@@ -234,9 +234,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- FUNÇÕES ---
-@st.cache_data(ttl=0)  # Sem cache - sempre relê o arquivo
 def load_data():
-    """Carrega e processa os dados do arquivo XLSX."""
+    """Carrega e processa os dados do arquivo XLSX - SEM CACHE."""
     # Tentar múltiplos caminhos possíveis com o nome correto do arquivo
     possible_paths = [
         os.path.join(os.path.dirname(__file__), "..", "data", "1Saldos - ecossistema.xlsx"),
@@ -251,10 +250,12 @@ def load_data():
     for path in possible_paths:
         if os.path.exists(path):
             xlsx_path = path
+            st.session_state.arquivo_carregado = f"✅ Arquivo encontrado em: {path}"
             break
     
     if xlsx_path is None:
         st.error("❌ Arquivo '1Saldos - ecossistema.xlsx' não encontrado!")
+        st.error(f"Caminhos procurados:\n" + "\n".join(possible_paths))
         return None
     
     try:
@@ -321,9 +322,8 @@ def load_data():
         st.error(f"❌ Erro ao carregar o arquivo: {e}")
         return None
 
-@st.cache_data
 def process_data(df):
-    """Processa os dados para agregação por empresa e ecossistema."""
+    """Processa os dados para agregação por empresa e ecossistema - SEM CACHE."""
     df_empresa_dia = (
         df.groupby(['Empresa', 'Data'], as_index=False)['Saldo_Final']
         .sum()
@@ -380,20 +380,31 @@ def formatar_milhao(valor):
     return f"{valor/1_000_000:.1f}M"
 
 # --- CARREGAR DADOS DO ARQUIVO LOCAL ---
-# Informação sobre os dados
+# Informação sobre os dados e status do arquivo
+if "arquivo_carregado" not in st.session_state:
+    st.session_state.arquivo_carregado = None
+
 col_info = st.columns([1])[0]
 with col_info:
-    st.info("💡 Clique em 'Atualizar Dados' após modificar o arquivo Excel para ver as mudanças")
+    st.info("💡 Os dados são carregados SEM cache - sempre mostram a versão mais recente do arquivo Excel")
 
 df = load_data()
+
+# Mostrar status do arquivo carregado
+if st.session_state.arquivo_carregado:
+    st.success(st.session_state.arquivo_carregado)
+
 if df is None:
     st.stop()
+
+st.success(f"✅ Dados carregados com sucesso! {len(df)} registros encontrados")
 
 # Validar colunas obrigatórias
 required_columns = ['Data', 'Empresa', 'Saldo_Final']
 missing_columns = [col for col in required_columns if col not in df.columns]
 if missing_columns:
     st.error(f"❌ Colunas obrigatórias não encontradas: {missing_columns}")
+    st.error(f"Colunas encontradas: {list(df.columns)}")
     st.stop()
 
 result = process_data(df)
