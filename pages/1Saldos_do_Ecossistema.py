@@ -261,27 +261,38 @@ def load_data():
     try:
         df = pd.read_excel(xlsx_path)
         
+        # Limpar nomes de colunas
         df.columns = [col.strip().replace('\n', '').replace('\r', '') for col in df.columns]
 
         col_data = None
         col_empresa = None
         col_saldo = None
 
+        # Detectar colunas com busca case-insensitive
         for col in df.columns:
             col_lower = col.lower().strip()
+            
+            # Procurar por Data
             if 'data' in col_lower and col_data is None:
                 col_data = col
+            
+            # Procurar por Empresa
             if 'empresa' in col_lower and col_empresa is None:
                 col_empresa = col
-            if 'saldo' in col_lower and 'final' in col_lower and col_saldo is None:
+            
+            # Procurar por Saldo Final (com espaço também)
+            if ('saldo' in col_lower and 'final' in col_lower) and col_saldo is None:
                 col_saldo = col
 
+        # Se não encontrou, mostrar erro com debug
         if not col_data:
-            st.error("❌ Coluna de Data não encontrada!")
+            st.error(f"❌ Coluna de Data não encontrada! Colunas: {list(df.columns)}")
             return None
+        
         if not col_saldo:
-            st.error("❌ Coluna de Saldo Final não encontrada!")
+            st.error(f"❌ Coluna de Saldo Final não encontrada! Colunas: {list(df.columns)}")
             return None
+        
         if not col_empresa:
             st.warning("⚠️ Coluna 'Empresa' não encontrada. Criando coluna genérica.")
             df['Empresa'] = 'Empresa Geral'
