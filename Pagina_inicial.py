@@ -7,10 +7,6 @@ import plotly.graph_objects as go
 import google.generativeai as genai
 import json
 import numpy as np
-from auth import verificar_autenticacao
-
-# --- AUTENTICAÇÃO ---
-verificar_autenticacao()
 
 st.set_page_config(
     layout='wide',
