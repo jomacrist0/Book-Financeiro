@@ -234,7 +234,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- FUNÇÕES ---
-@st.cache_data(ttl=60)  # Cache por 1 minuto para forçar atualização
+@st.cache_data(ttl=0)  # Sem cache - sempre relê o arquivo
 def load_data():
     """Carrega e processa os dados do arquivo XLSX."""
     # Tentar múltiplos caminhos possíveis com o nome correto do arquivo
