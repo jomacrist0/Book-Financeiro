@@ -380,24 +380,13 @@ def formatar_milhao(valor):
     return f"{valor/1_000_000:.1f}M"
 
 # --- CARREGAR DADOS DO ARQUIVO LOCAL ---
-# Informação sobre os dados e status do arquivo
 if "arquivo_carregado" not in st.session_state:
     st.session_state.arquivo_carregado = None
 
-col_info = st.columns([1])[0]
-with col_info:
-    st.info("💡 Os dados são carregados SEM cache - sempre mostram a versão mais recente do arquivo Excel")
-
 df = load_data()
-
-# Mostrar status do arquivo carregado
-if st.session_state.arquivo_carregado:
-    st.success(st.session_state.arquivo_carregado)
 
 if df is None:
     st.stop()
-
-st.success(f"✅ Dados carregados com sucesso! {len(df)} registros encontrados")
 
 # Validar colunas obrigatórias
 required_columns = ['Data', 'Empresa', 'Saldo_Final']
