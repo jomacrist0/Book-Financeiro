@@ -1,0 +1,9 @@
+streamlit
+pandas
+plotly
+numpy
+openpyxl
+google-generativeai
+requests
+apscheduler
+pytz

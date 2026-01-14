@@ -1,0 +1,957 @@
+2025-10-20 22:49:50,582 - INFO - 🔍 Verificando dependências...
+2025-10-20 22:49:50,582 - INFO -   ✅ requests
+2025-10-20 22:49:50,583 - INFO -   ✅ pandas
+2025-10-20 22:49:50,583 - INFO -   ✅ apscheduler
+2025-10-20 22:49:50,583 - INFO -   ✅ sqlite3
+2025-10-20 22:49:50,584 - INFO - ✅ Todas as dependências estão instaladas!
+2025-10-20 22:49:50,584 - INFO - ============================================================
+2025-10-20 22:49:50,584 - INFO - 🚀 INICIANDO WORKER...
+2025-10-20 22:49:50,585 - INFO - ============================================================
+2025-10-20 22:49:50,585 - INFO - ============================================================
+2025-10-20 22:49:50,585 - INFO - 🚀 MALGA WORKER - INICIANDO
+2025-10-20 22:49:50,586 - INFO - ============================================================
+2025-10-20 22:49:50,586 - INFO - ⏰ Intervalo de sincronização: 1 minuto(s)
+2025-10-20 22:49:50,587 - INFO - 💾 Banco de dados: malga_datamart.db
+2025-10-20 22:49:50,587 - INFO - ============================================================
+2025-10-20 22:49:50,587 - INFO - 🔧 Inicializando sistema...
+2025-10-20 22:49:50,668 - INFO - ✅ Sistema inicializado com sucesso!
+2025-10-20 22:49:50,668 - INFO - 🔄 Executando primeira sincronização...
+2025-10-20 22:49:50,668 - INFO - ============================================================
+2025-10-20 22:49:50,669 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:49:50,669 - INFO - ============================================================
+2025-10-20 22:49:50,671 - INFO - 📅 Última sincronização: 2025-10-20 22:49:50.658215-03:00
+2025-10-20 22:49:51,859 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:49:51,861 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:49:55,097 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:49:57,574 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:49:59,876 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:50:01,527 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:50:01,528 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:50:01,581 - INFO - ✅ 384 transações processadas
+2025-10-20 22:50:01,581 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:50:01,643 - INFO - 📊 Iniciando agregações...
+2025-10-20 22:50:01,686 - ERROR - ❌ Erro durante sincronização: Error binding parameter 2: type 'Timestamp' is not supported
+2025-10-20 22:50:01,697 - INFO - ============================================================
+2025-10-20 22:50:01,697 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:50:01,698 - INFO - ============================================================
+2025-10-20 22:50:01,724 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-20 22:50:01,725 - INFO - ✅ Worker configurado e rodando!
+2025-10-20 22:50:01,725 - INFO - ⚠️ Pressione Ctrl+C para parar
+2025-10-20 22:50:01,729 - INFO - Added job "Sincronização Malga" to job store "default"
+2025-10-20 22:50:01,730 - INFO - Scheduler started
+2025-10-20 22:51:01,738 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:51:01 -03)" (scheduled at 2025-10-20 22:51:01.724805-03:00)
+2025-10-20 22:51:01,739 - INFO - ============================================================
+2025-10-20 22:51:01,740 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:51:01,740 - INFO - ============================================================
+2025-10-20 22:51:01,741 - INFO - 📅 Última sincronização: 2025-10-20 22:50:01.688447-03:00
+2025-10-20 22:51:02,369 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:51:02,371 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:51:03,680 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:51:05,406 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:51:06,261 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:51:07,114 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:51:07,115 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:51:07,152 - INFO - ✅ 384 transações processadas
+2025-10-20 22:51:07,153 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:51:07,183 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:51:07,211 - INFO - ============================================================
+2025-10-20 22:51:07,212 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:51:07,213 - INFO - ============================================================
+2025-10-20 22:51:07,217 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:52:01 -03)" executed successfully
+2025-10-20 22:52:01,735 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:53:01 -03)" (scheduled at 2025-10-20 22:52:01.724805-03:00)
+2025-10-20 22:52:01,737 - INFO - ============================================================
+2025-10-20 22:52:01,738 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:52:01,739 - INFO - ============================================================
+2025-10-20 22:52:01,746 - INFO - 📅 Última sincronização: 2025-10-20 22:51:07.186911-03:00
+2025-10-20 22:52:02,338 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:52:02,340 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:52:03,187 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:52:04,200 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:52:04,994 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:52:06,063 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:52:06,064 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:52:06,092 - INFO - ✅ 384 transações processadas
+2025-10-20 22:52:06,094 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:52:06,117 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:52:06,136 - INFO - ============================================================
+2025-10-20 22:52:06,137 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:52:06,137 - INFO - ============================================================
+2025-10-20 22:52:06,139 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:53:01 -03)" executed successfully
+2025-10-20 22:53:01,734 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:54:01 -03)" (scheduled at 2025-10-20 22:53:01.724805-03:00)
+2025-10-20 22:53:01,735 - INFO - ============================================================
+2025-10-20 22:53:01,735 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:53:01,736 - INFO - ============================================================
+2025-10-20 22:53:01,738 - INFO - 📅 Última sincronização: 2025-10-20 22:52:06.119873-03:00
+2025-10-20 22:53:02,381 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:53:02,382 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:53:03,619 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:53:04,862 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:53:05,652 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:53:07,176 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:53:07,176 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:53:07,194 - INFO - ✅ 384 transações processadas
+2025-10-20 22:53:07,195 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:53:07,205 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:53:07,219 - INFO - ============================================================
+2025-10-20 22:53:07,219 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:53:07,220 - INFO - ============================================================
+2025-10-20 22:53:07,222 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:54:01 -03)" executed successfully
+2025-10-20 22:54:01,725 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:55:01 -03)" (scheduled at 2025-10-20 22:54:01.724805-03:00)
+2025-10-20 22:54:01,726 - INFO - ============================================================
+2025-10-20 22:54:01,726 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:54:01,727 - INFO - ============================================================
+2025-10-20 22:54:01,729 - INFO - 📅 Última sincronização: 2025-10-20 22:53:07.207290-03:00
+2025-10-20 22:54:02,286 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:54:02,287 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:54:03,437 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:54:04,797 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:54:06,590 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:54:07,537 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:54:07,538 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:54:07,561 - INFO - ✅ 384 transações processadas
+2025-10-20 22:54:07,561 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:54:07,575 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:54:07,591 - INFO - ============================================================
+2025-10-20 22:54:07,591 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:54:07,592 - INFO - ============================================================
+2025-10-20 22:54:07,593 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:55:01 -03)" executed successfully
+2025-10-20 22:55:01,731 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:56:01 -03)" (scheduled at 2025-10-20 22:55:01.724805-03:00)
+2025-10-20 22:55:01,732 - INFO - ============================================================
+2025-10-20 22:55:01,733 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:55:01,734 - INFO - ============================================================
+2025-10-20 22:55:01,736 - INFO - 📅 Última sincronização: 2025-10-20 22:54:07.576819-03:00
+2025-10-20 22:55:02,344 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:55:02,345 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:55:03,831 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:55:05,349 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:55:06,142 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:55:07,092 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:55:07,093 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:55:07,105 - INFO - ✅ 384 transações processadas
+2025-10-20 22:55:07,106 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:55:07,113 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:55:07,125 - INFO - ============================================================
+2025-10-20 22:55:07,126 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:55:07,126 - INFO - ============================================================
+2025-10-20 22:55:07,128 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:56:01 -03)" executed successfully
+2025-10-20 22:56:01,730 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:57:01 -03)" (scheduled at 2025-10-20 22:56:01.724805-03:00)
+2025-10-20 22:56:01,731 - INFO - ============================================================
+2025-10-20 22:56:01,732 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:56:01,733 - INFO - ============================================================
+2025-10-20 22:56:01,735 - INFO - 📅 Última sincronização: 2025-10-20 22:55:07.114654-03:00
+2025-10-20 22:56:02,402 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:56:02,403 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:56:03,356 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:56:04,126 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:56:04,890 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:56:06,524 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:56:06,525 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:56:06,555 - INFO - ✅ 384 transações processadas
+2025-10-20 22:56:06,556 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:56:06,576 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:56:06,594 - INFO - ============================================================
+2025-10-20 22:56:06,596 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:56:06,597 - INFO - ============================================================
+2025-10-20 22:56:06,599 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:57:01 -03)" executed successfully
+2025-10-20 22:57:01,738 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:58:01 -03)" (scheduled at 2025-10-20 22:57:01.724805-03:00)
+2025-10-20 22:57:01,739 - INFO - ============================================================
+2025-10-20 22:57:01,740 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:57:01,741 - INFO - ============================================================
+2025-10-20 22:57:01,744 - INFO - 📅 Última sincronização: 2025-10-20 22:56:06.579386-03:00
+2025-10-20 22:57:02,321 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:57:02,322 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:57:03,640 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:57:05,480 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:57:07,150 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:57:08,215 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:57:08,216 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:57:08,242 - INFO - ✅ 384 transações processadas
+2025-10-20 22:57:08,243 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:57:08,266 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:57:08,294 - INFO - ============================================================
+2025-10-20 22:57:08,295 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:57:08,296 - INFO - ============================================================
+2025-10-20 22:57:08,300 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:58:01 -03)" executed successfully
+2025-10-20 22:58:01,729 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:59:01 -03)" (scheduled at 2025-10-20 22:58:01.724805-03:00)
+2025-10-20 22:58:01,731 - INFO - ============================================================
+2025-10-20 22:58:01,731 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 22:58:01,732 - INFO - ============================================================
+2025-10-20 22:58:01,735 - INFO - 📅 Última sincronização: 2025-10-20 22:57:08.269114-03:00
+2025-10-20 22:58:02,551 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 22:58:02,552 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 22:58:04,163 - INFO - 📄 Página 1: 100 transações
+2025-10-20 22:58:05,786 - INFO - 📄 Página 2: 100 transações
+2025-10-20 22:58:06,922 - INFO - 📄 Página 3: 100 transações
+2025-10-20 22:58:07,663 - INFO - 📄 Página 4: 84 transações
+2025-10-20 22:58:07,664 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 22:58:07,707 - INFO - ✅ 384 transações processadas
+2025-10-20 22:58:07,712 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 22:58:07,763 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 22:58:07,781 - INFO - ============================================================
+2025-10-20 22:58:07,782 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 22:58:07,783 - INFO - ============================================================
+2025-10-20 22:58:07,785 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 22:59:01 -03)" executed successfully
+2025-10-20 22:59:13,105 - WARNING - Run time of job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:00:01 -03)" was missed by 0:00:11.380159
+2025-10-20 23:00:01,732 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:01:01 -03)" (scheduled at 2025-10-20 23:00:01.724805-03:00)
+2025-10-20 23:00:01,733 - INFO - ============================================================
+2025-10-20 23:00:01,733 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:00:01,734 - INFO - ============================================================
+2025-10-20 23:00:01,737 - INFO - 📅 Última sincronização: 2025-10-20 22:58:07.765657-03:00
+2025-10-20 23:00:02,845 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:00:02,846 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:00:04,444 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:00:05,966 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:00:06,822 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:00:10,667 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:00:10,668 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:00:10,707 - INFO - ✅ 384 transações processadas
+2025-10-20 23:00:10,708 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:00:10,733 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:00:10,760 - INFO - ============================================================
+2025-10-20 23:00:10,761 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:00:10,762 - INFO - ============================================================
+2025-10-20 23:00:10,765 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:01:01 -03)" executed successfully
+2025-10-20 23:01:01,732 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:02:01 -03)" (scheduled at 2025-10-20 23:01:01.724805-03:00)
+2025-10-20 23:01:01,733 - INFO - ============================================================
+2025-10-20 23:01:01,734 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:01:01,734 - INFO - ============================================================
+2025-10-20 23:01:01,738 - INFO - 📅 Última sincronização: 2025-10-20 23:00:10.737965-03:00
+2025-10-20 23:01:02,584 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:01:02,586 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:01:03,446 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:01:05,172 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:01:06,618 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:01:07,817 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:01:07,817 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:01:07,841 - INFO - ✅ 384 transações processadas
+2025-10-20 23:01:07,841 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:01:07,858 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:01:07,879 - INFO - ============================================================
+2025-10-20 23:01:07,880 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:01:07,880 - INFO - ============================================================
+2025-10-20 23:01:07,882 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:02:01 -03)" executed successfully
+2025-10-20 23:02:01,731 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:03:01 -03)" (scheduled at 2025-10-20 23:02:01.724805-03:00)
+2025-10-20 23:02:01,732 - INFO - ============================================================
+2025-10-20 23:02:01,733 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:02:01,734 - INFO - ============================================================
+2025-10-20 23:02:01,736 - INFO - 📅 Última sincronização: 2025-10-20 23:01:07.860528-03:00
+2025-10-20 23:02:02,543 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:02:02,545 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:02:03,639 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:02:04,524 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:02:05,804 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:02:07,014 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:02:07,014 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:02:07,037 - INFO - ✅ 384 transações processadas
+2025-10-20 23:02:07,038 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:02:07,055 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:02:07,070 - INFO - ============================================================
+2025-10-20 23:02:07,070 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:02:07,071 - INFO - ============================================================
+2025-10-20 23:02:07,073 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:03:01 -03)" executed successfully
+2025-10-20 23:03:01,737 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:04:01 -03)" (scheduled at 2025-10-20 23:03:01.724805-03:00)
+2025-10-20 23:03:01,738 - INFO - ============================================================
+2025-10-20 23:03:01,739 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:03:01,740 - INFO - ============================================================
+2025-10-20 23:03:01,743 - INFO - 📅 Última sincronização: 2025-10-20 23:02:07.057142-03:00
+2025-10-20 23:03:02,536 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:03:02,538 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:03:03,306 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:03:04,150 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:03:05,693 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:03:06,498 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:03:06,499 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:03:06,524 - INFO - ✅ 384 transações processadas
+2025-10-20 23:03:06,527 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:03:06,552 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:03:06,574 - INFO - ============================================================
+2025-10-20 23:03:06,576 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:03:06,577 - INFO - ============================================================
+2025-10-20 23:03:06,580 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:04:01 -03)" executed successfully
+2025-10-20 23:04:01,736 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:05:01 -03)" (scheduled at 2025-10-20 23:04:01.724805-03:00)
+2025-10-20 23:04:01,737 - INFO - ============================================================
+2025-10-20 23:04:01,738 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:04:01,739 - INFO - ============================================================
+2025-10-20 23:04:01,743 - INFO - 📅 Última sincronização: 2025-10-20 23:03:06.554857-03:00
+2025-10-20 23:04:02,258 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:04:02,260 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:04:03,136 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:04:03,865 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:04:05,454 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:04:06,488 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:04:06,489 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:04:06,513 - INFO - ✅ 384 transações processadas
+2025-10-20 23:04:06,514 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:04:06,537 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:04:06,554 - INFO - ============================================================
+2025-10-20 23:04:06,555 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:04:06,557 - INFO - ============================================================
+2025-10-20 23:04:06,559 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:05:01 -03)" executed successfully
+2025-10-20 23:05:01,741 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:06:01 -03)" (scheduled at 2025-10-20 23:05:01.724805-03:00)
+2025-10-20 23:05:01,741 - INFO - ============================================================
+2025-10-20 23:05:01,742 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:05:01,742 - INFO - ============================================================
+2025-10-20 23:05:01,743 - INFO - 📅 Última sincronização: 2025-10-20 23:04:06.538934-03:00
+2025-10-20 23:05:02,640 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:05:02,641 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:05:03,895 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:05:05,442 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:05:07,014 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:05:07,935 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:05:07,935 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:05:07,950 - INFO - ✅ 384 transações processadas
+2025-10-20 23:05:07,951 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:05:07,958 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:05:07,972 - INFO - ============================================================
+2025-10-20 23:05:07,973 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:05:07,974 - INFO - ============================================================
+2025-10-20 23:05:07,977 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:06:01 -03)" executed successfully
+2025-10-20 23:06:01,737 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:07:01 -03)" (scheduled at 2025-10-20 23:06:01.724805-03:00)
+2025-10-20 23:06:01,738 - INFO - ============================================================
+2025-10-20 23:06:01,740 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:06:01,742 - INFO - ============================================================
+2025-10-20 23:06:01,746 - INFO - 📅 Última sincronização: 2025-10-20 23:05:07.960299-03:00
+2025-10-20 23:06:02,584 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:06:02,586 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:06:04,320 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:06:05,110 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:06:05,805 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:06:06,518 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:06:06,518 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:06:06,529 - INFO - ✅ 384 transações processadas
+2025-10-20 23:06:06,529 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:06:06,537 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:06:06,549 - INFO - ============================================================
+2025-10-20 23:06:06,549 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:06:06,549 - INFO - ============================================================
+2025-10-20 23:06:06,551 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:07:01 -03)" executed successfully
+2025-10-20 23:07:01,735 - INFO - ⏹️ Worker finalizado pelo usuário
+2025-10-20 23:09:27,299 - INFO - 🔍 Verificando dependências...
+2025-10-20 23:09:27,300 - INFO -   ✅ requests
+2025-10-20 23:09:27,300 - INFO -   ✅ pandas
+2025-10-20 23:09:27,301 - INFO -   ✅ apscheduler
+2025-10-20 23:09:27,301 - INFO -   ✅ sqlite3
+2025-10-20 23:09:27,302 - INFO - ✅ Todas as dependências estão instaladas!
+2025-10-20 23:09:27,302 - INFO - ============================================================
+2025-10-20 23:09:27,303 - INFO - 🚀 INICIANDO WORKER...
+2025-10-20 23:09:27,303 - INFO - ============================================================
+2025-10-20 23:09:27,303 - INFO - ============================================================
+2025-10-20 23:09:27,304 - INFO - 🚀 MALGA WORKER - INICIANDO
+2025-10-20 23:09:27,304 - INFO - ============================================================
+2025-10-20 23:09:27,305 - INFO - ⏰ Intervalo de sincronização: 1 minuto(s)
+2025-10-20 23:09:27,306 - INFO - 💾 Banco de dados: malga_datamart.db
+2025-10-20 23:09:27,306 - INFO - ============================================================
+2025-10-20 23:09:27,307 - INFO - 🔧 Inicializando sistema...
+2025-10-20 23:09:27,311 - INFO - ✅ Sistema inicializado com sucesso!
+2025-10-20 23:09:27,312 - INFO - 🔄 Executando primeira sincronização...
+2025-10-20 23:09:27,312 - INFO - ============================================================
+2025-10-20 23:09:27,313 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:09:27,313 - INFO - ============================================================
+2025-10-20 23:09:27,315 - INFO - 📅 Última sincronização: 2025-10-20 23:06:06.538064-03:00
+2025-10-20 23:09:28,473 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:09:28,476 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:09:29,721 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:09:31,273 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:09:32,113 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:09:33,227 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:09:33,228 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:09:33,244 - INFO - ✅ 384 transações processadas
+2025-10-20 23:09:33,245 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:09:33,260 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:09:33,282 - INFO - ============================================================
+2025-10-20 23:09:33,284 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:09:33,284 - INFO - ============================================================
+2025-10-20 23:09:33,292 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-20 23:09:33,293 - INFO - ✅ Worker configurado e rodando!
+2025-10-20 23:09:33,294 - INFO - ⚠️ Pressione Ctrl+C para parar
+2025-10-20 23:09:33,298 - INFO - Added job "Sincronização Malga" to job store "default"
+2025-10-20 23:09:33,299 - INFO - Scheduler started
+2025-10-20 23:10:33,308 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:10:33 -03)" (scheduled at 2025-10-20 23:10:33.292455-03:00)
+2025-10-20 23:10:33,309 - INFO - ============================================================
+2025-10-20 23:10:33,310 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:10:33,311 - INFO - ============================================================
+2025-10-20 23:10:33,313 - INFO - 📅 Última sincronização: 2025-10-20 23:09:33.262723-03:00
+2025-10-20 23:10:34,173 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:10:34,175 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:10:35,843 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:10:37,421 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:10:39,028 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:10:40,511 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:10:40,512 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:10:40,547 - INFO - ✅ 384 transações processadas
+2025-10-20 23:10:40,548 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:10:40,585 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:10:40,616 - INFO - ============================================================
+2025-10-20 23:10:40,619 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:10:40,620 - INFO - ============================================================
+2025-10-20 23:10:40,624 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:11:33 -03)" executed successfully
+2025-10-20 23:11:33,308 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:12:33 -03)" (scheduled at 2025-10-20 23:11:33.292455-03:00)
+2025-10-20 23:11:33,310 - INFO - ============================================================
+2025-10-20 23:11:33,312 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:11:33,313 - INFO - ============================================================
+2025-10-20 23:11:33,317 - INFO - 📅 Última sincronização: 2025-10-20 23:10:40.588480-03:00
+2025-10-20 23:11:33,877 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:11:33,880 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:11:35,244 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:11:36,338 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:11:37,897 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:11:38,697 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:11:38,697 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:11:38,716 - INFO - ✅ 384 transações processadas
+2025-10-20 23:11:38,717 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:11:38,726 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:11:38,779 - INFO - ============================================================
+2025-10-20 23:11:38,780 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:11:38,781 - INFO - ============================================================
+2025-10-20 23:11:38,786 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:12:33 -03)" executed successfully
+2025-10-20 23:12:33,302 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:13:33 -03)" (scheduled at 2025-10-20 23:12:33.292455-03:00)
+2025-10-20 23:12:33,303 - INFO - ============================================================
+2025-10-20 23:12:33,303 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:12:33,304 - INFO - ============================================================
+2025-10-20 23:12:33,305 - INFO - 📅 Última sincronização: 2025-10-20 23:11:38.727804-03:00
+2025-10-20 23:12:33,959 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:12:33,961 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:12:35,291 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:12:36,973 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:12:38,185 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:12:39,122 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:12:39,124 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:12:39,135 - INFO - ✅ 384 transações processadas
+2025-10-20 23:12:39,136 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:12:39,144 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:12:39,156 - INFO - ============================================================
+2025-10-20 23:12:39,157 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:12:39,158 - INFO - ============================================================
+2025-10-20 23:12:39,160 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:13:33 -03)" executed successfully
+2025-10-20 23:13:33,300 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:14:33 -03)" (scheduled at 2025-10-20 23:13:33.292455-03:00)
+2025-10-20 23:13:33,302 - INFO - ============================================================
+2025-10-20 23:13:33,304 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:13:33,305 - INFO - ============================================================
+2025-10-20 23:13:33,309 - INFO - 📅 Última sincronização: 2025-10-20 23:12:39.145517-03:00
+2025-10-20 23:13:33,855 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:13:33,858 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:13:35,384 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:13:36,845 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:13:38,039 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:13:39,702 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:13:39,704 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:13:39,727 - INFO - ✅ 384 transações processadas
+2025-10-20 23:13:39,728 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:13:39,750 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:13:39,769 - INFO - ============================================================
+2025-10-20 23:13:39,770 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:13:39,771 - INFO - ============================================================
+2025-10-20 23:13:39,773 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:14:33 -03)" executed successfully
+2025-10-20 23:14:33,298 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:15:33 -03)" (scheduled at 2025-10-20 23:14:33.292455-03:00)
+2025-10-20 23:14:33,300 - INFO - ============================================================
+2025-10-20 23:14:33,301 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:14:33,302 - INFO - ============================================================
+2025-10-20 23:14:33,306 - INFO - 📅 Última sincronização: 2025-10-20 23:13:39.753400-03:00
+2025-10-20 23:14:34,179 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:14:34,182 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:14:35,513 - INFO - 📄 Página 1: 100 transações
+2025-10-20 23:14:37,030 - INFO - 📄 Página 2: 100 transações
+2025-10-20 23:14:38,009 - INFO - 📄 Página 3: 100 transações
+2025-10-20 23:14:38,925 - INFO - 📄 Página 4: 84 transações
+2025-10-20 23:14:38,927 - INFO - ✅ Total de 384 transações coletadas
+2025-10-20 23:14:38,951 - INFO - ✅ 384 transações processadas
+2025-10-20 23:14:38,953 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:14:38,971 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:14:38,988 - INFO - ============================================================
+2025-10-20 23:14:38,990 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:14:38,990 - INFO - ============================================================
+2025-10-20 23:14:38,993 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:15:33 -03)" executed successfully
+2025-10-20 23:15:33,298 - INFO - ⏹️ Worker finalizado pelo usuário
+2025-10-20 23:15:46,471 - INFO - 🔍 Verificando dependências...
+2025-10-20 23:15:46,472 - INFO -   ✅ requests
+2025-10-20 23:15:46,473 - INFO -   ✅ pandas
+2025-10-20 23:15:46,473 - INFO -   ✅ apscheduler
+2025-10-20 23:15:46,474 - INFO -   ✅ sqlite3
+2025-10-20 23:15:46,474 - INFO - ✅ Todas as dependências estão instaladas!
+2025-10-20 23:15:46,475 - INFO - ============================================================
+2025-10-20 23:15:46,475 - INFO - 🚀 INICIANDO WORKER...
+2025-10-20 23:15:46,476 - INFO - ============================================================
+2025-10-20 23:15:46,476 - INFO - ============================================================
+2025-10-20 23:15:46,476 - INFO - 🚀 MALGA WORKER - INICIANDO
+2025-10-20 23:15:46,477 - INFO - ============================================================
+2025-10-20 23:15:46,477 - INFO - ⏰ Intervalo de sincronização: 1 minuto(s)
+2025-10-20 23:15:46,477 - INFO - 💾 Banco de dados: malga_datamart.db
+2025-10-20 23:15:46,477 - INFO - ============================================================
+2025-10-20 23:15:46,477 - INFO - 🔧 Inicializando sistema...
+2025-10-20 23:15:46,480 - INFO - ✅ Sistema inicializado com sucesso!
+2025-10-20 23:15:46,480 - INFO - 🔄 Executando primeira sincronização...
+2025-10-20 23:15:46,481 - INFO - ============================================================
+2025-10-20 23:15:46,481 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:15:46,481 - INFO - ============================================================
+2025-10-20 23:15:46,483 - INFO - 📅 Última sincronização: 2025-10-20 23:14:38.974154-03:00
+2025-10-20 23:15:46,483 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:15:47,390 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:15:47,391 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:15:47,391 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:15:49,121 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:15:49,122 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:15:50,794 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:15:50,795 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:15:51,972 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:15:51,973 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:15:53,178 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:15:53,178 - INFO - ✅ Última página alcançada
+2025-10-20 23:15:53,193 - INFO - ✅ 384 transações processadas
+2025-10-20 23:15:53,194 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:15:53,207 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:15:53,222 - INFO - ============================================================
+2025-10-20 23:15:53,223 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:15:53,223 - INFO - ============================================================
+2025-10-20 23:15:53,227 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-20 23:15:53,227 - INFO - ✅ Worker configurado e rodando!
+2025-10-20 23:15:53,228 - INFO - ⚠️ Pressione Ctrl+C para parar
+2025-10-20 23:15:53,229 - INFO - Added job "Sincronização Malga" to job store "default"
+2025-10-20 23:15:53,230 - INFO - Scheduler started
+2025-10-20 23:16:53,241 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:16:53 -03)" (scheduled at 2025-10-20 23:16:53.227201-03:00)
+2025-10-20 23:16:53,243 - INFO - ============================================================
+2025-10-20 23:16:53,244 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:16:53,245 - INFO - ============================================================
+2025-10-20 23:16:53,248 - INFO - 📅 Última sincronização: 2025-10-20 23:15:53.208522-03:00
+2025-10-20 23:16:53,251 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:16:54,114 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:16:54,116 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:16:54,118 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:16:55,450 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:16:55,451 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:16:57,063 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:16:57,065 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:16:57,939 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:16:57,939 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:16:58,995 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:16:58,996 - INFO - ✅ Última página alcançada
+2025-10-20 23:16:59,007 - INFO - ✅ 384 transações processadas
+2025-10-20 23:16:59,008 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:16:59,015 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:16:59,029 - INFO - ============================================================
+2025-10-20 23:16:59,029 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:16:59,030 - INFO - ============================================================
+2025-10-20 23:16:59,031 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:17:53 -03)" executed successfully
+2025-10-20 23:17:53,232 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:18:53 -03)" (scheduled at 2025-10-20 23:17:53.227201-03:00)
+2025-10-20 23:17:53,233 - INFO - ============================================================
+2025-10-20 23:17:53,235 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:17:53,236 - INFO - ============================================================
+2025-10-20 23:17:53,238 - INFO - 📅 Última sincronização: 2025-10-20 23:16:59.016613-03:00
+2025-10-20 23:17:53,239 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:17:53,801 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:17:53,803 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:17:53,805 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:17:55,262 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:17:55,263 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:17:56,493 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:17:56,494 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:17:57,266 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:17:57,267 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:17:58,044 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:17:58,045 - INFO - ✅ Última página alcançada
+2025-10-20 23:17:58,057 - INFO - ✅ 384 transações processadas
+2025-10-20 23:17:58,058 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:17:58,066 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:17:58,077 - INFO - ============================================================
+2025-10-20 23:17:58,078 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:17:58,078 - INFO - ============================================================
+2025-10-20 23:17:58,079 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:18:53 -03)" executed successfully
+2025-10-20 23:18:53,241 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:19:53 -03)" (scheduled at 2025-10-20 23:18:53.227201-03:00)
+2025-10-20 23:18:53,242 - INFO - ============================================================
+2025-10-20 23:18:53,243 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:18:53,243 - INFO - ============================================================
+2025-10-20 23:18:53,245 - INFO - 📅 Última sincronização: 2025-10-20 23:17:58.067515-03:00
+2025-10-20 23:18:53,245 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:18:54,229 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:18:54,230 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:18:54,231 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:18:55,972 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:18:55,973 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:18:56,857 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:18:56,857 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:18:57,888 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:18:57,889 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:18:59,019 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:18:59,019 - INFO - ✅ Última página alcançada
+2025-10-20 23:18:59,029 - INFO - ✅ 384 transações processadas
+2025-10-20 23:18:59,030 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:18:59,037 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:18:59,051 - INFO - ============================================================
+2025-10-20 23:18:59,052 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:18:59,052 - INFO - ============================================================
+2025-10-20 23:18:59,054 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:19:53 -03)" executed successfully
+2025-10-20 23:19:53,234 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:20:53 -03)" (scheduled at 2025-10-20 23:19:53.227201-03:00)
+2025-10-20 23:19:53,235 - INFO - ============================================================
+2025-10-20 23:19:53,236 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:19:53,236 - INFO - ============================================================
+2025-10-20 23:19:53,239 - INFO - 📅 Última sincronização: 2025-10-20 23:18:59.038564-03:00
+2025-10-20 23:19:53,240 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:19:53,837 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:19:53,839 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:19:53,840 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:19:55,619 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:19:55,620 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:19:57,025 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:19:57,026 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:19:58,487 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:19:58,488 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:19:59,516 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:19:59,516 - INFO - ✅ Última página alcançada
+2025-10-20 23:19:59,526 - INFO - ✅ 384 transações processadas
+2025-10-20 23:19:59,526 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:19:59,533 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:19:59,545 - INFO - ============================================================
+2025-10-20 23:19:59,546 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:19:59,546 - INFO - ============================================================
+2025-10-20 23:19:59,548 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:20:53 -03)" executed successfully
+2025-10-20 23:20:53,244 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:21:53 -03)" (scheduled at 2025-10-20 23:20:53.227201-03:00)
+2025-10-20 23:20:53,246 - INFO - ============================================================
+2025-10-20 23:20:53,248 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:20:53,250 - INFO - ============================================================
+2025-10-20 23:20:53,255 - INFO - 📅 Última sincronização: 2025-10-20 23:19:59.534939-03:00
+2025-10-20 23:20:53,257 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:20:53,851 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:20:53,853 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:20:53,855 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:20:55,313 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:20:55,314 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:20:56,179 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:20:56,181 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:20:57,656 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:20:57,658 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:20:58,414 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:20:58,416 - INFO - ✅ Última página alcançada
+2025-10-20 23:20:58,444 - INFO - ✅ 384 transações processadas
+2025-10-20 23:20:58,447 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:20:58,460 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:20:58,480 - INFO - ============================================================
+2025-10-20 23:20:58,482 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:20:58,483 - INFO - ============================================================
+2025-10-20 23:20:58,485 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:21:53 -03)" executed successfully
+2025-10-20 23:21:53,228 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:22:53 -03)" (scheduled at 2025-10-20 23:21:53.227201-03:00)
+2025-10-20 23:21:53,231 - INFO - ============================================================
+2025-10-20 23:21:53,233 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:21:53,234 - INFO - ============================================================
+2025-10-20 23:21:53,242 - INFO - 📅 Última sincronização: 2025-10-20 23:20:58.462244-03:00
+2025-10-20 23:21:53,244 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:21:53,865 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:21:53,868 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:21:53,870 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:21:54,717 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:21:54,720 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:21:55,630 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:21:55,631 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:21:56,655 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:21:56,656 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:21:57,722 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:21:57,723 - INFO - ✅ Última página alcançada
+2025-10-20 23:21:57,770 - INFO - ✅ 384 transações processadas
+2025-10-20 23:21:57,771 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:21:57,816 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:21:57,846 - INFO - ============================================================
+2025-10-20 23:21:57,847 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:21:57,849 - INFO - ============================================================
+2025-10-20 23:21:57,854 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:22:53 -03)" executed successfully
+2025-10-20 23:22:53,228 - INFO - Running job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:23:53 -03)" (scheduled at 2025-10-20 23:22:53.227201-03:00)
+2025-10-20 23:22:53,229 - INFO - ============================================================
+2025-10-20 23:22:53,230 - INFO - 🚀 Iniciando sincronização...
+2025-10-20 23:22:53,230 - INFO - ============================================================
+2025-10-20 23:22:53,232 - INFO - 📅 Última sincronização: 2025-10-20 23:21:57.821871-03:00
+2025-10-20 23:22:53,233 - INFO - 🔐 Autenticando com Client-Id: d07b2f2c-c12f-43cf-8...
+2025-10-20 23:22:53,899 - INFO - ✅ Autenticação bem-sucedida
+2025-10-20 23:22:53,901 - INFO - 🔍 Buscando transações desde 2025-09-20...
+2025-10-20 23:22:53,901 - INFO - 📡 Tentando buscar página 1 com params: {'limit': 100, 'page': 1, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:22:54,646 - INFO - 📄 Página 1: 100 transações (total: 100)
+2025-10-20 23:22:54,647 - INFO - 📡 Tentando buscar página 2 com params: {'limit': 100, 'page': 2, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:22:55,413 - INFO - 📄 Página 2: 100 transações (total: 200)
+2025-10-20 23:22:55,414 - INFO - 📡 Tentando buscar página 3 com params: {'limit': 100, 'page': 3, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:22:56,586 - INFO - 📄 Página 3: 100 transações (total: 300)
+2025-10-20 23:22:56,587 - INFO - 📡 Tentando buscar página 4 com params: {'limit': 100, 'page': 4, 'created.gt': '2025-09-20', 'sort': 'DESC'}
+2025-10-20 23:22:57,516 - INFO - 📄 Página 4: 84 transações (total: 384)
+2025-10-20 23:22:57,517 - INFO - ✅ Última página alcançada
+2025-10-20 23:22:57,525 - INFO - ✅ 384 transações processadas
+2025-10-20 23:22:57,526 - INFO - 💾 Inserindo transações no banco...
+2025-10-20 23:22:57,533 - ERROR - ❌ Erro durante sincronização: UNIQUE constraint failed: transactions.id
+2025-10-20 23:22:57,546 - INFO - ============================================================
+2025-10-20 23:22:57,547 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-20 23:22:57,548 - INFO - ============================================================
+2025-10-20 23:22:57,550 - INFO - Job "Sincronização Malga (trigger: interval[0:01:00], next run at: 2025-10-20 23:23:53 -03)" executed successfully
+2025-10-20 23:23:53,237 - INFO - ⏹️ Worker finalizado pelo usuário
+2025-10-24 09:47:50,361 - INFO - ================================================================================
+2025-10-24 09:47:50,363 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 09:47:50,364 - INFO - ================================================================================
+2025-10-24 09:47:50,365 - INFO - ⏰ Início: 24/10/2025 09:47:50
+2025-10-24 09:47:50,365 - INFO - 
+2025-10-24 09:47:50,366 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 09:47:50,366 - INFO - ============================================================
+2025-10-24 09:47:50,366 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 09:47:50,367 - INFO - ============================================================
+2025-10-24 09:47:50,371 - INFO - 📅 Última sincronização: 2025-10-20 23:22:57.535220-03:00
+2025-10-24 09:47:50,372 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 09:47:51,680 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 09:47:51,681 - INFO - 🔍 PRIMEIRA SINCRONIZAÇÃO - Buscando TODAS as transações...
+2025-10-24 09:47:51,681 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 09:47:51,681 - INFO - 📡 Página 1...
+2025-10-24 09:47:55,092 - INFO - 📄 Página 1: 100 transações | Total acumulado: 100/1000
+2025-10-24 09:47:55,594 - INFO - 📡 Página 2...
+2025-10-24 09:48:00,145 - INFO - 📄 Página 2: 100 transações | Total acumulado: 200/1000
+2025-10-24 09:48:00,647 - INFO - 📡 Página 3...
+2025-10-24 09:48:04,908 - INFO - 📄 Página 3: 100 transações | Total acumulado: 300/1000
+2025-10-24 09:48:05,410 - INFO - 📡 Página 4...
+2025-10-24 09:48:10,261 - INFO - 📄 Página 4: 100 transações | Total acumulado: 400/1000
+2025-10-24 09:48:10,762 - INFO - 📡 Página 5...
+2025-10-24 09:48:14,922 - INFO - 📄 Página 5: 100 transações | Total acumulado: 500/1000
+2025-10-24 09:48:15,424 - INFO - 📡 Página 6...
+2025-10-24 09:48:19,700 - INFO - 📄 Página 6: 100 transações | Total acumulado: 600/1000
+2025-10-24 09:48:20,202 - INFO - 📡 Página 7...
+2025-10-24 09:48:24,162 - INFO - 📄 Página 7: 100 transações | Total acumulado: 700/1000
+2025-10-24 09:48:24,664 - INFO - 📡 Página 8...
+2025-10-24 09:48:28,099 - INFO - 📄 Página 8: 100 transações | Total acumulado: 800/1000
+2025-10-24 09:48:28,600 - INFO - 📡 Página 9...
+2025-10-24 09:48:32,556 - INFO - 📄 Página 9: 100 transações | Total acumulado: 900/1000
+2025-10-24 09:48:33,057 - INFO - 📡 Página 10...
+2025-10-24 09:48:37,463 - INFO - 📄 Página 10: 100 transações | Total acumulado: 1000/1000
+2025-10-24 09:48:37,463 - WARNING - 🛑 LIMITE ATINGIDO: 1000 transações coletadas
+2025-10-24 09:48:37,464 - INFO - ✅ Total de 1000 transações coletadas
+2025-10-24 09:48:37,464 - INFO - 📊 Páginas processadas: 9
+2025-10-24 09:48:37,517 - INFO - ✅ 1000 transações processadas
+2025-10-24 09:48:37,517 - INFO - 💾 Inserindo transações no banco...
+2025-10-24 09:48:37,647 - INFO - 📊 Iniciando agregações...
+2025-10-24 09:48:37,748 - ERROR - ❌ Erro durante sincronização: Error binding parameter 2: type 'Timestamp' is not supported
+2025-10-24 09:48:37,761 - INFO - ============================================================
+2025-10-24 09:48:37,762 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 09:48:37,763 - INFO - ============================================================
+2025-10-24 09:48:37,768 - INFO - 
+2025-10-24 09:48:37,769 - INFO - ================================================================================
+2025-10-24 09:48:37,769 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 09:48:37,770 - INFO - ================================================================================
+2025-10-24 09:48:37,773 - INFO - ✅ Última sincronização: 2025-10-24 09:48:37.750422-03:00
+2025-10-24 09:48:37,774 - INFO - ✅ Total de transações no banco: None
+2025-10-24 09:48:37,775 - INFO - 
+2025-10-24 09:48:37,776 - INFO - ⏰ Fim: 24/10/2025 09:48:37
+2025-10-24 09:48:37,776 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 09:48:37,777 - INFO - ================================================================================
+2025-10-24 10:25:47,617 - INFO - ================================================================================
+2025-10-24 10:25:47,620 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 10:25:47,621 - INFO - ================================================================================
+2025-10-24 10:25:47,622 - INFO - ⏰ Início: 24/10/2025 10:25:47
+2025-10-24 10:25:47,622 - INFO - 
+2025-10-24 10:25:47,623 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 10:25:47,623 - INFO - ============================================================
+2025-10-24 10:25:47,623 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 10:25:47,624 - INFO - ============================================================
+2025-10-24 10:25:47,625 - INFO - 📅 Última sincronização: 2025-10-24 09:48:37.750422-03:00
+2025-10-24 10:25:47,625 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 10:25:48,108 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 10:25:48,110 - INFO - 🔍 PRIMEIRA SINCRONIZAÇÃO - Buscando TODAS as transações...
+2025-10-24 10:25:48,112 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 10:25:48,113 - INFO - 📡 Página 1...
+2025-10-24 10:25:49,050 - INFO - 📄 Página 1: 100 transações | Total acumulado: 100/1000
+2025-10-24 10:25:49,551 - INFO - 📡 Página 2...
+2025-10-24 10:25:50,649 - INFO - 📄 Página 2: 100 transações | Total acumulado: 200/1000
+2025-10-24 10:25:51,151 - INFO - 📡 Página 3...
+2025-10-24 10:25:52,125 - INFO - 📄 Página 3: 100 transações | Total acumulado: 300/1000
+2025-10-24 10:25:52,627 - INFO - 📡 Página 4...
+2025-10-24 10:25:54,829 - INFO - 📄 Página 4: 100 transações | Total acumulado: 400/1000
+2025-10-24 10:25:55,330 - INFO - 📡 Página 5...
+2025-10-24 10:25:56,463 - INFO - 📄 Página 5: 100 transações | Total acumulado: 500/1000
+2025-10-24 10:25:56,964 - INFO - 📡 Página 6...
+2025-10-24 10:25:58,047 - INFO - 📄 Página 6: 100 transações | Total acumulado: 600/1000
+2025-10-24 10:25:58,550 - INFO - 📡 Página 7...
+2025-10-24 10:25:59,589 - INFO - 📄 Página 7: 100 transações | Total acumulado: 700/1000
+2025-10-24 10:26:00,091 - INFO - 📡 Página 8...
+2025-10-24 10:26:01,171 - INFO - 📄 Página 8: 100 transações | Total acumulado: 800/1000
+2025-10-24 10:26:01,672 - INFO - 📡 Página 9...
+2025-10-24 10:26:02,820 - INFO - 📄 Página 9: 100 transações | Total acumulado: 900/1000
+2025-10-24 10:26:03,322 - INFO - 📡 Página 10...
+2025-10-24 10:26:04,762 - INFO - 📄 Página 10: 100 transações | Total acumulado: 1000/1000
+2025-10-24 10:26:04,763 - WARNING - 🛑 LIMITE ATINGIDO: 1000 transações coletadas
+2025-10-24 10:26:04,765 - INFO - ✅ Total de 1000 transações coletadas
+2025-10-24 10:26:04,768 - INFO - 📊 Páginas processadas: 9
+2025-10-24 10:26:04,791 - INFO - ✅ 1000 transações processadas
+2025-10-24 10:26:04,792 - INFO - 💾 Inserindo transações no banco...
+2025-10-24 10:26:04,877 - INFO - ✅ 25 transações NOVAS inseridas (de 1000 coletadas)
+2025-10-24 10:26:04,880 - INFO - 📊 Iniciando agregações...
+2025-10-24 10:26:05,004 - INFO - ✅ Sincronização concluída: 1000 transações
+2025-10-24 10:26:05,008 - INFO - 📈 Estatísticas do banco:
+2025-10-24 10:26:05,009 - INFO -    - Total de transações: 1409
+2025-10-24 10:26:05,010 - INFO -    - Métricas por minuto: 713
+2025-10-24 10:26:05,010 - INFO -    - Métricas por hora: 165
+2025-10-24 10:26:05,011 - INFO -    - Métricas por dia: 30
+2025-10-24 10:26:05,012 - INFO - ============================================================
+2025-10-24 10:26:05,012 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 10:26:05,013 - INFO - ============================================================
+2025-10-24 10:26:05,018 - INFO - 
+2025-10-24 10:26:05,019 - INFO - ================================================================================
+2025-10-24 10:26:05,020 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 10:26:05,021 - INFO - ================================================================================
+2025-10-24 10:26:05,024 - INFO - ✅ Última sincronização: 2025-10-24 10:26:04.994837-03:00
+2025-10-24 10:26:05,025 - INFO - ✅ Total de transações no banco: 2025-10-24 13:23:36
+2025-10-24 10:26:05,025 - INFO - 
+2025-10-24 10:26:05,026 - INFO - ⏰ Fim: 24/10/2025 10:26:05
+2025-10-24 10:26:05,026 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 10:26:05,026 - INFO - ================================================================================
+2025-10-24 11:20:59,903 - INFO - ================================================================================
+2025-10-24 11:20:59,904 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 11:20:59,906 - INFO - ================================================================================
+2025-10-24 11:20:59,907 - INFO - ⏰ Início: 24/10/2025 11:20:59
+2025-10-24 11:20:59,907 - INFO - 
+2025-10-24 11:20:59,908 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 11:20:59,908 - INFO - ============================================================
+2025-10-24 11:20:59,909 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 11:20:59,910 - INFO - ============================================================
+2025-10-24 11:20:59,914 - INFO - 📅 Última sincronização: 2025-10-24 10:26:04.994837-03:00
+2025-10-24 11:20:59,915 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 11:21:00,493 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 11:21:00,495 - INFO - 🔄 Sincronização incremental desde 2025-10-24...
+2025-10-24 11:21:00,497 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 11:21:00,498 - INFO - 📡 Página 1...
+2025-10-24 11:21:01,786 - INFO - 📄 Página 1: 100 transações | Total acumulado: 100/1000
+2025-10-24 11:21:02,289 - INFO - 📡 Página 2...
+2025-10-24 11:21:03,351 - INFO - 📄 Página 2: 49 transações | Total acumulado: 149/1000
+2025-10-24 11:21:03,353 - INFO - ✅ Última página alcançada (menos de 100 items)
+2025-10-24 11:21:03,355 - INFO - ✅ Total de 149 transações coletadas
+2025-10-24 11:21:03,356 - INFO - 📊 Páginas processadas: 1
+2025-10-24 11:21:03,374 - INFO - ✅ 149 transações processadas
+2025-10-24 11:21:03,375 - INFO - 💾 Inserindo transações no banco...
+2025-10-24 11:21:03,458 - INFO - ✅ 30 transações NOVAS inseridas (de 149 coletadas)
+2025-10-24 11:21:03,461 - INFO - 📊 Iniciando agregações...
+2025-10-24 11:21:03,573 - INFO - ✅ Sincronização concluída: 149 transações
+2025-10-24 11:21:03,577 - INFO - 📈 Estatísticas do banco:
+2025-10-24 11:21:03,578 - INFO -    - Total de transações: 1439
+2025-10-24 11:21:03,579 - INFO -    - Métricas por minuto: 737
+2025-10-24 11:21:03,580 - INFO -    - Métricas por hora: 166
+2025-10-24 11:21:03,581 - INFO -    - Métricas por dia: 30
+2025-10-24 11:21:03,582 - INFO - ============================================================
+2025-10-24 11:21:03,582 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 11:21:03,583 - INFO - ============================================================
+2025-10-24 11:21:03,584 - INFO - 
+2025-10-24 11:21:03,584 - INFO - ================================================================================
+2025-10-24 11:21:03,586 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 11:21:03,587 - INFO - ================================================================================
+2025-10-24 11:21:03,590 - INFO - ✅ Última sincronização: 2025-10-24 11:21:03.563506-03:00
+2025-10-24 11:21:03,591 - INFO - ✅ Total de transações no banco: 2025-10-24 14:19:55
+2025-10-24 11:21:03,592 - INFO - 
+2025-10-24 11:21:03,593 - INFO - ⏰ Fim: 24/10/2025 11:21:03
+2025-10-24 11:21:03,594 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 11:21:03,596 - INFO - ================================================================================
+2025-10-24 11:30:53,744 - INFO - ================================================================================
+2025-10-24 11:30:53,745 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 11:30:53,746 - INFO - ================================================================================
+2025-10-24 11:30:53,746 - INFO - ⏰ Início: 24/10/2025 11:30:53
+2025-10-24 11:30:53,747 - INFO - 
+2025-10-24 11:30:53,747 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 11:30:53,747 - INFO - ============================================================
+2025-10-24 11:30:53,748 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 11:30:53,748 - INFO - ============================================================
+2025-10-24 11:30:53,749 - INFO - 📅 Última sincronização: 2025-10-24 11:21:03.563506-03:00
+2025-10-24 11:30:53,750 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 11:30:54,523 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 11:30:54,525 - INFO - 🔄 Sincronização incremental desde 2025-10-24T14:19:55...
+2025-10-24 11:30:54,525 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 11:30:54,526 - INFO - 📡 Página 1...
+2025-10-24 11:30:54,998 - ERROR - ❌ HTTP 400 - {"error":{"type":"bad_request","code":400,"message":"Bad Request Exception","details":["property created.gte should not exist"]}}
+2025-10-24 11:30:54,999 - INFO - ✅ Total de 0 transações coletadas
+2025-10-24 11:30:55,000 - INFO - 📊 Páginas processadas: 0
+2025-10-24 11:30:55,001 - INFO - ℹ️ Nenhuma transação nova para processar
+2025-10-24 11:30:55,025 - INFO - 📈 Estatísticas do banco:
+2025-10-24 11:30:55,026 - INFO -    - Total de transações: 1439
+2025-10-24 11:30:55,027 - INFO -    - Métricas por minuto: 737
+2025-10-24 11:30:55,028 - INFO -    - Métricas por hora: 166
+2025-10-24 11:30:55,029 - INFO -    - Métricas por dia: 30
+2025-10-24 11:30:55,030 - INFO - ============================================================
+2025-10-24 11:30:55,031 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 11:30:55,032 - INFO - ============================================================
+2025-10-24 11:30:55,032 - INFO - 
+2025-10-24 11:30:55,033 - INFO - ================================================================================
+2025-10-24 11:30:55,034 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 11:30:55,034 - INFO - ================================================================================
+2025-10-24 11:30:55,038 - INFO - ✅ Última sincronização: 2025-10-24 11:30:55.002681-03:00
+2025-10-24 11:30:55,039 - INFO - ✅ Total de transações no banco: 2025-10-24 14:19:55
+2025-10-24 11:30:55,039 - INFO - 
+2025-10-24 11:30:55,040 - INFO - ⏰ Fim: 24/10/2025 11:30:55
+2025-10-24 11:30:55,041 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 11:30:55,042 - INFO - ================================================================================
+2025-10-24 11:31:32,132 - INFO - ================================================================================
+2025-10-24 11:31:32,133 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 11:31:32,134 - INFO - ================================================================================
+2025-10-24 11:31:32,135 - INFO - ⏰ Início: 24/10/2025 11:31:32
+2025-10-24 11:31:32,137 - INFO - 
+2025-10-24 11:31:32,138 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 11:31:32,139 - INFO - ============================================================
+2025-10-24 11:31:32,140 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 11:31:32,141 - INFO - ============================================================
+2025-10-24 11:31:32,143 - INFO - 📅 Última sincronização: 2025-10-24 11:30:55.002681-03:00
+2025-10-24 11:31:32,145 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 11:31:33,052 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 11:31:33,054 - INFO - 🔄 Sincronização incremental desde 2025-10-24T14:19:55...
+2025-10-24 11:31:33,056 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 11:31:33,057 - INFO - 📡 Página 1...
+2025-10-24 11:31:33,711 - INFO - 📄 Página 1: 4 transações | Total acumulado: 4/1000
+2025-10-24 11:31:33,712 - INFO - ✅ Última página alcançada (menos de 100 items)
+2025-10-24 11:31:33,713 - INFO - ✅ Total de 4 transações coletadas
+2025-10-24 11:31:33,714 - INFO - 📊 Páginas processadas: 0
+2025-10-24 11:31:33,727 - INFO - ✅ 4 transações processadas
+2025-10-24 11:31:33,728 - INFO - 💾 Inserindo transações no banco...
+2025-10-24 11:31:33,761 - INFO - ✅ 3 transações NOVAS inseridas (de 4 coletadas)
+2025-10-24 11:31:33,763 - INFO - 📊 Iniciando agregações...
+2025-10-24 11:31:33,875 - INFO - ✅ Sincronização concluída: 4 transações
+2025-10-24 11:31:33,878 - INFO - 📈 Estatísticas do banco:
+2025-10-24 11:31:33,879 - INFO -    - Total de transações: 1442
+2025-10-24 11:31:33,879 - INFO -    - Métricas por minuto: 740
+2025-10-24 11:31:33,879 - INFO -    - Métricas por hora: 166
+2025-10-24 11:31:33,880 - INFO -    - Métricas por dia: 30
+2025-10-24 11:31:33,880 - INFO - ============================================================
+2025-10-24 11:31:33,880 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 11:31:33,880 - INFO - ============================================================
+2025-10-24 11:31:33,881 - INFO - 
+2025-10-24 11:31:33,881 - INFO - ================================================================================
+2025-10-24 11:31:33,882 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 11:31:33,882 - INFO - ================================================================================
+2025-10-24 11:31:33,884 - INFO - ✅ Última sincronização: 2025-10-24 11:31:33.864664-03:00
+2025-10-24 11:31:33,885 - INFO - ✅ Total de transações no banco: 2025-10-24 14:27:46
+2025-10-24 11:31:33,886 - INFO - 
+2025-10-24 11:31:33,887 - INFO - ⏰ Fim: 24/10/2025 11:31:33
+2025-10-24 11:31:33,887 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 11:31:33,888 - INFO - ================================================================================
+2025-10-24 11:40:09,009 - INFO - ================================================================================
+2025-10-24 11:40:09,011 - INFO - 🧪 TESTE WORKER - EXECUÇÃO ÚNICA
+2025-10-24 11:40:09,012 - INFO - ================================================================================
+2025-10-24 11:40:09,013 - INFO - ⏰ Início: 24/10/2025 11:40:09
+2025-10-24 11:40:09,013 - INFO - 
+2025-10-24 11:40:09,014 - INFO - 🚀 Iniciando sincronização com limite de 2000 transações...
+2025-10-24 11:40:09,017 - INFO - ============================================================
+2025-10-24 11:40:09,019 - INFO - 🚀 Iniciando sincronização...
+2025-10-24 11:40:09,020 - INFO - ============================================================
+2025-10-24 11:40:09,022 - INFO - 📅 Última sincronização: 2025-10-24 11:31:33.864664-03:00
+2025-10-24 11:40:09,026 - INFO - 🔐 Autenticando com Client-Id: af94ea85-d55f-4458-a...
+2025-10-24 11:40:09,534 - INFO - ✅ Autenticação bem-sucedida
+2025-10-24 11:40:09,537 - INFO - 🔄 Sincronização incremental desde 2025-10-24T14:27:46...
+2025-10-24 11:40:09,539 - INFO - 🎯 LIMITE CONFIGURADO: 1000 transações
+2025-10-24 11:40:09,541 - INFO - 📡 Página 1...
+2025-10-24 11:40:10,314 - INFO - 📄 Página 1: 2 transações | Total acumulado: 2/1000
+2025-10-24 11:40:10,316 - INFO - ✅ Última página alcançada (menos de 100 items)
+2025-10-24 11:40:10,318 - INFO - ✅ Total de 2 transações coletadas
+2025-10-24 11:40:10,320 - INFO - 📊 Páginas processadas: 0
+2025-10-24 11:40:10,330 - INFO - ✅ 2 transações processadas
+2025-10-24 11:40:10,332 - INFO - 💾 Inserindo transações no banco...
+2025-10-24 11:40:10,360 - INFO - ✅ 1 transações NOVAS inseridas (de 2 coletadas)
+2025-10-24 11:40:10,364 - INFO - 📊 Iniciando agregações...
+2025-10-24 11:40:10,526 - INFO - ✅ Sincronização concluída: 2 transações
+2025-10-24 11:40:10,531 - INFO - 📈 Estatísticas do banco:
+2025-10-24 11:40:10,533 - INFO -    - Total de transações: 1443
+2025-10-24 11:40:10,534 - INFO -    - Métricas por minuto: 741
+2025-10-24 11:40:10,536 - INFO -    - Métricas por hora: 166
+2025-10-24 11:40:10,536 - INFO -    - Métricas por dia: 30
+2025-10-24 11:40:10,537 - INFO - ============================================================
+2025-10-24 11:40:10,538 - INFO - ⏰ Próxima sincronização em 1 minuto(s)
+2025-10-24 11:40:10,538 - INFO - ============================================================
+2025-10-24 11:40:10,539 - INFO - 
+2025-10-24 11:40:10,539 - INFO - ================================================================================
+2025-10-24 11:40:10,540 - INFO - 📊 ESTATÍSTICAS FINAIS
+2025-10-24 11:40:10,541 - INFO - ================================================================================
+2025-10-24 11:40:10,545 - INFO - ✅ Última sincronização: 2025-10-24 11:40:10.512581-03:00
+2025-10-24 11:40:10,546 - INFO - ✅ Total de transações no banco: 2025-10-24 14:33:30
+2025-10-24 11:40:10,546 - INFO - 
+2025-10-24 11:40:10,547 - INFO - ⏰ Fim: 24/10/2025 11:40:10
+2025-10-24 11:40:10,548 - INFO - ✅ TESTE CONCLUÍDO COM SUCESSO
+2025-10-24 11:40:10,548 - INFO - ================================================================================
