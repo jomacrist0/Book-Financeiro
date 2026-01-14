@@ -5,6 +5,12 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import os
 from datetime import datetime, timedelta
+import sys
+sys.path.append('..')
+from auth import verificar_autenticacao
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(

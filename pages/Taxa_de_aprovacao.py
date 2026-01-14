@@ -4,6 +4,12 @@ import plotly.graph_objects as go
 import os
 from datetime import datetime, date, timedelta
 import numpy as np
+import sys
+sys.path.append('..')
+from auth import verificar_autenticacao
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(

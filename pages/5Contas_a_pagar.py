@@ -6,6 +6,12 @@ from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 import numpy as np
 import os
+import sys
+sys.path.append('..')
+from auth import verificar_autenticacao
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(

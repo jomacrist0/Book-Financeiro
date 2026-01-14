@@ -4,6 +4,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
+import sys
+sys.path.append('..')
+from auth import verificar_autenticacao
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(

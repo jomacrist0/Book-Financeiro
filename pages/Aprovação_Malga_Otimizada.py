@@ -8,6 +8,12 @@ Performance: Milissegundos ao invés de segundos
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import sys
+sys.path.append('..')
+from auth import verificar_autenticacao
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 import plotly.express as px
 from datetime import datetime, timedelta
 import pytz
