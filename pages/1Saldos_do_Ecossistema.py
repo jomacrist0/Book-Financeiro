@@ -7,11 +7,32 @@ import os
 from datetime import datetime, timedelta
 import base64
 import sys
+import hashlib
 sys.path.append('..')
 from auth import verificar_autenticacao
 
 # --- AUTENTICAÇÃO ---
 verificar_autenticacao()
+
+# --- VERIFICAR MUDANÇAS NO ARQUIVO PARA FORÇAR RELOAD ---
+def get_file_hash():
+    """Calcula hash do arquivo Excel para detectar mudanças"""
+    try:
+        xlsx_path = os.path.join(os.path.dirname(__file__), "..", "data", "1Saldos - ecossistema.xlsx")
+        if os.path.exists(xlsx_path):
+            with open(xlsx_path, 'rb') as f:
+                return hashlib.md5(f.read()).hexdigest()
+    except:
+        pass
+    return None
+
+# Verificar se arquivo mudou
+current_hash = get_file_hash()
+if "file_hash" not in st.session_state:
+    st.session_state.file_hash = current_hash
+elif st.session_state.file_hash != current_hash:
+    st.session_state.file_hash = current_hash
+    st.rerun()  # Recarregar automaticamente se arquivo mudou
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -234,9 +255,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- FUNÇÕES ---
-@st.cache_data(ttl=30)  # Cache de 30 segundos apenas
 def load_data():
-    """Carrega e processa os dados do arquivo XLSX - Cache curto para atualização rápida."""
+    """Carrega e processa os dados do arquivo XLSX - SEM CACHE para sempre usar dados mais recentes."""
     # Tentar múltiplos caminhos possíveis com o nome correto do arquivo
     possible_paths = [
         os.path.join(os.path.dirname(__file__), "..", "data", "1Saldos - ecossistema.xlsx"),
