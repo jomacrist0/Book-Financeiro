@@ -561,130 +561,130 @@ st.markdown('<div style="margin: 0.5rem 0;"></div>', unsafe_allow_html=True)
 if not df_plot.empty:
     with st.container(border=True):
         st.markdown(f"### 📈 Evolução dos Saldos do Ecossistema ({granularidade})")
-            
-            # --- SISTEMA DE CORES DINÂMICAS ---
-            def gerar_paleta_dinamica(empresas_selecionadas):
-                """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
-                # Paletas complementares para cada empresa principal
-                paletas_complementares = {
-                    'Alura': {  # Base azul escuro
-                        'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#1a5490',     # Azul escuro
-                        'FIAP': '#cc0000',      # Vermelho escuro
-                        'PM3': '#663399',       # Roxo escuro
-                        'Empresa Geral': '#ffc107',
-                        'Casa do Código': '#795548',
-                        'Caelum': '#607d8b',
-                        'INSTITUTO FIAP': '#cc0000'
-                    },
-                    'FIAP': {  # Base vermelho escuro
-                        'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#1a5490',     # Azul escuro
-                        'FIAP': '#cc0000',      # Vermelho escuro
-                        'PM3': '#663399',       # Roxo escuro
-                        'Empresa Geral': '#ff9800',
-                        'Casa do Código': '#5d4037',
-                        'Caelum': '#455a64',
-                        'INSTITUTO FIAP': '#cc0000'
-                    },
-                    'PM3': {  # Base roxo escuro
-                        'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#1a5490',     # Azul escuro
-                        'FIAP': '#cc0000',      # Vermelho escuro
-                        'PM3': '#663399',       # Roxo escuro
-                        'Empresa Geral': '#cddc39', # Lima
-                        'Casa do Código': '#6d4c41', # Marrom médio
-                        'Caelum': '#37474f',    # Cinza azulado
-                        'INSTITUTO FIAP': '#ff5722'
-                    }
+        
+        # --- SISTEMA DE CORES DINÂMICAS ---
+        def gerar_paleta_dinamica(empresas_selecionadas):
+            """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
+            # Paletas complementares para cada empresa principal
+            paletas_complementares = {
+                'Alura': {  # Base azul escuro
+                    'Saldo do Ecossistema': '#ffffff',  # Branco
+                    'Alura': '#1a5490',     # Azul escuro
+                    'FIAP': '#cc0000',      # Vermelho escuro
+                    'PM3': '#663399',       # Roxo escuro
+                    'Empresa Geral': '#ffc107',
+                    'Casa do Código': '#795548',
+                    'Caelum': '#607d8b',
+                    'INSTITUTO FIAP': '#cc0000'
+                },
+                'FIAP': {  # Base vermelho escuro
+                    'Saldo do Ecossistema': '#ffffff',  # Branco
+                    'Alura': '#1a5490',     # Azul escuro
+                    'FIAP': '#cc0000',      # Vermelho escuro
+                    'PM3': '#663399',       # Roxo escuro
+                    'Empresa Geral': '#ff9800',
+                    'Casa do Código': '#5d4037',
+                    'Caelum': '#455a64',
+                    'INSTITUTO FIAP': '#cc0000'
+                },
+                'PM3': {  # Base roxo escuro
+                    'Saldo do Ecossistema': '#ffffff',  # Branco
+                    'Alura': '#1a5490',     # Azul escuro
+                    'FIAP': '#cc0000',      # Vermelho escuro
+                    'PM3': '#663399',       # Roxo escuro
+                    'Empresa Geral': '#cddc39', # Lima
+                    'Casa do Código': '#6d4c41', # Marrom médio
+                    'Caelum': '#37474f',    # Cinza azulado
+                    'INSTITUTO FIAP': '#ff5722'
                 }
-                
-                # Determinar empresa principal (primeira selecionada ou Alura como padrão)
-                empresa_principal = 'Alura'  # Padrão
-                if empresas_selecionadas:
-                    if 'Alura' in empresas_selecionadas:
-                        empresa_principal = 'Alura'
-                    elif 'FIAP' in empresas_selecionadas:
-                        empresa_principal = 'FIAP'
-                    elif 'PM3' in empresas_selecionadas:
-                        empresa_principal = 'PM3'
-                    else:
-                        empresa_principal = empresas_selecionadas[0]
-                
-                # Retornar paleta baseada na empresa principal
-                return paletas_complementares.get(empresa_principal, paletas_complementares['Alura'])
+            }
             
-            # Gerar paleta dinâmica
-            cores_empresas = gerar_paleta_dinamica(empresas_selecionadas)
-
-            # Gráfico de linha com rótulos de dados abreviados em negrito (ex: R$ 1.2M)
-            fig_line = px.line(
-                df_plot,
-                x='Periodo',
-                y='Saldo_do_Dia',
-                color='Empresa',
-                markers=True,
-                title=None,
-                labels={'Saldo_do_Dia': 'Saldo (R$)', 'Periodo': periodo_label},
-                color_discrete_map=cores_empresas,
-                text=df_plot['Saldo_do_Dia'].apply(lambda x: f"<b>R$ {x/1_000_000:.1f}M</b>")
-            )
-
-            fig_line.update_layout(
-                xaxis_title=f"{periodo_label}",
-                yaxis_title="Saldo (R$)",
-                legend_title="Empresa/Consolidado",
-                hovermode='x unified',
-                height=600,
-                margin=dict(l=20, r=20, t=20, b=20),
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                showlegend=True,
-                font=dict(family="Arial Black", size=12, color='white'),
-                xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
-                yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)')
-            )
-
-            fig_line.update_traces(
-                mode='lines+markers+text',
-                line=dict(width=3),
-                marker=dict(size=8, color='white'),
-                textposition="top center",
-                textfont=dict(size=11, family="Arial Black", color='white'),
-                showlegend=True
-            )
-
-            st.plotly_chart(fig_line, use_container_width=True)
-
-        # --- DADOS TABULARES ORDENADOS POR DATA (MAIS RECENTE PRIMEIRO) ---
-        st.markdown("### 🗃️ Dados Consolidados")
+            # Determinar empresa principal (primeira selecionada ou Alura como padrão)
+            empresa_principal = 'Alura'  # Padrão
+            if empresas_selecionadas:
+                if 'Alura' in empresas_selecionadas:
+                    empresa_principal = 'Alura'
+                elif 'FIAP' in empresas_selecionadas:
+                    empresa_principal = 'FIAP'
+                elif 'PM3' in empresas_selecionadas:
+                    empresa_principal = 'PM3'
+                else:
+                    empresa_principal = empresas_selecionadas[0]
+            
+            # Retornar paleta baseada na empresa principal
+            return paletas_complementares.get(empresa_principal, paletas_complementares['Alura'])
         
-        df_tabela = df_plot.copy()
-        df_tabela['Data_Original'] = pd.to_datetime(df_tabela['Periodo'])
-        df_tabela = df_tabela.sort_values(['Data_Original', 'Empresa'], ascending=[False, True])  # Data desc, empresa asc
-        
-        df_tabela['Data'] = df_tabela['Data_Original'].dt.strftime('%d/%m/%Y')
-        df_tabela['Saldo_Formatado'] = df_tabela['Saldo_do_Dia'].apply(lambda x: f"R$ {x:,.0f}")
-        
-        st.dataframe(
-            df_tabela[['Data', 'Empresa', 'Saldo_Formatado']].rename(columns={
-                'Data': 'Data',
-                'Empresa': 'Empresa',
-                'Saldo_Formatado': 'Saldo (R$)'
-            }),
-            use_container_width=True,
-            hide_index=True,
-            height=400
+        # Gerar paleta dinâmica
+        cores_empresas = gerar_paleta_dinamica(empresas_selecionadas)
+
+        # Gráfico de linha com rótulos de dados abreviados em negrito (ex: R$ 1.2M)
+        fig_line = px.line(
+            df_plot,
+            x='Periodo',
+            y='Saldo_do_Dia',
+            color='Empresa',
+            markers=True,
+            title=None,
+            labels={'Saldo_do_Dia': 'Saldo (R$)', 'Periodo': periodo_label},
+            color_discrete_map=cores_empresas,
+            text=df_plot['Saldo_do_Dia'].apply(lambda x: f"<b>R$ {x/1_000_000:.1f}M</b>")
         )
-        
-        # Botão de download
-        csv_data = df_tabela[['Data', 'Empresa', 'Saldo_Formatado']].to_csv(index=False)
-        st.download_button(
-            label="📥 Baixar dados como CSV",
-            data=csv_data,
-            file_name=f"saldos_ecossistema_{periodo_inicio}_{periodo_fim}.csv",
-            mime="text/csv"
+
+        fig_line.update_layout(
+            xaxis_title=f"{periodo_label}",
+            yaxis_title="Saldo (R$)",
+            legend_title="Empresa/Consolidado",
+            hovermode='x unified',
+            height=600,
+            margin=dict(l=20, r=20, t=20, b=20),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            showlegend=True,
+            font=dict(family="Arial Black", size=12, color='white'),
+            xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
+            yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)')
         )
+
+        fig_line.update_traces(
+            mode='lines+markers+text',
+            line=dict(width=3),
+            marker=dict(size=8, color='white'),
+            textposition="top center",
+            textfont=dict(size=11, family="Arial Black", color='white'),
+            showlegend=True
+        )
+
+        st.plotly_chart(fig_line, use_container_width=True)
+
+    # --- DADOS TABULARES ORDENADOS POR DATA (MAIS RECENTE PRIMEIRO) ---
+    st.markdown("### 🗃️ Dados Consolidados")
+    
+    df_tabela = df_plot.copy()
+    df_tabela['Data_Original'] = pd.to_datetime(df_tabela['Periodo'])
+    df_tabela = df_tabela.sort_values(['Data_Original', 'Empresa'], ascending=[False, True])  # Data desc, empresa asc
+    
+    df_tabela['Data'] = df_tabela['Data_Original'].dt.strftime('%d/%m/%Y')
+    df_tabela['Saldo_Formatado'] = df_tabela['Saldo_do_Dia'].apply(lambda x: f"R$ {x:,.0f}")
+    
+    st.dataframe(
+        df_tabela[['Data', 'Empresa', 'Saldo_Formatado']].rename(columns={
+            'Data': 'Data',
+            'Empresa': 'Empresa',
+            'Saldo_Formatado': 'Saldo (R$)'
+        }),
+        use_container_width=True,
+        hide_index=True,
+        height=400
+    )
+    
+    # Botão de download
+    csv_data = df_tabela[['Data', 'Empresa', 'Saldo_Formatado']].to_csv(index=False)
+    st.download_button(
+        label="📥 Baixar dados como CSV",
+        data=csv_data,
+        file_name=f"saldos_ecossistema_{periodo_inicio}_{periodo_fim}.csv",
+        mime="text/csv"
+    )
 else:
     st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados.")
 
