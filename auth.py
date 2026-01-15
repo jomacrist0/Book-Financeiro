@@ -1,6 +1,6 @@
 import streamlit as st
 
-SENHA_CORRETA = "alunsaldos1988"
+SENHA_CORRETA = "saldosgrupoalun2026"
 
 def verificar_autenticacao():
     """Verifica se o usuário está autenticado. Se não, mostra tela de login."""
