@@ -415,11 +415,6 @@ def formatar_milhao(valor):
 if "arquivo_carregado" not in st.session_state:
     st.session_state.arquivo_carregado = None
 
-# Botão para forçar atualização
-if st.button("🔄 Atualizar Dados", help="Limpar cache e recarregar dados do Excel"):
-    st.cache_data.clear()
-    st.rerun()
-
 df = load_data()
 
 if df is None:
