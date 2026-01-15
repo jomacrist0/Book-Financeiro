@@ -571,31 +571,31 @@ with tab1:
                 """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
                 # Paletas complementares para cada empresa principal
                 paletas_complementares = {
-                    'Alura': {  # Base azul
-                        'Saldo do Ecossistema': '#1a1a1a',
-                        'Alura': '#1976d2',
-                        'FIAP': '#ff6b35',      # Laranja complementar
-                        'PM3': '#4caf50',       # Verde
-                        'Empresa Geral': '#ffc107', # Amarelo
-                        'Casa do Código': '#795548', # Marrom
-                        'Caelum': '#607d8b',    # Azul acinzentado
-                        'INSTITUTO FIAP': '#ff6b35'
+                    'Alura': {  # Base azul claro
+                        'Saldo do Ecossistema': '#ffffff',  # Branco
+                        'Alura': '#87ceeb',     # Azul claro
+                        'FIAP': '#ff7f7f',      # Vermelho claro
+                        'PM3': '#ba68c8',       # Roxo
+                        'Empresa Geral': '#ffc107',
+                        'Casa do Código': '#795548',
+                        'Caelum': '#607d8b',
+                        'INSTITUTO FIAP': '#ff7f7f'
                     },
-                    'FIAP': {  # Base rosa
-                        'Saldo do Ecossistema': '#1a1a1a',
-                        'Alura': '#2196f3',     # Azul complementar
-                        'FIAP': '#e91e63',
-                        'PM3': '#8bc34a',       # Verde claro
-                        'Empresa Geral': '#ff9800', # Laranja
-                        'Casa do Código': '#5d4037', # Marrom escuro
-                        'Caelum': '#455a64',    # Cinza escuro
-                        'INSTITUTO FIAP': '#e91e63'
+                    'FIAP': {  # Base vermelho claro
+                        'Saldo do Ecossistema': '#ffffff',  # Branco
+                        'Alura': '#87ceeb',     # Azul claro
+                        'FIAP': '#ff7f7f',      # Vermelho claro
+                        'PM3': '#ba68c8',       # Roxo
+                        'Empresa Geral': '#ff9800',
+                        'Casa do Código': '#5d4037',
+                        'Caelum': '#455a64',
+                        'INSTITUTO FIAP': '#ff7f7f'
                     },
                     'PM3': {  # Base roxo
-                        'Saldo do Ecossistema': '#1a1a1a',
-                        'Alura': '#00bcd4',     # Ciano
-                        'FIAP': '#ff5722',      # Laranja avermelhado
-                        'PM3': '#9c27b0',
+                        'Saldo do Ecossistema': '#ffffff',  # Branco
+                        'Alura': '#87ceeb',     # Azul claro
+                        'FIAP': '#ff7f7f',      # Vermelho claro
+                        'PM3': '#ba68c8',       # Roxo
                         'Empresa Geral': '#cddc39', # Lima
                         'Casa do Código': '#6d4c41', # Marrom médio
                         'Caelum': '#37474f',    # Cinza azulado
@@ -652,7 +652,7 @@ with tab1:
             fig_line.update_traces(
                 mode='lines+markers+text',
                 line=dict(width=3),
-                marker=dict(size=8),
+                marker=dict(size=8, color='black'),
                 textposition="top center",
                 textfont=dict(size=11, family="Arial Black", color='white'),
                 showlegend=True
