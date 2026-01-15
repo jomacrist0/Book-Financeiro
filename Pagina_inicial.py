@@ -275,6 +275,10 @@ def load_data():
             break
     
     if xlsx_path is None:
+        # Se estiver na cloud, retornar dataframe vazio em vez de quebrar
+        if "streamlit.app" in os.getcwd() or not os.path.exists("data"):
+            st.warning("⚠️ Arquivo '1Saldos - ecossistema.xlsx' não encontrado. Usando dados em branco.")
+            return pd.DataFrame()
         st.error("❌ Arquivo '1Saldos - ecossistema.xlsx' não encontrado!")
         st.error(f"Caminhos procurados:\n" + "\n".join(possible_paths))
         return None

@@ -1,0 +1,14 @@
+"""
+Arquivo exemplo CSV de Posição de Investimentos
+Copie este para posicao.xlsx (em Excel) e atualize com seus dados reais
+"""
+
+Fundo / Ativo,Posição Atual,Dias para Cotização,Dias pra Liquidação,Tipo,Status,Empresa,Atualização
+Fundo Ações Brasil,R$ 2.126.062,81,5,2,Fundo,Disponível,Empresa A,15/01/2026
+Fundo Renda Fixa,R$ 1.500.000,00,10,1,Fundo,Disponível,Empresa A,15/01/2026
+CDB 2027,R$ 500.000,00,Fechado,N/A,Renda Fixa,Disponível,Empresa B,15/01/2026
+Letra de Crédito,R$ 750.000,00,3,0,Renda Fixa,Disponível,Empresa B,15/01/2026
+Tesouro Direto,R$ 300.000,00,13/06/2026,13/06/2026,Renda Fixa,Disponível,Empresa C,15/01/2026
+Fundo em Resgate,R$ 850.000,00,1,3,Fundo,Resgatado,Empresa A,14/01/2026
+Fundo Resgatado,R$ 450.000,00,1,1,Fundo,Resgatado,Empresa C,10/01/2026
+Overnight,R$ 200.000,00,1,,Imediato,Disponível,Empresa B,15/01/2026
