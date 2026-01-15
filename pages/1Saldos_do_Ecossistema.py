@@ -234,8 +234,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- FUNÇÕES ---
+@st.cache_data(ttl=30)  # Cache de 30 segundos apenas
 def load_data():
-    """Carrega e processa os dados do arquivo XLSX - SEM CACHE."""
+    """Carrega e processa os dados do arquivo XLSX - Cache curto para atualização rápida."""
     # Tentar múltiplos caminhos possíveis com o nome correto do arquivo
     possible_paths = [
         os.path.join(os.path.dirname(__file__), "..", "data", "1Saldos - ecossistema.xlsx"),
@@ -393,6 +394,16 @@ def formatar_milhao(valor):
 # --- CARREGAR DADOS DO ARQUIVO LOCAL ---
 if "arquivo_carregado" not in st.session_state:
     st.session_state.arquivo_carregado = None
+
+# Botão para forçar atualização
+col_refresh, col_info = st.columns([0.8, 3])
+with col_refresh:
+    if st.button("🔄 Atualizar Dados", help="Limpar cache e recarregar dados do Excel"):
+        st.cache_data.clear()
+        st.rerun()
+
+with col_info:
+    st.caption("💡 Clique em 'Atualizar Dados' após fazer upload de novo arquivo no GitHub")
 
 df = load_data()
 
