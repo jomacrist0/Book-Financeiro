@@ -396,14 +396,9 @@ if "arquivo_carregado" not in st.session_state:
     st.session_state.arquivo_carregado = None
 
 # Botão para forçar atualização
-col_refresh, col_info = st.columns([0.8, 3])
-with col_refresh:
-    if st.button("🔄 Atualizar Dados", help="Limpar cache e recarregar dados do Excel"):
-        st.cache_data.clear()
-        st.rerun()
-
-with col_info:
-    st.caption("💡 Clique em 'Atualizar Dados' após fazer upload de novo arquivo no GitHub")
+if st.button("🔄 Atualizar Dados", help="Limpar cache e recarregar dados do Excel"):
+    st.cache_data.clear()
+    st.rerun()
 
 df = load_data()
 
