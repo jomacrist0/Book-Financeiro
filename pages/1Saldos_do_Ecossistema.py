@@ -554,17 +554,13 @@ if not df_plot.empty:
         with col4:
             st.metric("💼 PM3", f"R$ {saldo_pm3/1_000_000:.1f}M", help="Saldo da PM3")
 
-# Reduzir espaçamento antes das abas
+# Reduzir espaçamento antes do gráfico
 st.markdown('<div style="margin: 0.5rem 0;"></div>', unsafe_allow_html=True)
 
-# --- ORGANIZAÇÃO COM ABAS (APENAS 2 ABAS) ---
-tab1, tab2 = st.tabs(["📈 Gráfico e Dados", "📊 Análise por Empresa"])
-
-# --- ABA 1: GRÁFICO PRINCIPAL E DADOS TABULARES ---
-with tab1:
-    if not df_plot.empty:
-        with st.container(border=True):
-            st.markdown(f"### 📈 Evolução dos Saldos ({granularidade})")
+# --- GRÁFICO DO ECOSSISTEMA (SEM ABAS) ---
+if not df_plot.empty:
+    with st.container(border=True):
+        st.markdown(f"### 📈 Evolução dos Saldos do Ecossistema ({granularidade})")
             
             # --- SISTEMA DE CORES DINÂMICAS ---
             def gerar_paleta_dinamica(empresas_selecionadas):
@@ -662,8 +658,6 @@ with tab1:
 
         # --- DADOS TABULARES ORDENADOS POR DATA (MAIS RECENTE PRIMEIRO) ---
         st.markdown("### 🗃️ Dados Consolidados")
-        
-        # Preparar dados para tabela com data
         df_tabela = df_plot.copy()
         df_tabela['Data_Original'] = pd.to_datetime(df_tabela['Periodo'])
         df_tabela = df_tabela.sort_values(['Data_Original', 'Empresa'], ascending=[False, True])  # Data desc, empresa asc
@@ -690,215 +684,8 @@ with tab1:
             file_name=f"saldos_ecossistema_{periodo_inicio}_{periodo_fim}.csv",
             mime="text/csv"
         )
-    else:
-        st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados.")
-
-# --- ABA 2: ANÁLISE POR EMPRESA (MODIFICADA PARA MOSTRAR BANCOS) ---
-with tab2:
-    if not df_plot.empty:
-        empresas_individuais = [emp for emp in empresas_selecionadas if emp != 'Saldo do Ecossistema']
-        
-        if empresas_individuais:
-            with st.container(border=True):
-                st.markdown("### 🏢 Saldos por Banco por Empresa")
-                
-                # Buscar dados originais (não agregados) do período selecionado para mostrar por banco
-                df_banco_detalhado = df[
-                    (df['Data'] >= pd.to_datetime(periodo_inicio)) &
-                    (df['Data'] <= pd.to_datetime(periodo_fim)) &
-                    (df['Empresa'].isin(empresas_individuais))
-                ].copy()
-                
-                if not df_banco_detalhado.empty:
-                    # Pegar última data de cada empresa/banco
-                    ultima_data_por_empresa = df_banco_detalhado.groupby('Empresa')['Data'].max().reset_index()
-                    
-                    # Filtrar apenas os dados da última data de cada empresa
-                    df_ultimo_dia_bancos = []
-                    for _, row in ultima_data_por_empresa.iterrows():
-                        empresa = row['Empresa']
-                        ultima_data = row['Data']
-                        dados_empresa = df_banco_detalhado[
-                            (df_banco_detalhado['Empresa'] == empresa) & 
-                            (df_banco_detalhado['Data'] == ultima_data)
-                        ]
-                        df_ultimo_dia_bancos.append(dados_empresa)
-                    
-                    if df_ultimo_dia_bancos:
-                        df_bancos_final = pd.concat(df_ultimo_dia_bancos, ignore_index=True)
-                        
-                        # Verificar se existe coluna de banco
-                        colunas_banco = [col for col in df_bancos_final.columns if 'banco' in col.lower()]
-                        
-                        if colunas_banco:
-                            col_banco = colunas_banco[0]
-                            
-                            # Gráfico de barras empilhadas por banco
-                            def gerar_cores_bancos_dinamicas(empresas_selecionadas):
-                                """Gera cores de bancos baseadas na empresa principal selecionada"""
-                                paletas_bancos = {
-                                    'Alura': {  # Tons azuis e complementares
-                                        'Itaú': '#1976d2',      # Azul principal
-                                        'Bradesco': '#1565c0',  # Azul escuro
-                                        'Santander': '#42a5f5', # Azul claro
-                                        'Banco do Brasil': '#64b5f6', # Azul muito claro
-                                        'Caixa': '#0d47a1',     # Azul muito escuro
-                                        'BTG': '#2196f3',       # Azul médio
-                                        'Inter': '#03a9f4',     # Azul ciano
-                                        'Nubank': '#00bcd4',    # Ciano
-                                        'C6 Bank': '#006064',   # Verde azulado escuro
-                                        'Mercado Pago': '#0097a7' # Verde azulado
-                                    },
-                                    'FIAP': {  # Tons rosa e complementares
-                                        'Itaú': '#e91e63',      # Rosa principal
-                                        'Bradesco': '#c2185b',  # Rosa escuro
-                                        'Santander': '#f06292', # Rosa claro
-                                        'Banco do Brasil': '#f48fb1', # Rosa muito claro
-                                        'Caixa': '#ad1457',     # Rosa muito escuro
-                                        'BTG': '#ec407a',       # Rosa médio
-                                        'Inter': '#e1bee7',     # Rosa claro violeta
-                                        'Nubank': '#9c27b0',    # Roxo
-                                        'C6 Bank': '#673ab7',   # Roxo escuro
-                                        'Mercado Pago': '#3f51b5' # Azul violeta
-                                    },
-                                    'PM3': {  # Tons roxo e complementares
-                                        'Itaú': '#9c27b0',      # Roxo principal
-                                        'Bradesco': '#7b1fa2',  # Roxo escuro
-                                        'Santander': '#ba68c8', # Roxo claro
-                                        'Banco do Brasil': '#ce93d8', # Roxo muito claro
-                                        'Caixa': '#4a148c',     # Roxo muito escuro
-                                        'BTG': '#ab47bc',       # Roxo médio
-                                        'Inter': '#8e24aa',     # Roxo escuro médio
-                                        'Nubank': '#6a1b9a',    # Roxo escuro
-                                        'C6 Bank': '#4527a0',   # Roxo azulado
-                                        'Mercado Pago': '#311b92' # Roxo muito escuro
-                                    }
-                                }
-                                
-                                # Determinar empresa principal
-                                empresa_principal = 'Alura'
-                                if empresas_selecionadas:
-                                    if 'Alura' in empresas_selecionadas:
-                                        empresa_principal = 'Alura'
-                                    elif 'FIAP' in empresas_selecionadas:
-                                        empresa_principal = 'FIAP'
-                                    elif 'PM3' in empresas_selecionadas:
-                                        empresa_principal = 'PM3'
-                                
-                                return paletas_bancos.get(empresa_principal, paletas_bancos['Alura'])
-                            
-                            cores_bancos = gerar_cores_bancos_dinamicas(empresas_selecionadas)
-                            
-                            fig_stacked = px.bar(
-                                df_bancos_final,
-                                x='Empresa',
-                                y='Saldo_Final',
-                                color=col_banco,
-                                title="Saldos por Banco (Empilhado)",
-                                color_discrete_map=cores_bancos
-                            )
-                            
-                            # Remover os rótulos de dados das barras
-                            fig_stacked.update_traces(
-                                texttemplate=None,
-                                textposition=None
-                            )
-                            
-                            fig_stacked.update_layout(
-                                yaxis_title="Saldo (R$)",
-                                xaxis_title="Empresa",
-                                legend_title="Banco",
-                                height=500,
-                                plot_bgcolor='rgba(0,0,0,0)',
-                                paper_bgcolor='rgba(0,0,0,0)',
-                                font=dict(family="Arial Black", size=12, color='white'),
-                                xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
-                                yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
-                                showlegend=True
-                            )
-                            
-                            st.plotly_chart(fig_stacked, use_container_width=True)
-                            
-                            # Tabela detalhada por banco
-                            with st.expander("📋 Ver Saldos Detalhados por Banco"):
-                                # Preparar dados para tabela
-                                df_tabela_bancos = df_bancos_final.copy()
-                                df_tabela_bancos['Data_Formatada'] = df_tabela_bancos['Data'].dt.strftime('%d/%m/%Y')
-                                df_tabela_bancos['Saldo_Formatado'] = df_tabela_bancos['Saldo_Final'].apply(lambda x: f"R$ {x:,.0f}")
-                                
-                                # Ordenar por empresa e banco
-                                df_tabela_bancos = df_tabela_bancos.sort_values(['Empresa', col_banco])
-                                
-                                # Criar tabela resumo por empresa
-                                st.markdown("**Resumo por Empresa:**")
-                                df_resumo_empresa = df_tabela_bancos.groupby('Empresa')['Saldo_Final'].sum().reset_index()
-                                df_resumo_empresa['Saldo_Formatado'] = df_resumo_empresa['Saldo_Final'].apply(lambda x: f"R$ {x:,.0f}")
-                                df_resumo_empresa['Participação'] = (df_resumo_empresa['Saldo_Final'] / df_resumo_empresa['Saldo_Final'].sum() * 100).round(2)
-                                df_resumo_empresa['Participação'] = df_resumo_empresa['Participação'].apply(lambda x: f"{x}%")
-                                
-                                st.dataframe(
-                                    df_resumo_empresa[['Empresa', 'Saldo_Formatado', 'Participação']].rename(columns={
-                                        'Saldo_Formatado': 'Saldo Total (R$)',
-                                        'Participação': 'Participação (%)'
-                                    }),
-                                    use_container_width=True,
-                                    hide_index=True
-                                )
-                                
-                                st.markdown("**Detalhamento por Banco:**")
-                                st.dataframe(
-                                    df_tabela_bancos[['Empresa', col_banco, 'Data_Formatada', 'Saldo_Formatado']].rename(columns={
-                                        'Empresa': 'Empresa',
-                                        col_banco: 'Banco',
-                                        'Data_Formatada': 'Data',
-                                        'Saldo_Formatado': 'Saldo (R$)'
-                                    }),
-                                    use_container_width=True,
-                                    hide_index=True,
-                                    height=400
-                                )
-                                
-                                # Botão de download dos dados detalhados
-                                csv_bancos = df_tabela_bancos[['Empresa', col_banco, 'Data_Formatada', 'Saldo_Formatado']].to_csv(index=False)
-                                st.download_button(
-                                    label="📥 Baixar dados por banco como CSV",
-                                    data=csv_bancos,
-                                    file_name=f"saldos_bancos_{periodo_inicio}_{periodo_fim}.csv",
-                                    mime="text/csv"
-                                )
-                        else:
-                            # Fallback: se não há coluna de banco, mostrar como antes
-                            st.warning("⚠️ Coluna de banco não encontrada. Mostrando saldos totais por empresa.")
-                            
-                            df_empresas = df_plot[df_plot['Empresa'].isin(empresas_individuais)]
-                            if not df_empresas.empty:
-                                df_ultimo_periodo = df_empresas.groupby('Empresa')['Saldo_do_Dia'].last().reset_index()
-                                
-                                fig_bar = px.bar(
-                                    df_ultimo_periodo,
-                                    x='Empresa',
-                                    y='Saldo_do_Dia',
-                                    title="Saldo Atual por Empresa",
-                                    color='Empresa',
-                                    color_discrete_map=cores_empresas
-                                )
-                                
-                                fig_bar.update_layout(
-                                    yaxis_title="Saldo (R$)",
-                                    showlegend=False,
-                                    height=400,
-                                    plot_bgcolor='rgba(0,0,0,0)',
-                                    paper_bgcolor='rgba(0,0,0,0)',
-                                    font=dict(family="Arial Black", size=12, color='white'),
-                                    xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
-                                    yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)')
-                                )
-                                
-                                st.plotly_chart(fig_bar, use_container_width=True)
-                else:
-                    st.warning("⚠️ Nenhum dado encontrado para as empresas selecionadas.")
-        else:
-            st.info("📋 Selecione empresas individuais nos filtros para ver o comparativo por banco.")
+else:
+    st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados.")
 
 # --- FOOTER ---
 st.markdown(
