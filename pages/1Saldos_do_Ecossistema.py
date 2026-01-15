@@ -571,31 +571,31 @@ with tab1:
                 """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
                 # Paletas complementares para cada empresa principal
                 paletas_complementares = {
-                    'Alura': {  # Base azul claro
+                    'Alura': {  # Base azul escuro
                         'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#87ceeb',     # Azul claro
-                        'FIAP': '#ff7f7f',      # Vermelho claro
-                        'PM3': '#ba68c8',       # Roxo
+                        'Alura': '#1a5490',     # Azul escuro
+                        'FIAP': '#cc0000',      # Vermelho escuro
+                        'PM3': '#663399',       # Roxo escuro
                         'Empresa Geral': '#ffc107',
                         'Casa do Código': '#795548',
                         'Caelum': '#607d8b',
-                        'INSTITUTO FIAP': '#ff7f7f'
+                        'INSTITUTO FIAP': '#cc0000'
                     },
-                    'FIAP': {  # Base vermelho claro
+                    'FIAP': {  # Base vermelho escuro
                         'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#87ceeb',     # Azul claro
-                        'FIAP': '#ff7f7f',      # Vermelho claro
-                        'PM3': '#ba68c8',       # Roxo
+                        'Alura': '#1a5490',     # Azul escuro
+                        'FIAP': '#cc0000',      # Vermelho escuro
+                        'PM3': '#663399',       # Roxo escuro
                         'Empresa Geral': '#ff9800',
                         'Casa do Código': '#5d4037',
                         'Caelum': '#455a64',
-                        'INSTITUTO FIAP': '#ff7f7f'
+                        'INSTITUTO FIAP': '#cc0000'
                     },
-                    'PM3': {  # Base roxo
+                    'PM3': {  # Base roxo escuro
                         'Saldo do Ecossistema': '#ffffff',  # Branco
-                        'Alura': '#87ceeb',     # Azul claro
-                        'FIAP': '#ff7f7f',      # Vermelho claro
-                        'PM3': '#ba68c8',       # Roxo
+                        'Alura': '#1a5490',     # Azul escuro
+                        'FIAP': '#cc0000',      # Vermelho escuro
+                        'PM3': '#663399',       # Roxo escuro
                         'Empresa Geral': '#cddc39', # Lima
                         'Casa do Código': '#6d4c41', # Marrom médio
                         'Caelum': '#37474f',    # Cinza azulado
@@ -652,7 +652,7 @@ with tab1:
             fig_line.update_traces(
                 mode='lines+markers+text',
                 line=dict(width=3),
-                marker=dict(size=8, color='black'),
+                marker=dict(size=8, color='white'),
                 textposition="top center",
                 textfont=dict(size=11, family="Arial Black", color='white'),
                 showlegend=True
