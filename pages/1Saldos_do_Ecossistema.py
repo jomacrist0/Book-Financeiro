@@ -658,6 +658,7 @@ if not df_plot.empty:
 
         # --- DADOS TABULARES ORDENADOS POR DATA (MAIS RECENTE PRIMEIRO) ---
         st.markdown("### 🗃️ Dados Consolidados")
+        
         df_tabela = df_plot.copy()
         df_tabela['Data_Original'] = pd.to_datetime(df_tabela['Periodo'])
         df_tabela = df_tabela.sort_values(['Data_Original', 'Empresa'], ascending=[False, True])  # Data desc, empresa asc
