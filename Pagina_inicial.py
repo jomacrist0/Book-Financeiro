@@ -502,7 +502,10 @@ with tab2:
         for path in possible_paths:
             if os.path.exists(path):
                 try:
-                    df = pd.read_csv(path, encoding='utf-8')
+                    # Tentar com ponto-e-vírgula primeiro (padrão Excel BR)
+                    df = pd.read_csv(path, encoding='utf-8', sep=';')
+                    if len(df.columns) == 1:  # Se não separou, tentar com vírgula
+                        df = pd.read_csv(path, encoding='utf-8', sep=',')
                     return df
                 except Exception as e:
                     st.error(f"Erro ao carregar dados: {e}")
@@ -843,6 +846,218 @@ with tab2:
         
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # === PAINEL DE GRÁFICOS DE KPIS ===
+    st.markdown("---")
+    st.markdown("<h2 style='text-align: center; color: #DC143C;'>📊 Painel de Indicadores</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Visualização comparativa dos principais KPIs</p>", unsafe_allow_html=True)
+    
+    # Preparar dados para gráficos
+    df_graficos = df_filtrado.copy()
+    
+    # === GRÁFICO 1: Gauge de Performance Geral ===
+    total_indicadores = len(df_graficos)
+    indicadores_atingidos = sum(1 for _, row in df_graficos.iterrows() if calcular_status(row)['atingido'])
+    perc_geral = (indicadores_atingidos / total_indicadores * 100) if total_indicadores > 0 else 0
+    
+    col_g1, col_g2 = st.columns(2)
+    
+    with col_g1:
+        # Velocímetro de performance geral
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number+delta",
+            value=perc_geral,
+            domain={'x': [0, 1], 'y': [0, 1]},
+            title={'text': "Performance Geral", 'font': {'size': 20, 'color': 'white'}},
+            delta={'reference': 100, 'increasing': {'color': "#00FF00"}, 'decreasing': {'color': "#FF4444"}},
+            number={'suffix': "%", 'font': {'size': 40, 'color': 'white'}},
+            gauge={
+                'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "white", 'tickfont': {'color': 'white'}},
+                'bar': {'color': "#DC143C"},
+                'bgcolor': "rgba(0,0,0,0)",
+                'borderwidth': 2,
+                'bordercolor': "white",
+                'steps': [
+                    {'range': [0, 50], 'color': 'rgba(255, 68, 68, 0.3)'},
+                    {'range': [50, 80], 'color': 'rgba(255, 215, 0, 0.3)'},
+                    {'range': [80, 100], 'color': 'rgba(0, 255, 0, 0.3)'}
+                ],
+                'threshold': {
+                    'line': {'color': "#FFD700", 'width': 4},
+                    'thickness': 0.75,
+                    'value': 100
+                }
+            }
+        ))
+        fig_gauge.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            font={'color': 'white'},
+            height=300,
+            margin=dict(l=20, r=20, t=50, b=20)
+        )
+        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.caption(f"✅ {indicadores_atingidos} de {total_indicadores} indicadores atingidos")
+    
+    with col_g2:
+        # Gráfico de Radar por Objetivo
+        categorias = []
+        valores = []
+        for obj in df_graficos['OBJETIVO'].unique():
+            df_obj = df_graficos[df_graficos['OBJETIVO'] == obj]
+            ating = sum(1 for _, r in df_obj.iterrows() if calcular_status(r)['atingido'])
+            total = len(df_obj)
+            perc = (ating / total * 100) if total > 0 else 0
+            nome_curto = obj.split()[0:3]
+            categorias.append(' '.join(nome_curto) + '...')
+            valores.append(perc)
+        
+        fig_radar = go.Figure()
+        fig_radar.add_trace(go.Scatterpolar(
+            r=valores + [valores[0]],
+            theta=categorias + [categorias[0]],
+            fill='toself',
+            fillcolor='rgba(220, 20, 60, 0.3)',
+            line=dict(color='#DC143C', width=2),
+            name='Realizado'
+        ))
+        fig_radar.add_trace(go.Scatterpolar(
+            r=[100] * (len(categorias) + 1),
+            theta=categorias + [categorias[0]],
+            fill='toself',
+            fillcolor='rgba(255, 215, 0, 0.1)',
+            line=dict(color='#FFD700', width=1, dash='dash'),
+            name='Meta (100%)'
+        ))
+        fig_radar.update_layout(
+            polar=dict(
+                radialaxis=dict(visible=True, range=[0, 100], tickfont=dict(color='white')),
+                bgcolor='rgba(0,0,0,0)',
+                angularaxis=dict(tickfont=dict(color='white', size=10))
+            ),
+            showlegend=True,
+            legend=dict(orientation="h", y=-0.1, font=dict(color='white')),
+            paper_bgcolor='rgba(0,0,0,0)',
+            title=dict(text='Performance por Objetivo', font=dict(color='white', size=16)),
+            height=350,
+            margin=dict(l=60, r=60, t=50, b=60)
+        )
+        st.plotly_chart(fig_radar, use_container_width=True)
+    
+    # === GRÁFICO 2: Barras Comparativas Valor vs Meta ===
+    st.markdown("### 📈 Comparativo: Realizado vs Meta")
+    
+    df_num = df_graficos[~df_graficos['COMO_PREENCHER'].str.contains('Sim ou Não', na=False)].copy()
+    
+    if not df_num.empty:
+        col_b1, col_b2 = st.columns(2)
+        
+        with col_b1:
+            df_maior = df_num[df_num['INDICADOR'].isin([
+                'Trilha da Lívia', 'Automações construídas', 'PMP - Prazo Médio de Pagamento',
+                'Cashback Mensal', 'Percentual CDI de rendimento', 'Conversão em caixa (últimos 2 anos)'
+            ])].copy()
+            
+            if not df_maior.empty:
+                fig_bar1 = go.Figure()
+                fig_bar1.add_trace(go.Bar(
+                    name='Realizado',
+                    x=df_maior['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
+                    y=df_maior['VALOR_NUM'],
+                    marker_color='#DC143C',
+                    text=df_maior['VALOR_NUM'].apply(lambda x: f"{x:.1f}"),
+                    textposition='outside',
+                    textfont=dict(color='white')
+                ))
+                fig_bar1.add_trace(go.Bar(
+                    name='Meta',
+                    x=df_maior['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
+                    y=df_maior['META_NUM'],
+                    marker_color='rgba(255, 215, 0, 0.6)',
+                    text=df_maior['META_NUM'].apply(lambda x: f"{x:.0f}"),
+                    textposition='outside',
+                    textfont=dict(color='white')
+                ))
+                fig_bar1.update_layout(
+                    title='↑ Maior = Melhor',
+                    barmode='group',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='white'),
+                    height=350,
+                    showlegend=True,
+                    legend=dict(orientation="h", y=1.1),
+                    xaxis=dict(tickangle=45)
+                )
+                st.plotly_chart(fig_bar1, use_container_width=True)
+        
+        with col_b2:
+            df_menor = df_num[df_num['INDICADOR'].isin([
+                'SLA 1ª Resposta (cliente interno)', 'Desvio entre financeiro e contábil',
+                'Saldo de irregularidades', 'Tickets na Caixa', 'SLA 1ª Resposta (tickets)'
+            ])].copy()
+            
+            if not df_menor.empty:
+                fig_bar2 = go.Figure()
+                fig_bar2.add_trace(go.Bar(
+                    name='Realizado',
+                    x=df_menor['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
+                    y=df_menor['VALOR_NUM'],
+                    marker_color='#DC143C',
+                    text=df_menor['VALOR_NUM'].apply(lambda x: f"{x:.1f}"),
+                    textposition='outside',
+                    textfont=dict(color='white')
+                ))
+                fig_bar2.add_trace(go.Bar(
+                    name='Meta (máx)',
+                    x=df_menor['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
+                    y=df_menor['META_NUM'],
+                    marker_color='rgba(255, 215, 0, 0.6)',
+                    text=df_menor['META_NUM'].apply(lambda x: f"{x:.0f}"),
+                    textposition='outside',
+                    textfont=dict(color='white')
+                ))
+                fig_bar2.update_layout(
+                    title='↓ Menor = Melhor',
+                    barmode='group',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='white'),
+                    height=350,
+                    showlegend=True,
+                    legend=dict(orientation="h", y=1.1),
+                    xaxis=dict(tickangle=45)
+                )
+                st.plotly_chart(fig_bar2, use_container_width=True)
+    
+    # === GRÁFICO 3: Status dos Indicadores Booleanos ===
+    df_bool = df_graficos[df_graficos['COMO_PREENCHER'].str.contains('Sim ou Não', na=False)].copy()
+    
+    if not df_bool.empty:
+        st.markdown("### ✅ Status de Implementações")
+        
+        cols_bool = st.columns(len(df_bool))
+        for i, (_, row) in enumerate(df_bool.iterrows()):
+            with cols_bool[i]:
+                valor = str(row['VALOR']).lower().strip()
+                implementado = valor in ['sim', 's', '1', 'true', 'yes']
+                
+                cor = '#00FF00' if implementado else '#FF4444'
+                icone = '✅' if implementado else '❌'
+                status_txt = 'Implementado' if implementado else 'Pendente'
+                
+                st.markdown(f"""
+                    <div style='background: linear-gradient(135deg, {cor}22, {cor}11); 
+                                border: 2px solid {cor}; border-radius: 10px; 
+                                padding: 20px; text-align: center;'>
+                        <div style='font-size: 40px;'>{icone}</div>
+                        <div style='color: white; font-weight: bold; margin-top: 10px;'>
+                            {row['INDICADOR'][:25]}{'...' if len(row['INDICADOR']) > 25 else ''}
+                        </div>
+                        <div style='color: {cor}; font-size: 14px; margin-top: 5px;'>
+                            {status_txt}
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+    
     # === RESUMO EXECUTIVO ===
     st.markdown("---")
     st.markdown("<h2 style='text-align: center; color: #DC143C;'>📋 Resumo Executivo</h2>", unsafe_allow_html=True)
