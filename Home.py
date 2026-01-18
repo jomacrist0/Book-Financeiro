@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import base64
 import sys
 import hashlib
-sys.path.append('.')
 from auth import verificar_autenticacao
 
 # --- AUTENTICAÇÃO ---

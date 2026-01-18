@@ -5,7 +5,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
 import sys
-sys.path.append('..')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from auth import verificar_autenticacao
 
 # --- AUTENTICAÇÃO ---
