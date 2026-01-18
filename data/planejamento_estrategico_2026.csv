@@ -1,7 +1,7 @@
 objetivo_id,objetivo,resultado_chave,meta,valor_atual,periodo,ano,mes,tipo_indicador,tipo_calculo,qtd_pessoas_time,status,observacoes
 1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Percentual do time que completou o Tech para Finanças (Trilha da Lívia),100,25,2024-12-31,2024,12,percentual,maior_melhor,4,em_andamento,1 de 4 pessoas completou (25%)
 1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Percentual do time com automatização construída (1 por pessoa),100,25,2024-12-31,2024,12,percentual,maior_melhor,4,em_andamento,1 de 4 pessoas completou (25%)
-2,Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento (dias),20,15.44,2024-12-31,2024,12,dias,menor_melhor,,abaixo_meta,Meta Q1: 20 dias - ABAIXO da meta
+2,Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento (dias),20,15.44,2024-12-31,2024,12,dias,maior_igual_melhor,,abaixo_meta,Meta Q1: 20 dias - Queremos AUMENTAR o prazo
 2,Otimizar ciclo de pagamentos do grupo,Cashback via cartão - valor mensal (meta +20%),10657.6,6664,2024-12-31,2024,12,reais,percentual_meta,,atencao,Meta base R$8882 + 20% = R$10657.60
 2,Otimizar ciclo de pagamentos do grupo,SLA 1ª Resposta cliente interno (horas),24,24.1,2024-12-31,2024,12,horas,menor_igual_melhor,,nao_atingido,24.1h > 24h - NÃO BATEU
 3,Garantir a acuracidade e integridade das informações de Contas a Receber,Desvio entre financeiro e contábil (%),0.1,0.203,2024-12-31,2024,12,percentual,menor_igual_melhor,,acima_meta,0.203% > 0.1% - ACIMA do limite

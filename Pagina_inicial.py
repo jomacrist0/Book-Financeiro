@@ -908,7 +908,27 @@ with tab2:
                         ))
                         
                         unidade = df_kpi['unidade'].iloc[0] if 'unidade' in df_kpi.columns else ''
-                        kpi_label = kpi_nome.replace('_', ' ').title()
+                        
+                        # Mapeamento de nomes amigáveis para os gráficos
+                        nomes_amigaveis = {
+                            'trilha_livia': 'Trilha Lívia',
+                            'trilha_livia_percent': 'Trilha Lívia',
+                            'automacoes': 'Automações',
+                            'automacoes_percent': 'Automações',
+                            'pmp_dias': 'PMP (dias)',
+                            'cashback_mensal': 'Cashback Mensal',
+                            'sla_horas': 'SLA 1ª Resposta',
+                            'desvio_percentual': 'Desvio Financeiro',
+                            'saldo_irregularidades': 'Saldo Irregularidades',
+                            'fechamento_sem_atraso': 'Fechamento',
+                            'vans_bancarias': 'Vans Bancárias',
+                            'cdi_percentual': '% CDI',
+                            'bolecode_implementado': 'Bolecode',
+                            'conversao_caixa': 'Conversão em Caixa',
+                            'tickets_caixa': 'Tickets na Caixa',
+                            'sla_tickets_horas': 'SLA Tickets'
+                        }
+                        kpi_label = nomes_amigaveis.get(kpi_nome, kpi_nome.replace('_', ' ').title())
                         
                         # Título com indicação de lógica
                         if tipo_calc in ['menor_melhor', 'menor_igual_melhor']:
