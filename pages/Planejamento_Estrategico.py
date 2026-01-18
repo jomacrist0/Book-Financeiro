@@ -13,7 +13,7 @@ verificar_autenticacao()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    page_title="🎯 Planejamento Estratégico 2026",
+    page_title="🎯 Planejamento Estratégico",
     page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded"
