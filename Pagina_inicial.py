@@ -91,6 +91,10 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("### Navegação")
+    st.page_link("Pagina_inicial.py", label="Saldos do Ecossistema", icon="💰")
+    st.page_link("pages/Planejamento_Estrategico.py", label="Planejamento Estratégico", icon="🎯")
+
 col_refresh = st.columns([3, 1])
 with col_refresh[1]:
     if st.button("Atualizar Dados", type="primary"):

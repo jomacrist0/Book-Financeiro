@@ -112,6 +112,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+with st.sidebar:
+    st.markdown("""
+    <div style="text-align: center; padding: 1.5rem 0; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin-bottom: 1.5rem;">
+        <h2 style="color: white; margin: 0; font-size: 1.6rem;">ALUN</h2>
+        <div style="color: #ccc; font-size: 12px; margin-top: 8px;">Planejamento Estratégico</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### Navegação")
+    st.page_link("Pagina_inicial.py", label="Saldos do Ecossistema", icon="💰")
+    st.page_link("pages/Planejamento_Estrategico.py", label="Planejamento Estratégico", icon="🎯")
+
 # --- HEADER ---
 st.markdown("""
     <div style='text-align: center; padding: 20px 0;'>
