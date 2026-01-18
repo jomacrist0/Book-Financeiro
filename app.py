@@ -1,5 +1,12 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="🏠 ALUN - Dashboard Financeiro",
+    page_icon="🏠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 SENHA_CORRETA = "saldosalun2026"
 
 def verificar_autenticacao():

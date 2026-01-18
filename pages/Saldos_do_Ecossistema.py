@@ -9,14 +9,14 @@ import streamlit as st
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from auth import verificar_autenticacao
 
-verificar_autenticacao()
-
 st.set_page_config(
     page_title="💰 Saldos do Ecossistema",
     page_icon="💰",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+verificar_autenticacao()
 
 st.markdown(
     """

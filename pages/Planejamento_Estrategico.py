@@ -9,9 +9,6 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from auth import verificar_autenticacao
 
-# --- AUTENTICAÇÃO ---
-verificar_autenticacao()
-
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
     page_title="🎯 Planejamento Estratégico",
@@ -19,6 +16,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- AUTENTICAÇÃO ---
+verificar_autenticacao()
 
 # --- CSS CUSTOMIZADO COM TEMA PRETO E VERMELHO ---
 st.markdown("""
