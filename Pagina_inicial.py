@@ -65,9 +65,20 @@ st.markdown("""
     }
     section[data-testid="stSidebar"] { 
         background-color: #1a1a1a !important; 
+        display: block !important;
+        visibility: visible !important;
+        width: 18rem !important;
     }
     section[data-testid="stSidebar"] * { 
         color: #fafafa !important; 
+    }
+    div[data-testid="collapsedControl"] { 
+        display: block !important;
+        visibility: visible !important;
+    }
+    [data-testid="stSidebarNav"] { 
+        display: block !important;
+        visibility: visible !important;
     }
 </style>
 """, unsafe_allow_html=True)
