@@ -1,149 +1,232 @@
-# 📊 Como Atualizar os Dados do Planejamento Estratégico
+# 📊 Guia de Atualização dos Dados do Planejamento Estratégico
 
-## 🎯 Arquivos de Dados
+## 📁 Arquivos de Dados (CSV)
 
-Existem **2 arquivos principais** para você atualizar:
+### 1. `planejamento_estrategico_2026.csv`
+Contém os dados atuais de cada indicador por período.
 
-### 1. `planejamento_estrategico_2026.xlsx` 
-**O QUE É:** Dados dos objetivos, metas e resultados atuais
-
-**COLUNAS:**
-- `objetivo_id`: Número do objetivo (1, 2, 3...)
-- `objetivo`: Descrição completa do objetivo estratégico
-- `resultado_chave`: O que você quer medir (KR - Key Result)
-- `meta`: Valor que você quer atingir (ex: 100 para 100%)
-- `valor_atual`: Valor atual do indicador (ex: 25 para 25%)
-- `periodo`: Data de referência (formato: YYYY-MM-DD, ex: 2024-12-31)
-- `status`: Estado atual (em_andamento, meta_atingida, abaixo_meta, atencao, nao_iniciado, descontinuado, sem_dados)
-- `observacoes`: Comentários adicionais
-
-**EXEMPLO DE LINHA:**
-```
-1 | Aumentar eficiência técnica... | 100% do time completar Trilha | 100 | 25 | 2024-12-31 | em_andamento | 25% da área completou
-```
+### 2. `kpis_historico_2026.csv`
+Contém o histórico mensal para gerar os gráficos de evolução.
 
 ---
 
-### 2. `kpis_historico_2026.xlsx`
-**O QUE É:** Evolução mensal dos indicadores para gráficos de linha/tendência
+## 🔧 Estrutura do `planejamento_estrategico_2026.csv`
 
-**COLUNAS:**
-- `mes`: Mês (1-12)
-- `ano`: Ano (2024, 2025, 2026...)
-- `kpi_tipo`: Categoria (eficiencia_tecnica, ciclo_pagamentos, acuracidade, operacional, rentabilidade)
-- `kpi_nome`: Nome do indicador específico
-- `valor`: Valor medido naquele mês
-- `meta`: Meta esperada para aquele mês
-- `unidade`: Unidade de medida (%, dias, reais, horas)
-
-**EXEMPLO DE LINHA:**
-```
-12 | 2024 | ciclo_pagamentos | pmp_dias | 15.44 | 20 | dias
-```
-
----
-
-## ✏️ Como Atualizar (Passo a Passo)
-
-### **OPÇÃO 1: Editar no Excel (Mais Fácil)**
-
-1. Abra o arquivo Excel (`planejamento_estrategico_2026.xlsx` ou `kpis_historico_2026.xlsx`)
-2. Edite diretamente as células
-3. **IMPORTANTE:** Mantenha o formato das datas (YYYY-MM-DD) e números (use ponto para decimal: 15.44)
-4. Salve o arquivo
-5. Faça commit no GitHub (explico abaixo)
-
-### **OPÇÃO 2: Editar no CSV (Mais Técnico)**
-
-1. Abra o arquivo CSV com um editor de texto (VSCode, Notepad++)
-2. Cada linha é separada por vírgulas
-3. Edite os valores
-4. Salve o arquivo
-5. Faça commit no GitHub
+| Coluna | Descrição | Exemplo |
+|--------|-----------|---------|
+| `objetivo_id` | ID do objetivo (1-7) | 1 |
+| `objetivo` | Nome completo do objetivo | Aumentar eficiência técnica... |
+| `resultado_chave` | Nome do indicador | Percentual do time que completou... |
+| `meta` | Valor da meta | 100 |
+| `valor_atual` | Valor atual medido | 25 |
+| `periodo` | Data do período (YYYY-MM-DD) | 2024-12-31 |
+| `ano` | Ano do dado | 2024 |
+| `mes` | Mês do dado (1-12) | 12 |
+| `tipo_indicador` | Tipo do valor | percentual, dias, horas, reais, quantidade, booleano |
+| `tipo_calculo` | Lógica de avaliação | maior_melhor, menor_melhor, menor_igual_melhor, sim_nao |
+| `qtd_pessoas_time` | Qtd. pessoas (para Obj 1) | 4 |
+| `status` | Status atual | em_andamento, meta_atingida, nao_atingido |
+| `observacoes` | Comentários | Texto livre |
 
 ---
 
-## 🚀 Como Atualizar no GitHub
+## 📐 Tipos de Cálculo (MUITO IMPORTANTE!)
 
-Depois de editar os arquivos, você precisa enviar para o GitHub:
+### `maior_melhor`
+- **Quando usar:** Indicadores onde valor MAIOR é melhor
+- **Exemplos:** % Trilha da Lívia, % Automações, % CDI
+- **Lógica:** ✅ se valor >= meta
 
-```powershell
-# 1. Entre na pasta do projeto
-cd "C:\Users\colaboradorfiap\OneDrive - Fiap-Faculdade de Informática e Administração Paulista\Documentos\Projetos\Book-Financeiro"
+### `menor_melhor`
+- **Quando usar:** Indicadores onde valor MENOR é melhor (meta é o MÍNIMO aceitável)
+- **Exemplos:** PMP (dias) - queremos aumentar para 20, valor menor é RUIM
+- **Lógica:** ✅ se valor < meta
+- **ATENÇÃO:** Se a meta é 20 e o valor é 15, NÃO atingiu (queremos 20 ou mais)
 
-# 2. Adicione os arquivos alterados
-git add data/planejamento_estrategico_2026.xlsx data/kpis_historico_2026.xlsx
+### `menor_igual_melhor`
+- **Quando usar:** Indicadores onde valor deve ser MENOR OU IGUAL à meta (meta é o MÁXIMO)
+- **Exemplos:** SLA ≤24h, Desvio ≤0.1%, Tickets ≤10
+- **Lógica:** ✅ se valor <= meta
 
-# 3. Faça o commit
-git commit -m "Atualiza dados do planejamento estratégico - [MÊS/ANO]"
+### `maior_igual_melhor`
+- **Quando usar:** Indicadores onde valor deve ser MAIOR OU IGUAL à meta
+- **Exemplos:** % CDI ≥100%
+- **Lógica:** ✅ se valor >= meta
 
-# 4. Envie para o GitHub
+### `percentual_meta`
+- **Quando usar:** Indicadores calculados como % da meta
+- **Exemplos:** Cashback (valor atual / meta * 100)
+- **Meta:** valor que precisa atingir (ex: R$10.657 que é base + 20%)
+- **Lógica:** ✅ se valor >= meta
+
+### `sim_nao`
+- **Quando usar:** Indicadores booleanos (Sim ou Não)
+- **Exemplos:** Fechamento sem atraso, Vans implementadas, Bolecode
+- **Valores válidos no valor_atual:** sim, nao (ou s, n, 1, 0, true, false)
+- **Meta:** sempre "sim"
+- **Lógica:** ✅ se valor = "sim"
+
+---
+
+## 📋 Tipos de Indicador (Formatação)
+
+| Tipo | Formatação na Dashboard | Exemplo |
+|------|------------------------|---------|
+| `percentual` | XX.XX% | 25.00% |
+| `dias` | XX.XX dias | 15.44 dias |
+| `horas` | XX.Xh | 24.1h |
+| `reais` | R$ X.XXX,XX | R$ 6.664,00 |
+| `quantidade` | XX | 12 |
+| `booleano` | Sim/Não | Sim |
+
+---
+
+## 🎯 Mapeamento Completo por Objetivo
+
+### Objetivo 1: Eficiência Técnica da Tesouraria
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| % Trilha da Lívia | percentual | maior_melhor | 100% |
+| % Automações construídas | percentual | maior_melhor | 100% |
+
+### Objetivo 2: Ciclo de Pagamentos
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| PMP (dias) | dias | **menor_melhor** | 20 (Q1), 25 (Q2), 30 (Q3) |
+| Cashback mensal | reais | percentual_meta | Base + 20% |
+| SLA 1ª Resposta (interno) | horas | **menor_igual_melhor** | ≤24h |
+
+**⚠️ ATENÇÃO PMP:** A meta é AUMENTAR o PMP para 20 dias. Se o valor é 15.44, está ABAIXO da meta!
+
+**⚠️ ATENÇÃO Cashback:** 
+- Coloque na **meta** o valor que precisa atingir (base + 20%)
+- Exemplo: se base é R$8.882, meta = R$10.658,40
+- O sistema calcula se valor >= meta
+
+**⚠️ ATENÇÃO SLA:** Meta é 24h ou MENOS. Se valor > 24h, NÃO atingiu!
+
+### Objetivo 3: Acuracidade
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| Desvio Fin. vs Cont. | percentual | **menor_igual_melhor** | ≤0.1% |
+| Saldo Irregularidades | reais | **menor_melhor** | 0 (zerar) |
+
+**⚠️ ATENÇÃO Desvio:** Meta é 0.1% ou MENOS. Se valor > 0.1%, NÃO atingiu!
+
+### Objetivo 4: Eficiência Operacional
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| Fechamento sem atraso | booleano | sim_nao | sim |
+| Vans Bancárias implementadas | booleano | sim_nao | sim |
+
+### Objetivo 5: Rentabilidade
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| % CDI | percentual | maior_igual_melhor | ≥100% |
+
+### Objetivo 6: Eficiência de Caixa
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| Bolecode implementado | booleano | sim_nao | sim |
+| % Conversão em Caixa | percentual | maior_melhor | 100% |
+
+### Objetivo 7: Prazos Operacionais
+| Indicador | tipo_indicador | tipo_calculo | Meta |
+|-----------|---------------|--------------|------|
+| Tickets na Caixa | quantidade | **menor_igual_melhor** | ≤10 |
+| SLA 1ª Resposta (tickets) | horas | **menor_igual_melhor** | ≤24h |
+
+---
+
+## 📈 Estrutura do `kpis_historico_2026.csv`
+
+| Coluna | Descrição |
+|--------|-----------|
+| `ano` | Ano do registro (2024, 2025, 2026) |
+| `mes` | Mês (1-12) |
+| `kpi_tipo` | Tipo do KPI |
+| `kpi_nome` | Nome do KPI |
+| `valor` | Valor medido |
+| `meta` | Meta do período |
+| `unidade` | Unidade (%, dias, horas, reais, quantidade, booleano) |
+| `tipo_calculo` | Lógica de avaliação |
+
+### Mapeamento kpi_tipo → Objetivo:
+- `eficiencia_tecnica` → Objetivo 1
+- `ciclo_pagamentos` → Objetivo 2
+- `acuracidade` → Objetivo 3
+- `operacional` → Objetivo 4
+- `rentabilidade` → Objetivo 5
+- `eficiencia_caixa` → Objetivo 6
+- `prazos` → Objetivo 7
+
+### Nomes de KPIs válidos:
+- `trilha_livia_percent`, `automacoes_percent`
+- `pmp_dias`, `cashback_mensal`, `sla_horas`
+- `desvio_percentual`, `saldo_irregularidades`
+- `fechamento_sem_atraso`, `vans_bancarias`
+- `cdi_percentual`
+- `bolecode_implementado`, `conversao_caixa`
+- `tickets_caixa`, `sla_tickets_horas`
+
+---
+
+## 🔄 Como Atualizar
+
+### Passo 1: Editar os arquivos CSV
+- Abra no Excel ou editor de texto
+- Adicione novas linhas com os dados do novo período
+- **IMPORTANTE:** Preencha ano e mes corretamente!
+
+### Passo 2: Validar os dados
+- Verifique se `tipo_indicador` e `tipo_calculo` estão corretos
+- Use valores numéricos com **ponto decimal** (15.44, não 15,44)
+- Para booleanos use: sim ou nao
+
+### Passo 3: Commit e Push
+```bash
+git add data/planejamento_estrategico_2026.csv
+git add data/kpis_historico_2026.csv
+git commit -m "Atualização dados mês XX/XXXX"
 git push
 ```
 
-**O Streamlit Cloud vai atualizar automaticamente em ~2 minutos!**
+### Passo 4: Aguardar deploy
+O Streamlit Cloud atualizará automaticamente em ~2 minutos.
 
 ---
 
-## 📝 Dicas de Preenchimento
+## ⚠️ Erros Comuns e Soluções
 
-### **Status Recomendados:**
-- `meta_atingida` ✅ - Quando valor_atual >= meta
-- `em_andamento` 🟡 - Progresso bom mas ainda não atingiu
-- `abaixo_meta` 🟠 - Valor atual está abaixo do esperado
-- `atencao` ⚠️ - Situação crítica, precisa atenção
-- `nao_iniciado` ⭕ - Ainda não começou
-- `superou_meta` 🎯 - Superou a meta!
-- `descontinuado` ❌ - KPI descontinuado
-- `sem_dados` ⚪ - Sem dados disponíveis ainda
+### 1. **Indicador aparece vermelho quando deveria ser verde**
+- Verifique se `tipo_calculo` está correto
+- PMP usa `menor_melhor` (queremos AUMENTAR o prazo)
+- SLA usa `menor_igual_melhor` (queremos ≤24h)
 
-### **Valores Numéricos:**
-- Percentuais: use números diretos (25 para 25%, não 0.25)
-- Dinheiro: valor bruto (6664 para R$ 6.664)
-- Dias/Horas: use decimais com ponto (24.1 para 24h e 6min)
-- Datas: formato YYYY-MM-DD (2024-12-31)
+### 2. **Gráfico de evolução não aparece**
+- Verifique se há dados no `kpis_historico_2026.csv`
+- Confira se `kpi_tipo` está correto
 
-### **KPI Tipos (para histórico):**
-- `eficiencia_tecnica` - Trilha, automações
-- `ciclo_pagamentos` - PMP, cashback, SLA
-- `acuracidade` - Desvios, irregularidades
-- `operacional` - Fechamentos, vans bancárias
-- `rentabilidade` - CDI
-- `eficiencia_caixa` - Bolecode, conversão
+### 3. **Valores formatados errado**
+- Use **ponto** como separador decimal (15.44)
+- Não use R$ nos valores de reais, só o número
+
+### 4. **Filtro de ano mostra dados errados**
+- Verifique as colunas `ano` e `mes` nos CSVs
+- Dezembro/2024 deve ter ano=2024, mes=12
+
+### 5. **Indicador booleano não funciona**
+- Use exatamente: `sim` ou `nao` (minúsculo)
+- Meta deve ser: `sim`
 
 ---
 
-## 🔄 Frequência de Atualização Recomendada
+## 📌 Resumo Rápido
 
-- **Mensal:** Adicione novas linhas no `kpis_historico_2026.xlsx` todo mês
-- **Trimestral:** Revise metas e status no `planejamento_estrategico_2026.xlsx`
-- **Sempre que houver mudanças:** Atualize `valor_atual` e `observacoes`
-
----
-
-## 🆘 Troubleshooting
-
-**"Dashboard não atualizou após commit"**
-- Aguarde 2-3 minutos
-- Acesse o Streamlit Cloud e force um "Reboot app"
-
-**"Erro ao ler a planilha"**
-- Verifique se manteve os nomes das colunas exatamente iguais
-- Confira se o formato das datas está correto (YYYY-MM-DD)
-- Use ponto (.) para decimais, não vírgula
-
-**"Gráfico não aparece"**
-- Certifique-se de ter pelo menos 2 meses de dados no histórico
-- Verifique se o `kpi_nome` está consistente (mesma escrita)
-
----
-
-## 📞 Contato
-
-Se tiver dúvidas, consulte este README ou verifique os exemplos nos arquivos CSV/Excel.
-
-**Arquivos de Template:**
-- `data/planejamento_estrategico_2026.xlsx` - Dados principais
-- `data/kpis_historico_2026.xlsx` - Histórico mensal
-- `data/planejamento_estrategico_2026.csv` - Backup CSV
-- `data/kpis_historico_2026.csv` - Backup CSV
+| Indicador | Se valor é... | Então está... |
+|-----------|--------------|---------------|
+| PMP 15.44 (meta 20) | menor que meta | ❌ ABAIXO da meta |
+| SLA 24.1h (meta 24) | maior que meta | ❌ NÃO atingiu |
+| Desvio 0.203% (meta 0.1) | maior que meta | ❌ ACIMA do limite |
+| CDI 102.54% (meta 100) | maior que meta | ✅ SUPEROU |
+| Fechamento = nao | diferente de sim | ❌ NÃO atingiu |

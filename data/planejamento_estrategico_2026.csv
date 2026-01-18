@@ -1,15 +1,15 @@
-objetivo_id,objetivo,resultado_chave,meta,valor_atual,periodo,status,observacoes
-1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,100% do time completar o Tech para Finanças (Trilha da Lívia),100,25,2024-12-31,em_andamento,25% da área completou
-1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Construir 1 automatização de processos (por trimestre),100,30,2024-12-31,em_andamento,30% da área completou
-2,Otimizar ciclo de pagamentos do grupo,Aumentar PMP progressivamente (Q1: 20 | Q2: 25 | Q3: 30),20,15.44,2024-12-31,abaixo_meta,Meta Q1: 20 dias
-2,Otimizar ciclo de pagamentos do grupo,Aumentar cashback via cartão de crédito em 20%,20,0,2024-12-31,atencao,Nov: 8882 | Dez: 6664 (redução)
-2,Otimizar ciclo de pagamentos do grupo,SLA de Primeira Resposta pro cliente (interno) - 24h,24,24.1,2024-12-31,meta_atingida,24h e 6 minutos
-3,Garantir a acuracidade e integridade das informações de Contas a Receber,Manter o desvio entre o financeiro e o contábil ≤ 0.1%,0.1,0.203,2024-12-31,acima_meta,Desvio de 0.203%
-3,Garantir a acuracidade e integridade das informações de Contas a Receber,Saldo total de irregularidades entre as bases (reduzir até 0),0,0,2024-12-31,sem_dados,Sem dados disponíveis
-4,Aumentar a eficiência operacional da Tesouraria para fechamentos,Finalizar fechamento sem atrasos,100,0,2024-12-31,nao_atingido,Atrasou
-4,Aumentar a eficiência operacional da Tesouraria para fechamentos,Implementação - Vans Bancárias,100,0,2024-12-31,nao_iniciado,Não foi implementada ainda
-5,Aumentar rentabilidade do caixa do grupo,Chegar a 100% CDI de rendimento de caixa,100,102.54,2024-12-31,superou_meta,102.54% CDI
-6,Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Finalizar a implementação do bolecode e recorrência para outros segmentos,100,0,2024-12-31,nao_iniciado,Ainda não iniciado
-6,Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Aumentar o percentual de conversão em caixa nos últimos 2 anos,100,0,2024-12-31,sem_dados,Sem dados por enquanto
-7,Otimizar prazos operacionais e de retorno,Reduzir média de qtd. de tickets na Caixa,0,0,2024-12-31,descontinuado,Vai ser descontinuado
-7,Otimizar prazos operacionais e de retorno,SLA de Primeira Resposta pro cliente - 24h,24,0,2024-12-31,descontinuado,Vai ser descontinuado
+objetivo_id,objetivo,resultado_chave,meta,valor_atual,periodo,ano,mes,tipo_indicador,tipo_calculo,qtd_pessoas_time,status,observacoes
+1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Percentual do time que completou o Tech para Finanças (Trilha da Lívia),100,25,2024-12-31,2024,12,percentual,maior_melhor,4,em_andamento,1 de 4 pessoas completou (25%)
+1,Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Percentual do time com automatização construída (1 por pessoa),100,25,2024-12-31,2024,12,percentual,maior_melhor,4,em_andamento,1 de 4 pessoas completou (25%)
+2,Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento (dias),20,15.44,2024-12-31,2024,12,dias,menor_melhor,,abaixo_meta,Meta Q1: 20 dias - ABAIXO da meta
+2,Otimizar ciclo de pagamentos do grupo,Cashback via cartão - valor mensal (meta +20%),10657.6,6664,2024-12-31,2024,12,reais,percentual_meta,,atencao,Meta base R$8882 + 20% = R$10657.60
+2,Otimizar ciclo de pagamentos do grupo,SLA 1ª Resposta cliente interno (horas),24,24.1,2024-12-31,2024,12,horas,menor_igual_melhor,,nao_atingido,24.1h > 24h - NÃO BATEU
+3,Garantir a acuracidade e integridade das informações de Contas a Receber,Desvio entre financeiro e contábil (%),0.1,0.203,2024-12-31,2024,12,percentual,menor_igual_melhor,,acima_meta,0.203% > 0.1% - ACIMA do limite
+3,Garantir a acuracidade e integridade das informações de Contas a Receber,Saldo de irregularidades (R$),0,50000,2024-12-31,2024,12,reais,menor_melhor,,em_andamento,Meta é zerar - R$50k restante
+4,Aumentar a eficiência operacional da Tesouraria para fechamentos,Fechamento sem atrasos,sim,nao,2024-12-31,2024,12,booleano,sim_nao,,nao_atingido,Atrasou no fechamento
+4,Aumentar a eficiência operacional da Tesouraria para fechamentos,Vans Bancárias implementadas,sim,nao,2024-12-31,2024,12,booleano,sim_nao,,nao_iniciado,Não foi implementada ainda
+5,Aumentar rentabilidade do caixa do grupo,Percentual CDI de rendimento de caixa,100,102.54,2024-12-31,2024,12,percentual,maior_igual_melhor,,superou_meta,102.54% CDI - SUPEROU
+6,Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Bolecode implementado para outros segmentos,sim,nao,2024-12-31,2024,12,booleano,sim_nao,,nao_iniciado,Ainda não iniciado
+6,Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Percentual de conversão em caixa (últimos 2 anos),100,0,2024-12-31,2024,12,percentual,maior_melhor,,sem_dados,Aguardando dados
+7,Otimizar prazos operacionais e de retorno,Quantidade de tickets na Caixa,10,12,2024-12-31,2024,12,quantidade,menor_igual_melhor,,atencao,12 tickets vs meta 10
+7,Otimizar prazos operacionais e de retorno,SLA 1ª Resposta tickets (horas),24,22,2024-12-31,2024,12,horas,menor_igual_melhor,,meta_atingida,22h < 24h - META BATIDA
