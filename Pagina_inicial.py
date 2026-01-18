@@ -520,64 +520,294 @@ with tab2:
 
     st.markdown("---")
 
-    # Dados mockados
-    dados_estrategicos = {
-        'eficiencia_tecnica': {
-            'equipe': [
-                {'nome': 'Ana Silva', 'trilha_livia': 100, 'automacoes': 1},
-                {'nome': 'Carlos Santos', 'trilha_livia': 80, 'automacoes': 1},
-                {'nome': 'Maria Oliveira', 'trilha_livia': 60, 'automacoes': 0},
-                {'nome': 'João Pereira', 'trilha_livia': 90, 'automacoes': 1},
-            ],
-            'meta_trilha': 100,
-            'meta_automacoes': 1
-        },
-        'ciclo_pagamentos': {
-            'pmp_atual': 22,
-            'pmp_meta_q1': 20,
-            'pmp_meta_q2': 25,
-            'pmp_meta_q3': 30,
-            'cashback_mensal': [
-                {'mes': 'Jan', 'valor': 45000},
-                {'mes': 'Fev', 'valor': 52000},
-                {'mes': 'Mar', 'valor': 48000},
-                {'mes': 'Abr', 'valor': 58000},
-                {'mes': 'Mai', 'valor': 62000}
-            ],
-            'cashback_meta_aumento': 20,
-            'sla_horas': 18.5
-        },
-        'acuracidade': {
-            'desvio_atual': 0.08,
-            'desvio_meta': 0.1,
-        },
-        'operacional': {
-            'fechamentos': 8,
-            'fechamentos_total': 8,
-            'vans_bancarias': 'Implementado'
-        },
-        'rentabilidade': {
-            'cdi_caixa': 98,
-            'cdi_meta': 100,
-            'bolecode_status': 'Em Implementação',
-            'conversao_caixa_2anos': 87.5
-        },
-        'prazos': {
-            'tickets_caixa': 12,
-            'sla_horas_media': 18.5
+    # === CARREGAR DADOS REAIS DOS ARQUIVOS ===
+    @st.cache_data
+    def load_planejamento_data():
+        """Carrega dados do planejamento estratégico"""
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "data", "planejamento_estrategico_2026.xlsx"),
+            os.path.join(os.getcwd(), "data", "planejamento_estrategico_2026.xlsx"),
+            os.path.join("data", "planejamento_estrategico_2026.xlsx"),
+        ]
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                try:
+                    # Ler Excel pulando a primeira linha (formato)
+                    df = pd.read_excel(path, skiprows=1)
+                    return df
+                except Exception as e:
+                    st.error(f"Erro ao carregar planejamento: {e}")
+                    return None
+        
+        st.warning("Arquivo planejamento_estrategico_2026.xlsx não encontrado")
+        return None
+
+    @st.cache_data
+    def load_kpis_historico():
+        """Carrega histórico de KPIs"""
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "data", "kpis_historico_2026.xlsx"),
+            os.path.join(os.getcwd(), "data", "kpis_historico_2026.xlsx"),
+            os.path.join("data", "kpis_historico_2026.xlsx"),
+        ]
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                try:
+                    # Ler Excel pulando a primeira linha (formato)
+                    df = pd.read_excel(path, skiprows=1)
+                    # Converter valores com vírgula para ponto
+                    if 'valor' in df.columns:
+                        df['valor'] = df['valor'].astype(str).str.replace(',', '.', regex=False)
+                        df['valor'] = pd.to_numeric(df['valor'], errors='coerce')
+                    if 'meta' in df.columns:
+                        df['meta'] = df['meta'].astype(str).str.replace(',', '.', regex=False)
+                        df['meta'] = pd.to_numeric(df['meta'], errors='coerce')
+                    return df
+                except Exception as e:
+                    st.error(f"Erro ao carregar histórico: {e}")
+                    return None
+        
+        st.warning("Arquivo kpis_historico_2026.xlsx não encontrado")
+        return None
+
+    # Carregar dados
+    df_planejamento = load_planejamento_data()
+    df_historico = load_kpis_historico()
+    
+    if df_planejamento is None or df_historico is None:
+        st.error("⚠️ Não foi possível carregar os dados. Verifique se os arquivos estão na pasta /data")
+        st.stop()
+    
+    # Processar dados por objetivo
+    objetivos_unicos = df_planejamento['objetivo'].unique()
+    
+    # === MOSTRAR CADA OBJETIVO COM DADOS REAIS ===
+    for idx, objetivo in enumerate(objetivos_unicos, 1):
+        st.markdown("<div class='strategic-section'>", unsafe_allow_html=True)
+        
+        # Buscar dados deste objetivo
+        df_obj = df_planejamento[df_planejamento['objetivo'] == objetivo]
+        
+        # Mostrar nome completo do objetivo
+        st.markdown(f"#### 🎯 Objetivo {idx}")
+        st.markdown(f"**{objetivo}**")
+        st.markdown("---")
+        
+        # Mostrar cada resultado-chave
+        for _, row in df_obj.iterrows():
+            col1, col2, col3 = st.columns([3, 1, 1])
+            
+            with col1:
+                st.markdown(f"**📌 {row['resultado_chave']}**")
+            
+            with col2:
+                # Calcular progresso
+                try:
+                    meta = float(str(row['meta']).replace(',', '.'))
+                    valor = float(str(row['valor_atual']).replace(',', '.'))
+                    if meta > 0:
+                        progresso = (valor / meta) * 100
+                    else:
+                        progresso = 0
+                    
+                    # Determinar cor
+                    if progresso >= 100:
+                        cor = "🟢"
+                    elif progresso >= 70:
+                        cor = "🟡"
+                    else:
+                        cor = "🔴"
+                    
+                    st.metric(
+                        label="Atual",
+                        value=f"{valor:.2f}".replace('.', ','),
+                        delta=f"{progresso:.0f}% da meta"
+                    )
+                except:
+                    st.metric(label="Atual", value=str(row['valor_atual']))
+            
+            with col3:
+                st.metric(label="Meta", value=str(row['meta']))
+        
+        # Buscar histórico deste objetivo (se houver)
+        obj_tipo_map = {
+            'Aumentar eficiência técnica': 'eficiencia_tecnica',
+            'Otimizar ciclo de pagamentos': 'ciclo_pagamentos',
+            'Garantir a acuracidade': 'acuracidade',
+            'Aumentar a eficiência operacional': 'operacional',
+            'Aumentar rentabilidade': 'rentabilidade',
+            'Aumentar a eficiência e previsibilidade': 'eficiencia_caixa',
+            'Otimizar prazos': 'prazos'
         }
-    }
+        
+        # Identificar tipo do objetivo
+        obj_tipo = None
+        for key_word, tipo in obj_tipo_map.items():
+            if key_word.lower() in objetivo.lower():
+                obj_tipo = tipo
+                break
+        
+        # Se encontrou tipo, mostrar gráfico de evolução
+        if obj_tipo and df_historico is not None:
+            df_hist_obj = df_historico[df_historico['kpi_tipo'] == obj_tipo]
+            
+            if not df_hist_obj.empty:
+                st.markdown("**📈 Evolução Histórica:**")
+                
+                # Agrupar por KPI
+                for kpi_nome in df_hist_obj['kpi_nome'].unique():
+                    df_kpi = df_hist_obj[df_hist_obj['kpi_nome'] == kpi_nome].sort_values(['ano', 'mes'])
+                    
+                    if len(df_kpi) > 1:  # Só plotar se tiver mais de 1 ponto
+                        fig = go.Figure()
+                        
+                        # Criar label do eixo X
+                        df_kpi['periodo_label'] = df_kpi['mes'].astype(str) + '/' + df_kpi['ano'].astype(str)
+                        
+                        # Linha de valores
+                        fig.add_trace(go.Scatter(
+                            x=df_kpi['periodo_label'],
+                            y=df_kpi['valor'],
+                            mode='lines+markers',
+                            name='Realizado',
+                            line=dict(color='#DC143C', width=3),
+                            marker=dict(size=10)
+                        ))
+                        
+                        # Linha de meta
+                        fig.add_trace(go.Scatter(
+                            x=df_kpi['periodo_label'],
+                            y=df_kpi['meta'],
+                            mode='lines',
+                            name='Meta',
+                            line=dict(color='#FFD700', width=2, dash='dash')
+                        ))
+                        
+                        unidade = df_kpi['unidade'].iloc[0] if 'unidade' in df_kpi.columns else ''
+                        kpi_label = kpi_nome.replace('_', ' ').title()
+                        
+                        fig.update_layout(
+                            title=f"{kpi_label}",
+                            xaxis_title="Período",
+                            yaxis_title=f"Valor ({unidade})",
+                            plot_bgcolor='rgba(0,0,0,0)',
+                            paper_bgcolor='rgba(0,0,0,0)',
+                            font=dict(color='white'),
+                            height=300,
+                            showlegend=True,
+                            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+                        )
+                        
+                        st.plotly_chart(fig, use_container_width=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # OBJETIVO 1: EFICIÊNCIA TÉCNICA
-    st.markdown("<div class='strategic-section'>", unsafe_allow_html=True)
-    st.markdown("#### ⚙️ Eficiência Técnica do Time")
-    st.caption("📊 OBJETIVO: Aumentar eficiência técnica da Tesouraria para automações e análise de dados")
+    # RESUMO EXECUTIVO
+    st.markdown("---")
+    st.markdown("<h2 style='text-align: center; color: #DC143C;'>📋 Resumo Executivo - Status Geral</h2>", unsafe_allow_html=True)
+    
+    # Calcular progresso geral por objetivo
+    resumo_objetivos = []
+    for objetivo in objetivos_unicos:
+        df_obj = df_planejamento[df_planejamento['objetivo'] == objetivo]
+        progressos = []
+        
+        for _, row in df_obj.iterrows():
+            try:
+                meta = float(str(row['meta']).replace(',', '.'))
+                valor = float(str(row['valor_atual']).replace(',', '.'))
+                if meta > 0:
+                    prog = (valor / meta) * 100
+                    progressos.append(min(prog, 150))  # Cap em 150% para não distorcer média
+            except:
+                pass
+        
+        if progressos:
+            media_prog = sum(progressos) / len(progressos)
+            resumo_objetivos.append({
+                'objetivo': objetivo[:50] + '...' if len(objetivo) > 50 else objetivo,  # Truncar nome longo
+                'progresso': media_prog
+            })
+    
+    if resumo_objetivos:
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            # Gráfico de barras com progresso por objetivo
+            df_resumo = pd.DataFrame(resumo_objetivos)
+            
+            fig_resumo = go.Figure()
+            fig_resumo.add_trace(go.Bar(
+                y=df_resumo['objetivo'],
+                x=df_resumo['progresso'],
+                orientation='h',
+                marker=dict(
+                    color=df_resumo['progresso'],
+                    colorscale=[[0, '#8B0000'], [0.7, '#FFD700'], [1, '#00FF00']],
+                    showscale=False
+                ),
+                text=[f"{p:.0f}%" for p in df_resumo['progresso']],
+                textposition='outside',
+                textfont=dict(color='white')
+            ))
+            fig_resumo.add_vline(x=100, line_dash="dash", line_color="white", annotation_text="Meta: 100%")
+            fig_resumo.update_layout(
+                title="Progresso por Objetivo Estratégico",
+                xaxis_title="Progresso (%)",
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white'),
+                height=400,
+                xaxis=dict(range=[0, max(df_resumo['progresso'].max(), 100) + 20])
+            )
+            st.plotly_chart(fig_resumo, use_container_width=True)
+        
+        with col2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Score geral
+            score_geral = df_resumo['progresso'].mean()
+            st.metric(
+                label="🎯 Score Geral",
+                value=f"{score_geral:.1f}%",
+                delta=f"{score_geral - 100:.1f}% vs Meta"
+            )
+            
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.markdown("**📊 Status por Área:**")
+            for _, row in df_resumo.iterrows():
+                prog = row['progresso']
+                if prog >= 100:
+                    emoji = "✅"
+                    cor = "green"
+                elif prog >= 70:
+                    emoji = "🟡"
+                    cor = "orange"
+                else:
+                    emoji = "🔴"
+                    cor = "red"
+                
+                st.markdown(f"{emoji} **{prog:.0f}%** - {row['objetivo'][:30]}...")
+    
+    # Footer
+    st.markdown("---")
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px; opacity: 0.7;'>
+            <p style='color: #FFFFFF; font-size: 0.9rem;'>
+                🎯 Planejamento Estratégico da Tesouraria | Atualizado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
-    equipe = dados_estrategicos['eficiencia_tecnica']['equipe']
-    media_trilha = sum([p['trilha_livia'] for p in equipe]) / len(equipe)
-    total_automacoes = sum([p['automacoes'] for p in equipe])
-
-    col1, col2, col3 = st.columns(3)
+# === FOOTER GERAL ===
+st.markdown("""
+<div style='text-align: center; color: #666666; font-size: 0.9em; margin-top: 2rem;'>
+    <div style="background: #1a1a1a; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block;">ALUN</div>
+    <br>Dashboard Financeiro | Atualizado automaticamente
+</div>
+""", unsafe_allow_html=True)
 
     with col1:
         st.metric(
