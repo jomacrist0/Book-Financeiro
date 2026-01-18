@@ -1,0 +1,43 @@
+OBJETIVO,INDICADOR,MES,ANO,VALOR,META,COMO_PREENCHER
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Trilha da Lívia,Novembro,2024,20,100,Percentual (0 a 100)
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Automações construídas,Novembro,2024,20,100,Percentual (0 a 100)
+Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento,Novembro,2024,18.5,20,Número de dias (ex: 15.5)
+Otimizar ciclo de pagamentos do grupo,Cashback Mensal,Novembro,2024,8882,10658,Valor em reais (ex: 8882)
+Otimizar ciclo de pagamentos do grupo,SLA 1ª Resposta (cliente interno),Novembro,2024,25.2,24,Horas (ex: 24.5)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Desvio entre financeiro e contábil,Novembro,2024,0.25,0.1,Percentual (ex: 0.15)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Saldo de irregularidades,Novembro,2024,75000,0,Valor em reais (ex: 50000)
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Fechamento sem atrasos,Novembro,2024,Sim,Sim,Sim ou Não
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Vans Bancárias implementadas,Novembro,2024,Não,Sim,Sim ou Não
+Aumentar rentabilidade do caixa do grupo,Percentual CDI de rendimento,Novembro,2024,101.2,100,Percentual (ex: 102.5)
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Bolecode implementado,Novembro,2024,Não,Sim,Sim ou Não
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Conversão em caixa (últimos 2 anos),Novembro,2024,0,100,Percentual (0 a 100)
+Otimizar prazos operacionais e de retorno,Tickets na Caixa,Novembro,2024,15,10,Quantidade (ex: 12)
+Otimizar prazos operacionais e de retorno,SLA 1ª Resposta (tickets),Novembro,2024,26,24,Horas (ex: 22)
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Trilha da Lívia,Dezembro,2024,25,100,Percentual (0 a 100)
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Automações construídas,Dezembro,2024,25,100,Percentual (0 a 100)
+Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento,Dezembro,2024,15.44,20,Número de dias (ex: 15.5)
+Otimizar ciclo de pagamentos do grupo,Cashback Mensal,Dezembro,2024,6664,10658,Valor em reais (ex: 8882)
+Otimizar ciclo de pagamentos do grupo,SLA 1ª Resposta (cliente interno),Dezembro,2024,24.1,24,Horas (ex: 24.5)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Desvio entre financeiro e contábil,Dezembro,2024,0.203,0.1,Percentual (ex: 0.15)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Saldo de irregularidades,Dezembro,2024,50000,0,Valor em reais (ex: 50000)
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Fechamento sem atrasos,Dezembro,2024,Não,Sim,Sim ou Não
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Vans Bancárias implementadas,Dezembro,2024,Não,Sim,Sim ou Não
+Aumentar rentabilidade do caixa do grupo,Percentual CDI de rendimento,Dezembro,2024,102.54,100,Percentual (ex: 102.5)
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Bolecode implementado,Dezembro,2024,Não,Sim,Sim ou Não
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Conversão em caixa (últimos 2 anos),Dezembro,2024,0,100,Percentual (0 a 100)
+Otimizar prazos operacionais e de retorno,Tickets na Caixa,Dezembro,2024,12,10,Quantidade (ex: 12)
+Otimizar prazos operacionais e de retorno,SLA 1ª Resposta (tickets),Dezembro,2024,22,24,Horas (ex: 22)
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Trilha da Lívia,Dezembro,2025,25,100,Percentual (0 a 100)
+Aumentar eficiência técnica da Tesouraria para automações e análise de dados,Automações construídas,Dezembro,2025,25,100,Percentual (0 a 100)
+Otimizar ciclo de pagamentos do grupo,PMP - Prazo Médio de Pagamento,Dezembro,2025,15.44,20,Número de dias (ex: 15.5)
+Otimizar ciclo de pagamentos do grupo,Cashback Mensal,Dezembro,2025,6664,10658,Valor em reais (ex: 8882)
+Otimizar ciclo de pagamentos do grupo,SLA 1ª Resposta (cliente interno),Dezembro,2025,24.1,24,Horas (ex: 24.5)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Desvio entre financeiro e contábil,Dezembro,2025,0.203,0.1,Percentual (ex: 0.15)
+Garantir a acuracidade e integridade das informações de Contas a Receber,Saldo de irregularidades,Dezembro,2025,50000,0,Valor em reais (ex: 50000)
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Fechamento sem atrasos,Dezembro,2025,Não,Sim,Sim ou Não
+Aumentar a eficiência operacional da Tesouraria para fechamentos,Vans Bancárias implementadas,Dezembro,2025,Não,Sim,Sim ou Não
+Aumentar rentabilidade do caixa do grupo,Percentual CDI de rendimento,Dezembro,2025,102.54,100,Percentual (ex: 102.5)
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Bolecode implementado,Dezembro,2025,Não,Sim,Sim ou Não
+Aumentar a eficiência e previsibilidade das entradas de caixa do grupo,Conversão em caixa (últimos 2 anos),Dezembro,2025,0,100,Percentual (0 a 100)
+Otimizar prazos operacionais e de retorno,Tickets na Caixa,Dezembro,2025,12,10,Quantidade (ex: 12)
+Otimizar prazos operacionais e de retorno,SLA 1ª Resposta (tickets),Dezembro,2025,22,24,Horas (ex: 22)

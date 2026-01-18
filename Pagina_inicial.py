@@ -489,346 +489,286 @@ with tab2:
 
     st.markdown("---")
 
-    # === CARREGAR DADOS REAIS DOS ARQUIVOS ===
+    # === CARREGAR DADOS DO ARQUIVO ÚNICO ===
     @st.cache_data
-    def load_planejamento_data():
-        """Carrega dados do planejamento estratégico - CSV"""
+    def load_dados_mensais():
+        """Carrega dados do arquivo único dados_mensais.csv"""
         possible_paths = [
-            os.path.join(os.path.dirname(__file__), "data", "planejamento_estrategico_2026.csv"),
-            os.path.join(os.getcwd(), "data", "planejamento_estrategico_2026.csv"),
-            os.path.join("data", "planejamento_estrategico_2026.csv"),
+            os.path.join(os.path.dirname(__file__), "data", "dados_mensais.csv"),
+            os.path.join(os.getcwd(), "data", "dados_mensais.csv"),
+            os.path.join("data", "dados_mensais.csv"),
         ]
         
         for path in possible_paths:
             if os.path.exists(path):
                 try:
-                    df = pd.read_csv(path)
-                    # Converter valores numéricos
-                    for col in ['meta', 'valor_atual']:
-                        if col in df.columns:
-                            df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
-                            df[col] = pd.to_numeric(df[col], errors='coerce')
+                    df = pd.read_csv(path, encoding='utf-8')
                     return df
                 except Exception as e:
-                    st.error(f"Erro ao carregar planejamento: {e}")
+                    st.error(f"Erro ao carregar dados: {e}")
                     return None
         
-        st.warning("Arquivo planejamento_estrategico_2026.csv não encontrado")
-        return None
-
-    @st.cache_data
-    def load_kpis_historico():
-        """Carrega histórico de KPIs - CSV"""
-        possible_paths = [
-            os.path.join(os.path.dirname(__file__), "data", "kpis_historico_2026.csv"),
-            os.path.join(os.getcwd(), "data", "kpis_historico_2026.csv"),
-            os.path.join("data", "kpis_historico_2026.csv"),
-        ]
-        
-        for path in possible_paths:
-            if os.path.exists(path):
-                try:
-                    df = pd.read_csv(path)
-                    # Converter valores numéricos
-                    for col in ['valor', 'meta']:
-                        if col in df.columns:
-                            df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
-                            df[col] = pd.to_numeric(df[col], errors='coerce')
-                    return df
-                except Exception as e:
-                    st.error(f"Erro ao carregar histórico: {e}")
-                    return None
-        
-        st.warning("Arquivo kpis_historico_2026.csv não encontrado")
+        st.warning("Arquivo dados_mensais.csv não encontrado na pasta /data")
         return None
 
     # Carregar dados
-    df_planejamento_raw = load_planejamento_data()
-    df_historico_raw = load_kpis_historico()
+    df_raw = load_dados_mensais()
     
-    if df_planejamento_raw is None or df_historico_raw is None:
-        st.error("⚠️ Não foi possível carregar os dados. Verifique se os arquivos CSV estão na pasta /data")
+    if df_raw is None:
+        st.error("⚠️ Não foi possível carregar os dados. Verifique se o arquivo dados_mensais.csv está na pasta /data")
         st.stop()
 
-    # Filtros
-    st.markdown("### 📅 Filtros de Acompanhamento")
-    col_filtro1, col_filtro2, col_filtro3 = st.columns([2, 2, 2])
+    # === CONVERTER VALORES (vírgula para ponto) ===
+    def converter_valor(valor):
+        """Converte valor brasileiro (vírgula) para número"""
+        if pd.isna(valor):
+            return None
+        valor_str = str(valor).strip().lower()
+        
+        # Booleanos
+        if valor_str in ['sim', 's', 'yes', 'true', '1']:
+            return 1
+        if valor_str in ['não', 'nao', 'n', 'no', 'false', '0']:
+            return 0
+        
+        # Números com vírgula
+        try:
+            valor_str = str(valor).replace(',', '.')
+            return float(valor_str)
+        except:
+            return None
 
-    # Obter anos disponíveis nos dados
-    anos_disponiveis = sorted(df_planejamento_raw['ano'].dropna().unique().tolist())
-    if not anos_disponiveis:
-        anos_disponiveis = [2024, 2025, 2026]
+    df = df_raw.copy()
+    df['VALOR_NUM'] = df['VALOR'].apply(converter_valor)
+    df['META_NUM'] = df['META'].apply(converter_valor)
+
+    # === MAPEAMENTO DE MESES ===
+    meses_ordem = {
+        'Janeiro': 1, 'Fevereiro': 2, 'Março': 3, 'Abril': 4,
+        'Maio': 5, 'Junho': 6, 'Julho': 7, 'Agosto': 8,
+        'Setembro': 9, 'Outubro': 10, 'Novembro': 11, 'Dezembro': 12
+    }
+    df['MES_NUM'] = df['MES'].map(meses_ordem)
+
+    # === FILTROS ===
+    st.markdown("### 📅 Filtros")
+    col_f1, col_f2, col_f3 = st.columns(3)
+
+    anos_disponiveis = sorted(df['ANO'].unique().tolist())
+    meses_disponiveis = df['MES'].unique().tolist()
+    # Ordenar meses
+    meses_disponiveis = sorted(meses_disponiveis, key=lambda x: meses_ordem.get(x, 0))
+
+    with col_f1:
+        ano_sel = st.selectbox("Ano", ["Todos"] + anos_disponiveis, index=0, key="plan_ano")
     
-    with col_filtro1:
-        opcoes_ano = ["Todos"] + [int(a) for a in anos_disponiveis]
-        ano_selecionado = st.selectbox(
-            "Ano",
-            options=opcoes_ano,
-            index=0,
-            key="plan_ano_filtro"
-        )
-
-    with col_filtro2:
-        meses_lista = ["Todos", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-        mes_selecionado = st.selectbox(
-            "Mês",
-            options=meses_lista,
-            index=0,
-            key="plan_mes_filtro"
-        )
-
-    with col_filtro3:
-        trimestre_selecionado = st.selectbox(
-            "Trimestre",
-            options=["Todos", "Q1", "Q2", "Q3", "Q4"],
-            index=0,
-            key="plan_trimestre_filtro"
-        )
+    with col_f2:
+        mes_sel = st.selectbox("Mês", ["Todos"] + meses_disponiveis, index=0, key="plan_mes")
+    
+    with col_f3:
+        # Opção de ver último período
+        ver_ultimo = st.checkbox("📍 Ver apenas o período mais recente", value=True)
 
     # Aplicar filtros
-    df_planejamento = df_planejamento_raw.copy()
-    df_historico = df_historico_raw.copy()
+    df_filtrado = df.copy()
     
-    # Filtrar por ano
-    if ano_selecionado != "Todos":
-        df_planejamento = df_planejamento[df_planejamento['ano'] == ano_selecionado]
-        df_historico = df_historico[df_historico['ano'] == ano_selecionado]
-    
-    # Filtrar por mês
-    if mes_selecionado != "Todos":
-        mes_num = meses_lista.index(mes_selecionado)  # Janeiro=1, etc.
-        df_planejamento = df_planejamento[df_planejamento['mes'] == mes_num]
-        df_historico = df_historico[df_historico['mes'] == mes_num]
-    
-    # Filtrar por trimestre
-    if trimestre_selecionado != "Todos":
-        trimestre_map = {"Q1": [1,2,3], "Q2": [4,5,6], "Q3": [7,8,9], "Q4": [10,11,12]}
-        meses_trimestre = trimestre_map[trimestre_selecionado]
-        df_planejamento = df_planejamento[df_planejamento['mes'].isin(meses_trimestre)]
-        df_historico = df_historico[df_historico['mes'].isin(meses_trimestre)]
-
-    # Mostrar período selecionado
-    if not df_planejamento.empty:
-        periodo_info = []
-        if ano_selecionado != "Todos":
-            periodo_info.append(f"Ano: {ano_selecionado}")
-        if mes_selecionado != "Todos":
-            periodo_info.append(f"Mês: {mes_selecionado}")
-        if trimestre_selecionado != "Todos":
-            periodo_info.append(f"Trimestre: {trimestre_selecionado}")
-        
-        if periodo_info:
-            st.info(f"📅 Filtros ativos: {' | '.join(periodo_info)}")
-        else:
-            st.info("📅 Exibindo todos os dados disponíveis")
+    if ver_ultimo:
+        # Pegar o período mais recente
+        df_filtrado = df_filtrado.sort_values(['ANO', 'MES_NUM'], ascending=[False, False])
+        ultimo_ano = df_filtrado['ANO'].iloc[0]
+        ultimo_mes = df_filtrado['MES'].iloc[0]
+        df_filtrado = df_filtrado[(df_filtrado['ANO'] == ultimo_ano) & (df_filtrado['MES'] == ultimo_mes)]
+        st.info(f"📅 Exibindo dados de: **{ultimo_mes}/{ultimo_ano}**")
     else:
-        st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados")
-        st.stop()
+        if ano_sel != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['ANO'] == int(ano_sel)]
+        if mes_sel != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['MES'] == mes_sel]
+        
+        if df_filtrado.empty:
+            st.warning("Nenhum dado encontrado para os filtros selecionados")
+            st.stop()
+        
+        periodos = df_filtrado.groupby(['MES', 'ANO']).size().reset_index()
+        periodos_str = ", ".join([f"{row['MES']}/{row['ANO']}" for _, row in periodos.iterrows()])
+        st.info(f"📅 Exibindo dados de: **{periodos_str}**")
 
     st.markdown("---")
 
-    # === FUNÇÕES DE CÁLCULO DE STATUS ===
-    def calcular_status_indicador(valor, meta, tipo_calculo, tipo_indicador):
-        """
-        Calcula o status do indicador baseado no tipo de cálculo:
-        - maior_melhor: valor >= meta é bom (ex: % trilha, % CDI)
-        - menor_melhor: valor < meta é bom (ex: PMP, saldo irregularidades)
-        - menor_igual_melhor: valor <= meta é bom (ex: SLA, desvio)
-        - maior_igual_melhor: valor >= meta é bom (ex: CDI)
-        - percentual_meta: calcular % atingido da meta (ex: cashback)
-        - sim_nao: valor booleano
-        """
-        if tipo_indicador == 'booleano':
-            valor_str = str(valor).lower().strip()
-            meta_str = str(meta).lower().strip()
-            atingido = valor_str in ['sim', 's', '1', 'true', 'yes']
-            return {
-                'atingido': atingido,
-                'emoji': '✅' if atingido else '❌',
-                'cor': 'green' if atingido else 'red',
-                'texto': 'Sim' if atingido else 'Não',
-                'progresso': 100 if atingido else 0
-            }
+    # === FUNÇÃO PARA CALCULAR STATUS E GERAR OBSERVAÇÃO ===
+    def calcular_status(row):
+        """Calcula status e gera observação automática"""
+        valor = row['VALOR_NUM']
+        meta = row['META_NUM']
+        indicador = row['INDICADOR']
+        como_preencher = row['COMO_PREENCHER']
         
-        try:
-            valor = float(valor)
-            meta = float(meta)
-        except:
-            return {'atingido': False, 'emoji': '⚪', 'cor': 'gray', 'texto': 'Sem dados', 'progresso': 0}
+        if pd.isna(valor) or pd.isna(meta):
+            return {'atingido': False, 'emoji': '⚪', 'obs': 'Sem dados', 'progresso': 0}
         
-        if tipo_calculo == 'maior_melhor':
-            progresso = (valor / meta * 100) if meta > 0 else 0
+        # Determinar tipo de indicador e lógica
+        eh_percentual = 'Percentual' in como_preencher
+        eh_dias = 'dias' in como_preencher.lower()
+        eh_horas = 'Horas' in como_preencher
+        eh_reais = 'reais' in como_preencher.lower()
+        eh_sim_nao = 'Sim ou Não' in como_preencher
+        eh_quantidade = 'Quantidade' in como_preencher
+        
+        # Lógica especial por indicador
+        indicador_lower = indicador.lower()
+        
+        # PMP: maior é melhor (queremos aumentar o prazo)
+        if 'pmp' in indicador_lower or 'prazo médio' in indicador_lower:
             atingido = valor >= meta
-            
-        elif tipo_calculo == 'menor_melhor':
-            # Quanto menor, melhor. Meta é o máximo aceitável
-            if meta == 0:
+            progresso = (valor / meta * 100) if meta > 0 else 0
+            if atingido:
+                obs = f"✅ {valor:.2f} dias - ATINGIU a meta de {meta:.0f} dias"
+            else:
+                obs = f"⚠️ {valor:.2f} dias - ABAIXO da meta de {meta:.0f} dias"
+        
+        # SLA, Desvio, Irregularidades, Tickets: menor é melhor
+        elif any(x in indicador_lower for x in ['sla', 'desvio', 'irregularidades', 'tickets']):
+            if meta == 0:  # Meta é zerar
                 atingido = valor == 0
-                progresso = 100 if valor == 0 else max(0, 100 - (valor * 10))  # Penalização
+                progresso = 100 if valor == 0 else max(0, 100 - (valor / 10000 * 100))
+                if atingido:
+                    obs = f"✅ Zerado!"
+                else:
+                    obs = f"⚠️ R$ {valor:,.0f} restantes - Meta é zerar".replace(',', '.')
             else:
-                atingido = valor < meta
-                # Invertido: valor menor = progresso maior
-                progresso = max(0, min(100, (1 - (valor / meta)) * 100 + 100)) if valor < meta else max(0, (meta / valor) * 100)
-                
-        elif tipo_calculo == 'menor_igual_melhor':
-            atingido = valor <= meta
-            if meta == 0:
-                progresso = 100 if valor == 0 else 0
-            else:
-                progresso = 100 if atingido else max(0, (meta / valor) * 100)
-                
-        elif tipo_calculo == 'maior_igual_melhor':
-            atingido = valor >= meta
-            progresso = (valor / meta * 100) if meta > 0 else 0
-            
-        elif tipo_calculo == 'percentual_meta':
-            progresso = (valor / meta * 100) if meta > 0 else 0
-            atingido = valor >= meta
-            
-        else:
-            progresso = (valor / meta * 100) if meta > 0 else 0
-            atingido = progresso >= 100
+                atingido = valor <= meta
+                progresso = (meta / valor * 100) if valor > 0 else 100
+                if eh_horas:
+                    if atingido:
+                        obs = f"✅ {valor:.1f}h - DENTRO da meta de {meta:.0f}h"
+                    else:
+                        obs = f"❌ {valor:.1f}h - ACIMA da meta de {meta:.0f}h"
+                elif eh_percentual:
+                    if atingido:
+                        obs = f"✅ {valor:.2f}% - DENTRO do limite de {meta:.1f}%"
+                    else:
+                        obs = f"❌ {valor:.2f}% - ACIMA do limite de {meta:.1f}%"
+                else:
+                    if atingido:
+                        obs = f"✅ {valor:.0f} - DENTRO da meta de {meta:.0f}"
+                    else:
+                        obs = f"❌ {valor:.0f} - ACIMA da meta de {meta:.0f}"
         
-        if atingido:
-            emoji = '✅'
-            cor = 'green'
-        elif progresso >= 70:
-            emoji = '🟡'
-            cor = 'orange'
+        # Booleanos (Sim/Não)
+        elif eh_sim_nao:
+            atingido = valor == 1
+            progresso = 100 if atingido else 0
+            valor_txt = "Sim" if valor == 1 else "Não"
+            if atingido:
+                obs = f"✅ {valor_txt} - Concluído!"
+            else:
+                obs = f"❌ {valor_txt} - Pendente"
+        
+        # Cashback: precisa atingir a meta (valor >= meta)
+        elif 'cashback' in indicador_lower:
+            atingido = valor >= meta
+            progresso = (valor / meta * 100) if meta > 0 else 0
+            if atingido:
+                obs = f"✅ R$ {valor:,.0f} - ATINGIU a meta de R$ {meta:,.0f}".replace(',', '.')
+            else:
+                falta = meta - valor
+                obs = f"⚠️ R$ {valor:,.0f} - Faltam R$ {falta:,.0f} para a meta".replace(',', '.')
+        
+        # Padrão: maior é melhor (percentuais, CDI, etc)
         else:
-            emoji = '🔴'
-            cor = 'red'
+            atingido = valor >= meta
+            progresso = (valor / meta * 100) if meta > 0 else 0
+            if eh_percentual:
+                if atingido:
+                    obs = f"✅ {valor:.1f}% - ATINGIU a meta de {meta:.0f}%"
+                else:
+                    obs = f"⚠️ {valor:.1f}% - Faltam {meta - valor:.1f}% para a meta"
+            elif eh_reais:
+                if atingido:
+                    obs = f"✅ R$ {valor:,.0f}".replace(',', '.')
+                else:
+                    obs = f"⚠️ R$ {valor:,.0f}".replace(',', '.')
+            else:
+                if atingido:
+                    obs = f"✅ {valor}"
+                else:
+                    obs = f"⚠️ {valor}"
+        
+        emoji = '✅' if atingido else '🟡' if progresso >= 70 else '❌'
         
         return {
             'atingido': atingido,
             'emoji': emoji,
-            'cor': cor,
-            'progresso': min(progresso, 150),  # Cap em 150%
-            'texto': f"{progresso:.0f}%"
+            'obs': obs,
+            'progresso': min(progresso, 150)
         }
 
-    # Processar dados por objetivo
-    objetivos_unicos = df_planejamento['objetivo'].unique()
+    # === MOSTRAR OBJETIVOS ===
+    objetivos = df_filtrado['OBJETIVO'].unique()
     
-    # Mapa de tipo de objetivo para tipo no histórico
-    obj_tipo_map = {
-        'eficiência técnica': 'eficiencia_tecnica',
-        'ciclo de pagamentos': 'ciclo_pagamentos',
-        'acuracidade': 'acuracidade',
-        'eficiência operacional': 'operacional',
-        'rentabilidade': 'rentabilidade',
-        'eficiência e previsibilidade': 'eficiencia_caixa',
-        'prazos operacionais': 'prazos'
-    }
-    
-    # === MOSTRAR CADA OBJETIVO COM DADOS REAIS ===
-    for idx, objetivo in enumerate(objetivos_unicos, 1):
-        st.markdown("<div class='strategic-section'>", unsafe_allow_html=True)
-        
-        # Buscar dados deste objetivo
-        df_obj = df_planejamento[df_planejamento['objetivo'] == objetivo]
-        
-        # Mostrar nome completo do objetivo
-        st.markdown(f"#### 🎯 Objetivo {idx}")
+    for idx, objetivo in enumerate(objetivos, 1):
+        st.markdown(f"<div class='strategic-section'>", unsafe_allow_html=True)
+        st.markdown(f"### 🎯 Objetivo {idx}")
         st.markdown(f"**{objetivo}**")
         st.markdown("---")
         
-        # Mostrar período dos dados
-        if not df_obj.empty:
-            row_exemplo = df_obj.iloc[0]
-            mes_nome = meses_lista[int(row_exemplo['mes'])] if pd.notna(row_exemplo.get('mes')) else ''
-            ano_dado = int(row_exemplo['ano']) if pd.notna(row_exemplo.get('ano')) else ''
-            st.caption(f"📅 Dados de: {mes_nome}/{ano_dado}")
+        df_obj = df_filtrado[df_filtrado['OBJETIVO'] == objetivo]
         
-        # Mostrar cada resultado-chave
         for _, row in df_obj.iterrows():
-            tipo_calculo = row.get('tipo_calculo', 'maior_melhor')
-            tipo_indicador = row.get('tipo_indicador', 'percentual')
+            status = calcular_status(row)
+            como_preencher = row['COMO_PREENCHER']
+            eh_percentual = 'Percentual' in como_preencher
+            eh_sim_nao = 'Sim ou Não' in como_preencher
             
-            # Calcular status corretamente
-            status = calcular_status_indicador(
-                row['valor_atual'], 
-                row['meta'], 
-                tipo_calculo, 
-                tipo_indicador
-            )
-            
-            col1, col2, col3, col4 = st.columns([3, 1.5, 1, 1])
+            col1, col2, col3, col4 = st.columns([3, 1.5, 1, 1.5])
             
             with col1:
-                st.markdown(f"**📌 {row['resultado_chave']}**")
-                if pd.notna(row.get('observacoes')) and str(row.get('observacoes', '')).strip():
-                    st.caption(f"💬 {row['observacoes']}")
+                st.markdown(f"**📌 {row['INDICADOR']}**")
+                st.caption(f"💬 {status['obs']}")
             
             with col2:
-                # Mostrar valor atual com formatação correta
-                if tipo_indicador == 'booleano':
-                    valor_display = status['texto']
+                # Formatar valor
+                valor = row['VALOR_NUM']
+                if eh_sim_nao:
+                    valor_fmt = "Sim" if valor == 1 else "Não"
+                elif eh_percentual:
+                    valor_fmt = f"{valor:.1f}%"
+                elif 'reais' in como_preencher.lower():
+                    valor_fmt = f"R$ {valor:,.0f}".replace(',', '.')
+                elif 'dias' in como_preencher.lower():
+                    valor_fmt = f"{valor:.2f} dias"
+                elif 'Horas' in como_preencher:
+                    valor_fmt = f"{valor:.1f}h"
                 else:
-                    try:
-                        valor_num = float(str(row['valor_atual']).replace(',', '.'))
-                        if tipo_indicador == 'reais':
-                            valor_display = f"R$ {valor_num:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-                        elif tipo_indicador == 'dias':
-                            valor_display = f"{valor_num:.2f} dias"
-                        elif tipo_indicador == 'horas':
-                            valor_display = f"{valor_num:.1f}h"
-                        elif tipo_indicador == 'quantidade':
-                            valor_display = f"{int(valor_num)}"
-                        else:
-                            valor_display = f"{valor_num:.2f}%"
-                    except:
-                        valor_display = str(row['valor_atual'])
+                    valor_fmt = f"{valor:.0f}"
                 
-                # Delta baseado no tipo de cálculo
-                if tipo_indicador != 'booleano':
-                    if tipo_calculo in ['menor_melhor', 'menor_igual_melhor']:
-                        delta_txt = "✅ Dentro da meta" if status['atingido'] else "⚠️ Fora da meta"
-                    else:
-                        delta_txt = f"{status['progresso']:.0f}% da meta"
-                    
-                    st.metric(
-                        label=f"{status['emoji']} Atual",
-                        value=valor_display,
-                        delta=delta_txt,
-                        delta_color="normal" if status['atingido'] else "inverse"
-                    )
-                else:
-                    st.metric(
-                        label=f"{status['emoji']} Status",
-                        value=valor_display
-                    )
+                st.metric(label=f"{status['emoji']} Atual", value=valor_fmt)
             
             with col3:
-                # Mostrar meta com formatação correta
-                try:
-                    if tipo_indicador == 'booleano':
-                        meta_display = "Sim"
-                    else:
-                        meta_num = float(str(row['meta']).replace(',', '.'))
-                        if tipo_indicador == 'reais':
-                            meta_display = f"R$ {meta_num:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-                        elif tipo_indicador == 'dias':
-                            meta_display = f"≥ {meta_num:.0f} dias"
-                        elif tipo_indicador == 'horas':
-                            meta_display = f"≤ {meta_num:.0f}h"
-                        elif tipo_indicador == 'quantidade':
-                            meta_display = f"≤ {int(meta_num)}"
-                        else:
-                            meta_display = f"{meta_num:.1f}%"
-                except:
-                    meta_display = str(row['meta'])
+                # Formatar meta
+                meta = row['META_NUM']
+                if eh_sim_nao:
+                    meta_fmt = "Sim"
+                elif eh_percentual:
+                    meta_fmt = f"{meta:.0f}%"
+                elif 'reais' in como_preencher.lower():
+                    meta_fmt = f"R$ {meta:,.0f}".replace(',', '.')
+                elif 'dias' in como_preencher.lower():
+                    meta_fmt = f"{meta:.0f} dias"
+                elif 'Horas' in como_preencher:
+                    meta_fmt = f"≤{meta:.0f}h"
+                else:
+                    meta_fmt = f"{meta:.0f}"
                 
-                st.metric(label="🎯 Meta", value=meta_display)
+                st.metric(label="🎯 Meta", value=meta_fmt)
             
             with col4:
-                # Barra de progresso visual
+                # Barra de progresso
                 prog = min(status['progresso'], 100)
-                cor_barra = '#00FF00' if status['atingido'] else '#FFD700' if prog >= 70 else '#FF4444'
+                cor = '#00FF00' if status['atingido'] else '#FFD700' if prog >= 70 else '#FF4444'
                 st.markdown(f"""
                     <div style='background: #333; border-radius: 5px; height: 30px; margin-top: 25px;'>
-                        <div style='background: {cor_barra}; width: {max(prog, 5)}%; height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: center;'>
+                        <div style='background: {cor}; width: {max(prog, 5)}%; height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: center;'>
                             <span style='color: black; font-weight: bold; font-size: 11px;'>{status['progresso']:.0f}%</span>
                         </div>
                     </div>
@@ -836,226 +776,135 @@ with tab2:
             
             st.markdown("<br>", unsafe_allow_html=True)
         
-        # === GRÁFICOS DE EVOLUÇÃO HISTÓRICA ===
-        # Identificar tipo do objetivo para buscar histórico
-        obj_tipo = None
-        obj_tipo_map_local = {
-            'eficiência técnica': 'eficiencia_tecnica',
-            'ciclo de pagamentos': 'ciclo_pagamentos',
-            'acuracidade': 'acuracidade',
-            'eficiência operacional': 'operacional',
-            'rentabilidade': 'rentabilidade',
-            'eficiência e previsibilidade': 'eficiencia_caixa',
-            'prazos operacionais': 'prazos'
-        }
-        
-        for key_word, tipo in obj_tipo_map_local.items():
-            if key_word.lower() in objetivo.lower():
-                obj_tipo = tipo
-                break
-        
-        # Se encontrou tipo, mostrar gráficos de evolução
-        if obj_tipo and df_historico_raw is not None:
-            df_hist_obj = df_historico_raw[df_historico_raw['kpi_tipo'] == obj_tipo].copy()
+        # === GRÁFICO DE EVOLUÇÃO (se não estiver vendo só último período) ===
+        if not ver_ultimo:
+            st.markdown("### 📈 Evolução Histórica")
             
-            if not df_hist_obj.empty:
-                st.markdown("### 📈 Evolução Histórica")
+            df_hist = df[df['OBJETIVO'] == objetivo].copy()
+            df_hist = df_hist.sort_values(['ANO', 'MES_NUM'])
+            df_hist['PERIODO'] = df_hist['MES'].str[:3] + '/' + df_hist['ANO'].astype(str).str[-2:]
+            
+            indicadores = df_hist['INDICADOR'].unique()
+            
+            if len(indicadores) >= 2:
+                col_g1, col_g2 = st.columns(2)
+                cols = [col_g1, col_g2]
+            else:
+                cols = [st.container()]
+            
+            for i, indicador in enumerate(indicadores):
+                df_ind = df_hist[df_hist['INDICADOR'] == indicador]
+                como = df_ind['COMO_PREENCHER'].iloc[0]
+                eh_perc = 'Percentual' in como
+                eh_bool = 'Sim ou Não' in como
                 
-                # Criar colunas para gráficos lado a lado
-                kpis_unicos = df_hist_obj['kpi_nome'].unique()
+                if eh_bool or len(df_ind) < 2:
+                    continue
                 
-                if len(kpis_unicos) >= 2:
-                    col_graf1, col_graf2 = st.columns(2)
-                    cols_graf = [col_graf1, col_graf2]
-                else:
-                    cols_graf = [st.container()]
+                fig = go.Figure()
                 
-                for i, kpi_nome in enumerate(kpis_unicos):
-                    df_kpi = df_hist_obj[df_hist_obj['kpi_nome'] == kpi_nome].sort_values(['ano', 'mes']).copy()
-                    
-                    if len(df_kpi) >= 1:
-                        # Criar label do eixo X
-                        meses_abrev = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-                        df_kpi['periodo_label'] = df_kpi.apply(
-                            lambda r: f"{meses_abrev[int(r['mes'])]}/{str(int(r['ano']))[-2:]}", axis=1
-                        )
-                        
-                        fig = go.Figure()
-                        
-                        # Obter tipo de cálculo
-                        tipo_calc = df_kpi['tipo_calculo'].iloc[0] if 'tipo_calculo' in df_kpi.columns else 'maior_melhor'
-                        
-                        # Linha de valores realizados
-                        fig.add_trace(go.Scatter(
-                            x=df_kpi['periodo_label'],
-                            y=df_kpi['valor'],
-                            mode='lines+markers+text',
-                            name='Realizado',
-                            line=dict(color='#DC143C', width=3),
-                            marker=dict(size=12, color='#DC143C'),
-                            text=df_kpi['valor'].apply(lambda x: f"{x:.1f}"),
-                            textposition='top center',
-                            textfont=dict(color='white', size=10)
-                        ))
-                        
-                        # Linha de meta
-                        fig.add_trace(go.Scatter(
-                            x=df_kpi['periodo_label'],
-                            y=df_kpi['meta'],
-                            mode='lines',
-                            name='Meta',
-                            line=dict(color='#FFD700', width=2, dash='dash')
-                        ))
-                        
-                        unidade = df_kpi['unidade'].iloc[0] if 'unidade' in df_kpi.columns else ''
-                        
-                        # Mapeamento de nomes amigáveis para os gráficos
-                        nomes_amigaveis = {
-                            'trilha_livia': 'Trilha Lívia',
-                            'trilha_livia_percent': 'Trilha Lívia',
-                            'automacoes': 'Automações',
-                            'automacoes_percent': 'Automações',
-                            'pmp_dias': 'PMP (dias)',
-                            'cashback_mensal': 'Cashback Mensal',
-                            'sla_horas': 'SLA 1ª Resposta',
-                            'desvio_percentual': 'Desvio Financeiro',
-                            'saldo_irregularidades': 'Saldo Irregularidades',
-                            'fechamento_sem_atraso': 'Fechamento',
-                            'vans_bancarias': 'Vans Bancárias',
-                            'cdi_percentual': '% CDI',
-                            'bolecode_implementado': 'Bolecode',
-                            'conversao_caixa': 'Conversão em Caixa',
-                            'tickets_caixa': 'Tickets na Caixa',
-                            'sla_tickets_horas': 'SLA Tickets'
-                        }
-                        kpi_label = nomes_amigaveis.get(kpi_nome, kpi_nome.replace('_', ' ').title())
-                        
-                        # Título com indicação de lógica
-                        if tipo_calc in ['menor_melhor', 'menor_igual_melhor']:
-                            titulo_extra = " (↓ menor = melhor)"
-                        else:
-                            titulo_extra = " (↑ maior = melhor)"
-                        
-                        fig.update_layout(
-                            title=dict(text=f"{kpi_label}{titulo_extra}", font=dict(size=14)),
-                            xaxis_title="Período",
-                            yaxis_title=f"Valor ({unidade})",
-                            plot_bgcolor='rgba(0,0,0,0)',
-                            paper_bgcolor='rgba(0,0,0,0)',
-                            font=dict(color='white'),
-                            height=300,
-                            showlegend=True,
-                            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                            margin=dict(l=40, r=40, t=60, b=40)
-                        )
-                        
-                        # Usar coluna apropriada
-                        with cols_graf[i % len(cols_graf)]:
-                            st.plotly_chart(fig, use_container_width=True)
+                # Linha realizado
+                fig.add_trace(go.Scatter(
+                    x=df_ind['PERIODO'],
+                    y=df_ind['VALOR_NUM'],
+                    mode='lines+markers+text',
+                    name='Realizado',
+                    line=dict(color='#DC143C', width=3),
+                    marker=dict(size=10),
+                    text=df_ind['VALOR_NUM'].apply(lambda x: f"{x:.1f}%" if eh_perc else f"{x:.1f}"),
+                    textposition='top center',
+                    textfont=dict(color='white', size=10)
+                ))
+                
+                # Linha meta
+                fig.add_trace(go.Scatter(
+                    x=df_ind['PERIODO'],
+                    y=df_ind['META_NUM'],
+                    mode='lines',
+                    name='Meta',
+                    line=dict(color='#FFD700', width=2, dash='dash')
+                ))
+                
+                unidade = '%' if eh_perc else ''
+                fig.update_layout(
+                    title=indicador,
+                    xaxis_title="Período",
+                    yaxis_title=f"Valor ({unidade})" if unidade else "Valor",
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='white'),
+                    height=300,
+                    showlegend=True,
+                    legend=dict(orientation="h", y=1.1)
+                )
+                
+                with cols[i % len(cols)]:
+                    st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RESUMO EXECUTIVO
+    # === RESUMO EXECUTIVO ===
     st.markdown("---")
-    st.markdown("<h2 style='text-align: center; color: #DC143C;'>📋 Resumo Executivo - Status Geral</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #DC143C;'>📋 Resumo Executivo</h2>", unsafe_allow_html=True)
     
-    # Calcular progresso geral por objetivo usando a lógica correta
-    resumo_objetivos = []
-    for objetivo in objetivos_unicos:
-        df_obj = df_planejamento[df_planejamento['objetivo'] == objetivo]
-        indicadores_atingidos = 0
-        total_indicadores = 0
-        
-        for _, row in df_obj.iterrows():
-            tipo_calculo = row.get('tipo_calculo', 'maior_melhor')
-            tipo_indicador = row.get('tipo_indicador', 'percentual')
-            
-            status = calcular_status_indicador(
-                row['valor_atual'], 
-                row['meta'], 
-                tipo_calculo, 
-                tipo_indicador
-            )
-            
-            total_indicadores += 1
-            if status['atingido']:
-                indicadores_atingidos += 1
-        
-        if total_indicadores > 0:
-            progresso = (indicadores_atingidos / total_indicadores) * 100
-            resumo_objetivos.append({
-                'objetivo': objetivo[:50] + '...' if len(objetivo) > 50 else objetivo,
-                'progresso': progresso,
-                'atingidos': indicadores_atingidos,
-                'total': total_indicadores
-            })
+    resumo = []
+    for objetivo in objetivos:
+        df_obj = df_filtrado[df_filtrado['OBJETIVO'] == objetivo]
+        atingidos = sum(1 for _, row in df_obj.iterrows() if calcular_status(row)['atingido'])
+        total = len(df_obj)
+        progresso = (atingidos / total * 100) if total > 0 else 0
+        resumo.append({
+            'objetivo': objetivo[:45] + '...' if len(objetivo) > 45 else objetivo,
+            'atingidos': atingidos,
+            'total': total,
+            'progresso': progresso
+        })
     
-    if resumo_objetivos:
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Gráfico de barras com progresso por objetivo
-            df_resumo = pd.DataFrame(resumo_objetivos)
-            
-            fig_resumo = go.Figure()
-            fig_resumo.add_trace(go.Bar(
-                y=df_resumo['objetivo'],
-                x=df_resumo['progresso'],
-                orientation='h',
-                marker=dict(
-                    color=df_resumo['progresso'],
-                    colorscale=[[0, '#8B0000'], [0.5, '#FFD700'], [1, '#00FF00']],
-                    showscale=False
-                ),
-                text=[f"{int(row['atingidos'])}/{int(row['total'])} ({row['progresso']:.0f}%)" for _, row in df_resumo.iterrows()],
-                textposition='outside',
-                textfont=dict(color='white')
-            ))
-            fig_resumo.add_vline(x=100, line_dash="dash", line_color="white", annotation_text="100%")
-            fig_resumo.update_layout(
-                title="Metas Atingidas por Objetivo",
-                xaxis_title="% Indicadores Atingidos",
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white'),
-                height=400,
-                xaxis=dict(range=[0, 110])
-            )
-            st.plotly_chart(fig_resumo, use_container_width=True)
-        
-        with col2:
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # Score geral
-            score_geral = df_resumo['progresso'].mean()
-            st.metric(
-                label="🎯 Score Geral",
-                value=f"{score_geral:.1f}%",
-                delta=f"{score_geral - 100:.1f}% vs Meta"
-            )
-            
-            st.markdown("<br><br>", unsafe_allow_html=True)
-            st.markdown("**📊 Status por Área:**")
-            for _, row in df_resumo.iterrows():
-                prog = row['progresso']
-                if prog >= 100:
-                    emoji = "✅"
-                    cor = "green"
-                elif prog >= 70:
-                    emoji = "🟡"
-                    cor = "orange"
-                else:
-                    emoji = "🔴"
-                    cor = "red"
-                
-                st.markdown(f"{emoji} **{prog:.0f}%** - {row['objetivo'][:30]}...")
+    df_resumo = pd.DataFrame(resumo)
     
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        fig_resumo = go.Figure()
+        fig_resumo.add_trace(go.Bar(
+            y=df_resumo['objetivo'],
+            x=df_resumo['progresso'],
+            orientation='h',
+            marker=dict(
+                color=df_resumo['progresso'],
+                colorscale=[[0, '#8B0000'], [0.5, '#FFD700'], [1, '#00FF00']],
+            ),
+            text=[f"{r['atingidos']}/{r['total']} ({r['progresso']:.0f}%)" for _, r in df_resumo.iterrows()],
+            textposition='outside',
+            textfont=dict(color='white')
+        ))
+        fig_resumo.add_vline(x=100, line_dash="dash", line_color="white")
+        fig_resumo.update_layout(
+            title="Indicadores Atingidos por Objetivo",
+            xaxis_title="% Atingido",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white'),
+            height=400,
+            xaxis=dict(range=[0, 110])
+        )
+        st.plotly_chart(fig_resumo, use_container_width=True)
+    
+    with col2:
+        score = df_resumo['progresso'].mean()
+        st.metric("🎯 Score Geral", f"{score:.0f}%")
+        
+        st.markdown("**Status por Objetivo:**")
+        for _, r in df_resumo.iterrows():
+            emoji = '✅' if r['progresso'] >= 100 else '🟡' if r['progresso'] >= 50 else '❌'
+            st.markdown(f"{emoji} {r['progresso']:.0f}% - {r['objetivo'][:25]}...")
+
     # Footer
     st.markdown("---")
     st.markdown(f"""
         <div style='text-align: center; padding: 20px; opacity: 0.7;'>
             <p style='color: #FFFFFF; font-size: 0.9rem;'>
-                🎯 Planejamento Estratégico da Tesouraria | Atualizado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}
+                🎯 Planejamento Estratégico | Dados de: {df_filtrado['MES'].iloc[0]}/{df_filtrado['ANO'].iloc[0]}
             </p>
         </div>
     """, unsafe_allow_html=True)
