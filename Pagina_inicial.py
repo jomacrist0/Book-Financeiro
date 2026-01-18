@@ -42,12 +42,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CSS CUSTOMIZADO COM TEMA ESCURO ALUN E MELHORIAS DE LAYOUT ---
+# --- CSS CUSTOMIZADO COM TEMA VERMELHO VINHO E MELHORIAS DE LAYOUT ---
 st.markdown("""
 <style>
-    /* Layout Principal */
+    /* Layout Principal - Fundo Vermelho Vinho */
     .main > div { background: transparent !important; }
-    .main { background-color: #0e1117 !important; }
+    .main { background-color: #630330 !important; }
     .main h1, .main h2, .main h3, .main h4, .main h5, .main h6 { 
         color: #fafafa !important; 
         font-weight: 700 !important; 
@@ -64,10 +64,10 @@ st.markdown("""
         line-height: 1.6 !important;
     }
     
-    /* Cards de Métricas Melhorados */
+    /* Cards de Métricas Melhorados - Tema Vinho */
     .main [data-testid="metric-container"] { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
-        border: 1px solid #30343f !important; 
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
+        border: 1px solid #9a0660 !important; 
         color: #fafafa !important; 
         border-radius: 12px !important; 
         padding: 1.5rem !important;
@@ -80,22 +80,22 @@ st.markdown("""
     }
     .main [data-testid="metric-container"] > div { color: #fafafa !important; }
     
-    /* Containers Melhorados */
+    /* Containers Melhorados - Tema Vinho */
     .main [data-testid="stContainer"] { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
-        border: 1px solid #30343f !important; 
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
+        border: 1px solid #9a0660 !important; 
         border-radius: 15px !important;
         box-shadow: 0 4px 12px rgba(14, 17, 23, 0.3) !important;
         margin: 1rem 0 !important;
     }
     
-    /* Área de Controles Refinada */
+    /* Área de Controles Refinada - Tema Vinho */
     .compact-controls { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
         padding: 2rem; 
         border-radius: 20px; 
         margin-bottom: 2.5rem; 
-        border: 1px solid #30343f !important; 
+        border: 1px solid #9a0660 !important; 
         box-shadow: 0 8px 25px rgba(14, 17, 23, 0.4) !important;
     }
     .compact-controls h4 {
@@ -105,9 +105,9 @@ st.markdown("""
         font-size: 1.2rem !important;
     }
     
-    /* Abas Elegantes */
+    /* Abas Elegantes - Tema Vinho */
     .main .stTabs [data-baseweb="tab-list"] { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
         border-radius: 12px !important; 
         padding: 0.5rem !important;
         margin-bottom: 2rem !important;
@@ -134,9 +134,9 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3) !important;
     }
     
-    /* DataFrames Elegantes */
+    /* DataFrames Elegantes - Tema Vinho */
     .main .stDataFrame { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
         color: #fafafa !important; 
         border-radius: 12px !important;
         overflow: hidden !important;
@@ -162,10 +162,10 @@ st.markdown("""
         box-shadow: 0 6px 18px rgba(255, 107, 53, 0.4) !important;
     }
     
-    /* Alertas Melhorados */
+    /* Alertas Melhorados - Tema Vinho */
     .main .stAlert { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
-        border: 1px solid #30343f !important; 
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
+        border: 1px solid #9a0660 !important; 
         color: #fafafa !important;
         border-radius: 12px !important;
         box-shadow: 0 4px 12px rgba(14, 17, 23, 0.3) !important;
@@ -183,9 +183,9 @@ st.markdown("""
         border-left: 4px solid #2196f3 !important;
     }
     
-    /* Expanderes Refinados */
+    /* Expanderes Refinados - Tema Vinho */
     .main .streamlit-expanderHeader { 
-        background: linear-gradient(135deg, #262730 0%, #2a2d3a 100%) !important;
+        background: linear-gradient(135deg, #7a0440 0%, #8b0550 100%) !important;
         color: #fafafa !important;
         border-radius: 10px !important;
         font-weight: 600 !important;
@@ -556,104 +556,102 @@ if not df_plot.empty:
 # Reduzir espaçamento antes do gráfico
 st.markdown('<div style="margin: 0.5rem 0;"></div>', unsafe_allow_html=True)
 
-# --- GRÁFICO DO ECOSSISTEMA (SEM ABAS) ---
 if not df_plot.empty:
     with st.container(border=True):
         st.markdown(f"### 📈 Evolução dos Saldos do Ecossistema ({granularidade})")
-        
-        # --- SISTEMA DE CORES DINÂMICAS ---
-        def gerar_paleta_dinamica(empresas_selecionadas):
-            """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
-            # Paletas complementares para cada empresa principal
-            paletas_complementares = {
-                'Alura': {  # Base azul escuro
-                    'Saldo do Ecossistema': '#ffffff',  # Branco
-                    'Alura': '#1a5490',     # Azul escuro
-                    'FIAP': '#cc0000',      # Vermelho escuro
-                    'PM3': '#663399',       # Roxo escuro
-                    'Empresa Geral': '#ffc107',
-                    'Casa do Código': '#795548',
-                    'Caelum': '#607d8b',
-                    'INSTITUTO FIAP': '#cc0000'
-                },
-                'FIAP': {  # Base vermelho escuro
-                    'Saldo do Ecossistema': '#ffffff',  # Branco
-                    'Alura': '#1a5490',     # Azul escuro
-                    'FIAP': '#cc0000',      # Vermelho escuro
-                    'PM3': '#663399',       # Roxo escuro
-                    'Empresa Geral': '#ff9800',
-                    'Casa do Código': '#5d4037',
-                    'Caelum': '#455a64',
-                    'INSTITUTO FIAP': '#cc0000'
-                },
-                'PM3': {  # Base roxo escuro
-                    'Saldo do Ecossistema': '#ffffff',  # Branco
-                    'Alura': '#1a5490',     # Azul escuro
-                    'FIAP': '#cc0000',      # Vermelho escuro
-                    'PM3': '#663399',       # Roxo escuro
-                    'Empresa Geral': '#cddc39', # Lima
-                    'Casa do Código': '#6d4c41', # Marrom médio
-                    'Caelum': '#37474f',    # Cinza azulado
-                    'INSTITUTO FIAP': '#ff5722'
-                }
+    
+    # --- SISTEMA DE CORES DINÂMICAS ---
+    def gerar_paleta_dinamica(empresas_selecionadas):
+        """Gera paleta de cores dinâmica baseada nas empresas selecionadas"""
+        # Paletas complementares para cada empresa principal
+        paletas_complementares = {
+            'Alura': {  # Base azul escuro
+                'Saldo do Ecossistema': '#ffffff',  # Branco
+                'Alura': '#1a5490',     # Azul escuro
+                'FIAP': '#cc0000',      # Vermelho escuro
+                'PM3': '#663399',       # Roxo escuro
+                'Empresa Geral': '#ffc107',
+                'Casa do Código': '#795548',
+                'Caelum': '#607d8b',
+                'INSTITUTO FIAP': '#cc0000'
+            },
+            'FIAP': {  # Base vermelho escuro
+                'Saldo do Ecossistema': '#ffffff',  # Branco
+                'Alura': '#1a5490',     # Azul escuro
+                'FIAP': '#cc0000',      # Vermelho escuro
+                'PM3': '#663399',       # Roxo escuro
+                'Empresa Geral': '#ff9800',
+                'Casa do Código': '#5d4037',
+                'Caelum': '#455a64',
+                'INSTITUTO FIAP': '#cc0000'
+            },
+            'PM3': {  # Base roxo escuro
+                'Saldo do Ecossistema': '#ffffff',  # Branco
+                'Alura': '#1a5490',     # Azul escuro
+                'FIAP': '#cc0000',      # Vermelho escuro
+                'PM3': '#663399',       # Roxo escuro
+                'Empresa Geral': '#cddc39', # Lima
+                'Casa do Código': '#6d4c41', # Marrom médio
+                'Caelum': '#37474f',    # Cinza azulado
+                'INSTITUTO FIAP': '#ff5722'
             }
-            
-            # Determinar empresa principal (primeira selecionada ou Alura como padrão)
-            empresa_principal = 'Alura'  # Padrão
-            if empresas_selecionadas:
-                if 'Alura' in empresas_selecionadas:
-                    empresa_principal = 'Alura'
-                elif 'FIAP' in empresas_selecionadas:
-                    empresa_principal = 'FIAP'
-                elif 'PM3' in empresas_selecionadas:
-                    empresa_principal = 'PM3'
-                else:
-                    empresa_principal = empresas_selecionadas[0]
-            
-            # Retornar paleta baseada na empresa principal
-            return paletas_complementares.get(empresa_principal, paletas_complementares['Alura'])
+        }
         
-        # Gerar paleta dinâmica
-        cores_empresas = gerar_paleta_dinamica(empresas_selecionadas)
+        # Determinar empresa principal (primeira selecionada ou Alura como padrão)
+        empresa_principal = 'Alura'  # Padrão
+        if empresas_selecionadas:
+            if 'Alura' in empresas_selecionadas:
+                empresa_principal = 'Alura'
+            elif 'FIAP' in empresas_selecionadas:
+                empresa_principal = 'FIAP'
+            elif 'PM3' in empresas_selecionadas:
+                empresa_principal = 'PM3'
+            else:
+                empresa_principal = empresas_selecionadas[0]
+        
+        # Retornar paleta baseada na empresa principal
+        return paletas_complementares.get(empresa_principal, paletas_complementares['Alura'])
+    # Gerar paleta dinâmica
+    cores_empresas = gerar_paleta_dinamica(empresas_selecionadas)
 
-        # Gráfico de linha com rótulos de dados abreviados em negrito (ex: R$ 1.2M)
-        fig_line = px.line(
-            df_plot,
-            x='Periodo',
-            y='Saldo_do_Dia',
-            color='Empresa',
-            markers=True,
-            title=None,
-            labels={'Saldo_do_Dia': 'Saldo (R$)', 'Periodo': periodo_label},
-            color_discrete_map=cores_empresas,
-            text=df_plot['Saldo_do_Dia'].apply(lambda x: f"<b>R$ {x/1_000_000:.1f}M</b>")
-        )
+    # Gráfico de linha com rótulos de dados abreviados em negrito (ex: R$ 1.2M)
+    fig_line = px.line(
+        df_plot,
+        x='Periodo',
+        y='Saldo_do_Dia',
+        color='Empresa',
+        markers=True,
+        title=None,
+        labels={'Saldo_do_Dia': 'Saldo (R$)', 'Periodo': periodo_label},
+        color_discrete_map=cores_empresas,
+        text=df_plot['Saldo_do_Dia'].apply(lambda x: f"<b>R$ {x/1_000_000:.1f}M</b>")
+    )
 
-        fig_line.update_layout(
-            xaxis_title=f"{periodo_label}",
-            yaxis_title="Saldo (R$)",
-            legend_title="Empresa/Consolidado",
-            hovermode='x unified',
-            height=600,
-            margin=dict(l=20, r=20, t=20, b=20),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            showlegend=True,
-            font=dict(family="Arial Black", size=12, color='white'),
-            xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
-            yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)')
-        )
+    fig_line.update_layout(
+        xaxis_title=f"{periodo_label}",
+        yaxis_title="Saldo (R$)",
+        legend_title="Empresa/Consolidado",
+        hovermode='x unified',
+        height=600,
+        margin=dict(l=20, r=20, t=20, b=20),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        showlegend=True,
+        font=dict(family="Arial Black", size=12, color='white'),
+        xaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)'),
+        yaxis=dict(color='white', gridcolor='rgba(255,255,255,0.1)')
+    )
 
-        fig_line.update_traces(
-            mode='lines+markers+text',
-            line=dict(width=3),
-            marker=dict(size=8, color='white'),
-            textposition="top center",
-            textfont=dict(size=11, family="Arial Black", color='white'),
-            showlegend=True
-        )
+    fig_line.update_traces(
+        mode='lines+markers+text',
+        line=dict(width=3),
+        marker=dict(size=8, color='white'),
+        textposition="top center",
+        textfont=dict(size=11, family="Arial Black", color='white'),
+        showlegend=True
+    )
 
-        st.plotly_chart(fig_line, use_container_width=True)
+    st.plotly_chart(fig_line, use_container_width=True)
 
     # --- DADOS TABULARES ORDENADOS POR DATA (MAIS RECENTE PRIMEIRO) ---
     st.markdown("### 🗃️ Dados Consolidados")
