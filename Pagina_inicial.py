@@ -92,7 +92,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("### Navegação")
-    st.page_link("Pagina_inicial.py", label="Saldos do Ecossistema", icon="💰")
+    st.page_link("pages/Saldos_do_Ecossistema.py", label="Saldos do Ecossistema", icon="💰")
     st.page_link("pages/Planejamento_Estrategico.py", label="Planejamento Estratégico", icon="🎯")
 
 col_refresh = st.columns([3, 1])
