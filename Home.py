@@ -36,8 +36,8 @@ elif st.session_state.file_hash != current_hash:
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    page_title="💰 Saldos do Ecossistema",
-    page_icon="💰",
+    page_title="🏠 ALUN - Dashboard Financeiro",
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
