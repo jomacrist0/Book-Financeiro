@@ -502,13 +502,18 @@ with tab2:
         for path in possible_paths:
             if os.path.exists(path):
                 # Tentar múltiplos encodings (Excel BR usa ISO-8859-1 ou cp1252)
-                encodings = ['utf-8', 'iso-8859-1', 'latin1', 'cp1252']
+                encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
                 for encoding in encodings:
                     try:
                         # Tentar com ponto-e-vírgula primeiro (padrão Excel BR)
                         df = pd.read_csv(path, encoding=encoding, sep=';')
                         if len(df.columns) == 1:  # Se não separou, tentar com vírgula
                             df = pd.read_csv(path, encoding=encoding, sep=',')
+                        
+                        # Garantir que strings estão em UTF-8
+                        for col in df.select_dtypes(include=['object']).columns:
+                            df[col] = df[col].apply(lambda x: x if pd.isna(x) else str(x))
+                        
                         return df
                     except (UnicodeDecodeError, Exception):
                         continue
@@ -947,93 +952,7 @@ with tab2:
         )
         st.plotly_chart(fig_radar, use_container_width=True)
     
-    # === GRÁFICO 2: Barras Comparativas Valor vs Meta ===
-    st.markdown("### 📈 Comparativo: Realizado vs Meta")
-    
-    df_num = df_graficos[~df_graficos['COMO_PREENCHER'].str.contains('Sim ou Não', na=False)].copy()
-    
-    if not df_num.empty:
-        col_b1, col_b2 = st.columns(2)
-        
-        with col_b1:
-            df_maior = df_num[df_num['INDICADOR'].isin([
-                'Trilha da Lívia', 'Automações construídas', 'PMP - Prazo Médio de Pagamento',
-                'Cashback Mensal', 'Percentual CDI de rendimento', 'Conversão em caixa (últimos 2 anos)'
-            ])].copy()
-            
-            if not df_maior.empty:
-                fig_bar1 = go.Figure()
-                fig_bar1.add_trace(go.Bar(
-                    name='Realizado',
-                    x=df_maior['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
-                    y=df_maior['VALOR_NUM'],
-                    marker_color='#DC143C',
-                    text=df_maior['VALOR_NUM'].apply(lambda x: f"{x:.1f}"),
-                    textposition='outside',
-                    textfont=dict(color='white')
-                ))
-                fig_bar1.add_trace(go.Bar(
-                    name='Meta',
-                    x=df_maior['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
-                    y=df_maior['META_NUM'],
-                    marker_color='rgba(255, 215, 0, 0.6)',
-                    text=df_maior['META_NUM'].apply(lambda x: f"{x:.0f}"),
-                    textposition='outside',
-                    textfont=dict(color='white')
-                ))
-                fig_bar1.update_layout(
-                    title='↑ Maior = Melhor',
-                    barmode='group',
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='white'),
-                    height=350,
-                    showlegend=True,
-                    legend=dict(orientation="h", y=1.1),
-                    xaxis=dict(tickangle=45)
-                )
-                st.plotly_chart(fig_bar1, use_container_width=True)
-        
-        with col_b2:
-            df_menor = df_num[df_num['INDICADOR'].isin([
-                'SLA 1ª Resposta (cliente interno)', 'Desvio entre financeiro e contábil',
-                'Saldo de irregularidades', 'Tickets na Caixa', 'SLA 1ª Resposta (tickets)'
-            ])].copy()
-            
-            if not df_menor.empty:
-                fig_bar2 = go.Figure()
-                fig_bar2.add_trace(go.Bar(
-                    name='Realizado',
-                    x=df_menor['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
-                    y=df_menor['VALOR_NUM'],
-                    marker_color='#DC143C',
-                    text=df_menor['VALOR_NUM'].apply(lambda x: f"{x:.1f}"),
-                    textposition='outside',
-                    textfont=dict(color='white')
-                ))
-                fig_bar2.add_trace(go.Bar(
-                    name='Meta (máx)',
-                    x=df_menor['INDICADOR'].apply(lambda x: x[:20] + '...' if len(x) > 20 else x),
-                    y=df_menor['META_NUM'],
-                    marker_color='rgba(255, 215, 0, 0.6)',
-                    text=df_menor['META_NUM'].apply(lambda x: f"{x:.0f}"),
-                    textposition='outside',
-                    textfont=dict(color='white')
-                ))
-                fig_bar2.update_layout(
-                    title='↓ Menor = Melhor',
-                    barmode='group',
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='white'),
-                    height=350,
-                    showlegend=True,
-                    legend=dict(orientation="h", y=1.1),
-                    xaxis=dict(tickangle=45)
-                )
-                st.plotly_chart(fig_bar2, use_container_width=True)
-    
-    # === GRÁFICO 3: Status dos Indicadores Booleanos ===
+    # === STATUS DOS INDICADORES BOOLEANOS ===
     df_bool = df_graficos[df_graficos['COMO_PREENCHER'].str.contains('Sim ou Não', na=False)].copy()
     
     if not df_bool.empty:
