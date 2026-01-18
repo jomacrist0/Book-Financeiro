@@ -958,9 +958,11 @@ with tab2:
     if not df_bool.empty:
         st.markdown("### ✅ Status de Implementações")
         
-        cols_bool = st.columns(len(df_bool))
-        for i, (_, row) in enumerate(df_bool.iterrows()):
-            with cols_bool[i]:
+        # Layout vertical para evitar corte de texto
+        for _, row in df_bool.iterrows():
+            col1, col2, col3 = st.columns([1, 4, 1])
+            
+            with col2:
                 valor = str(row['VALOR']).lower().strip()
                 implementado = valor in ['sim', 's', '1', 'true', 'yes']
                 
@@ -968,13 +970,16 @@ with tab2:
                 icone = '✅' if implementado else '❌'
                 status_txt = 'Implementado' if implementado else 'Pendente'
                 
+                # Garantir que o indicador está em UTF-8
+                indicador_nome = str(row['INDICADOR'])
+                
                 st.markdown(f"""
                     <div style='background: linear-gradient(135deg, {cor}22, {cor}11); 
                                 border: 2px solid {cor}; border-radius: 10px; 
-                                padding: 20px; text-align: center;'>
+                                padding: 20px; text-align: center; margin-bottom: 10px;'>
                         <div style='font-size: 40px;'>{icone}</div>
-                        <div style='color: white; font-weight: bold; margin-top: 10px;'>
-                            {row['INDICADOR'][:25]}{'...' if len(row['INDICADOR']) > 25 else ''}
+                        <div style='color: white; font-weight: bold; margin-top: 10px; font-size: 16px;'>
+                            {indicador_nome}
                         </div>
                         <div style='color: {cor}; font-size: 14px; margin-top: 5px;'>
                             {status_txt}
