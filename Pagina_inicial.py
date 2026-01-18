@@ -501,15 +501,20 @@ with tab2:
         
         for path in possible_paths:
             if os.path.exists(path):
-                try:
-                    # Tentar com ponto-e-vírgula primeiro (padrão Excel BR)
-                    df = pd.read_csv(path, encoding='utf-8', sep=';')
-                    if len(df.columns) == 1:  # Se não separou, tentar com vírgula
-                        df = pd.read_csv(path, encoding='utf-8', sep=',')
-                    return df
-                except Exception as e:
-                    st.error(f"Erro ao carregar dados: {e}")
-                    return None
+                # Tentar múltiplos encodings (Excel BR usa ISO-8859-1 ou cp1252)
+                encodings = ['utf-8', 'iso-8859-1', 'latin1', 'cp1252']
+                for encoding in encodings:
+                    try:
+                        # Tentar com ponto-e-vírgula primeiro (padrão Excel BR)
+                        df = pd.read_csv(path, encoding=encoding, sep=';')
+                        if len(df.columns) == 1:  # Se não separou, tentar com vírgula
+                            df = pd.read_csv(path, encoding=encoding, sep=',')
+                        return df
+                    except (UnicodeDecodeError, Exception):
+                        continue
+                
+                st.error(f"Não foi possível ler o arquivo com nenhum encoding. Tente salvar como UTF-8.")
+                return None
         
         st.warning("Arquivo dados_mensais.csv não encontrado na pasta /data")
         return None
