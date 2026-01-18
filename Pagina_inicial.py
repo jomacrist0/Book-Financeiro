@@ -499,6 +499,27 @@ with tab2:
             os.path.join("data", "dados_mensais.csv"),
         ]
         
+        def fix_encoding_issues(text):
+            """Corrige problemas comuns de encoding"""
+            if pd.isna(text):
+                return text
+            text = str(text)
+            # Corrigir caracteres mal-decodificados
+            replacements = {
+                'Ã¡': 'á', 'Ã©': 'é', 'Ã­': 'í', 'Ã³': 'ó', 'Ãº': 'ú',
+                'Ã¢': 'â', 'Ãª': 'ê', 'Ã´': 'ô',
+                'Ã£': 'ã', 'Ãµ': 'õ',
+                'Ã§': 'ç',
+                'Ã': 'Á', 'Ã‰': 'É', 'Ã': 'Í', 'Ã"': 'Ó', 'Ãš': 'Ú',
+                'Ã‚': 'Â', 'ÃŠ': 'Ê', 'Ã"': 'Ô',
+                'Ãƒ': 'Ã', 'Ã•': 'Õ',
+                'Ã‡': 'Ç',
+                'Âª': 'ª', 'Âº': 'º'
+            }
+            for wrong, right in replacements.items():
+                text = text.replace(wrong, right)
+            return text
+        
         for path in possible_paths:
             if os.path.exists(path):
                 # Tentar múltiplos encodings (Excel BR usa ISO-8859-1 ou cp1252)
@@ -510,9 +531,9 @@ with tab2:
                         if len(df.columns) == 1:  # Se não separou, tentar com vírgula
                             df = pd.read_csv(path, encoding=encoding, sep=',')
                         
-                        # Garantir que strings estão em UTF-8
+                        # Corrigir encoding em todas as colunas de texto
                         for col in df.select_dtypes(include=['object']).columns:
-                            df[col] = df[col].apply(lambda x: x if pd.isna(x) else str(x))
+                            df[col] = df[col].apply(fix_encoding_issues)
                         
                         return df
                     except (UnicodeDecodeError, Exception):
