@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -8,15 +9,13 @@ from datetime import datetime, timedelta
 import base64
 import hashlib
 
-# --- CONFIGURAÇÃO DA PÁGINA (DEVE SER PRIMEIRO) ---
 st.set_page_config(
-    page_title="💰 Saldos do Ecossistema",
-    page_icon="💰",
+    page_title="Saldos do Ecossistema",
+    page_icon="chart_with_upwards_trend",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- AUTENTICAÇÃO ---
 SENHA_CORRETA = "saldosalun2026"
 
 def verificar_autenticacao():
@@ -26,7 +25,7 @@ def verificar_autenticacao():
     if not st.session_state.autenticado:
         st.markdown("""
         <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
-            <h1 style="color: #ff6b35; text-align: center;">🔐 Acesso Restrito</h1>
+            <h1 style="color: #ff6b35; text-align: center;">Acesso Restrito</h1>
         </div>
         """, unsafe_allow_html=True)
         
@@ -40,13 +39,12 @@ def verificar_autenticacao():
                     st.session_state.autenticado = True
                     st.rerun()
                 else:
-                    st.error("❌ Senha incorreta!")
+                    st.error("Senha incorreta!")
         
         st.stop()
 
 verificar_autenticacao()
 
-# --- CSS CUSTOMIZADO COM TEMA VERMELHO VINHO ---
 st.markdown("""
 <style>
     .main > div { background: transparent !important; }
@@ -74,7 +72,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR COM LOGO ALUN ---
 with st.sidebar:
     st.markdown("""
     <div style="text-align: center; padding: 2rem 0; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 15px; margin-bottom: 2rem;">
@@ -83,25 +80,21 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# --- BOTÃO DE ATUALIZAÇÃO ---
 col_refresh = st.columns([3, 1])
 with col_refresh[1]:
-    if st.button("🔄 Atualizar Dados", type="primary"):
+    if st.button("Atualizar Dados", type="primary"):
         st.cache_data.clear()
-        st.success("✅ Cache limpo!")
+        st.success("Cache limpo!")
         st.rerun()
 
-# --- HEADER ---
 st.markdown("""
 <div style="text-align: center; margin-bottom: 2rem;">
-    <h1 style="color: #fafafa; font-weight: 700; margin-bottom: 0;">💰 Dashboard de Saldos do Ecossistema</h1>
-    <p style="color: #ccc; font-size: 1.1em;">Análise Financeira Integrada do Ecossistema</p>
+    <h1 style="color: #fafafa; font-weight: 700; margin-bottom: 0;">Dashboard de Saldos do Ecossistema</h1>
+    <p style="color: #ccc; font-size: 1.1em;">Analise Financeira Integrada do Ecossistema</p>
 </div>
 """, unsafe_allow_html=True)
 
-# --- FUNÇÕES ---
 def load_data():
-    """Carrega e processa os dados do arquivo XLSX."""
     possible_paths = [
         os.path.join(os.path.dirname(__file__), "data", "1Saldos - ecossistema.xlsx"),
         os.path.join(os.getcwd(), "data", "1Saldos - ecossistema.xlsx"),
@@ -115,7 +108,7 @@ def load_data():
             break
     
     if xlsx_path is None:
-        st.error("❌ Arquivo '1Saldos - ecossistema.xlsx' não encontrado em /data")
+        st.error("Arquivo '1Saldos - ecossistema.xlsx' nao encontrado em /data")
         return None
     
     try:
@@ -127,7 +120,7 @@ def load_data():
         col_saldo = next((c for c in df.columns if 'saldo' in c.lower() and 'final' in c.lower()), None)
         
         if not col_data or not col_saldo:
-            st.error("❌ Colunas esperadas não encontradas no Excel.")
+            st.error("Colunas esperadas nao encontradas no Excel.")
             return None
         
         if not col_empresa:
@@ -154,11 +147,10 @@ def load_data():
         return df
         
     except Exception as e:
-        st.error(f"❌ Erro ao carregar o arquivo: {e}")
+        st.error(f"Erro ao carregar o arquivo: {e}")
         return None
 
 def process_data(df):
-    """Processa os dados para agregação por empresa e ecossistema."""
     df_empresa_dia = (
         df.groupby(['Empresa', 'Data'], as_index=False)['Saldo_Final']
         .sum()
@@ -173,7 +165,6 @@ def process_data(df):
     return df_consolidado, df_empresa_dia, df_ecossistema
 
 def agregar_por_granularidade(df, granularidade):
-    """Agrega dados conforme a granularidade selecionada."""
     df_temp = df.copy()
     
     if granularidade == "Semanal":
@@ -181,7 +172,7 @@ def agregar_por_granularidade(df, granularidade):
         periodo_label = "Semana"
     elif granularidade == "Mensal":
         df_temp['Periodo'] = df_temp['Data'].dt.to_period('M').apply(lambda x: x.start_time)
-        periodo_label = "Mês"
+        periodo_label = "Mes"
     else:
         df_temp['Periodo'] = df_temp['Data']
         periodo_label = "Dia"
@@ -195,7 +186,6 @@ def agregar_por_granularidade(df, granularidade):
     
     return df_agrupado, periodo_label
 
-# --- CARREGAR DADOS ---
 df = load_data()
 
 if df is None:
@@ -204,7 +194,6 @@ if df is None:
 result = process_data(df)
 df_consolidado, df_empresa_dia, df_ecossistema = result
 
-# Datas disponíveis
 datas_unicas = df_consolidado['Data'].drop_duplicates().sort_values(ascending=False)
 datas_15_mais_recentes = datas_unicas.head(15)
 data_mais_antiga_dos_15 = datas_15_mais_recentes.min()
@@ -212,15 +201,14 @@ data_mais_recente = datas_15_mais_recentes.max()
 data_mais_antiga_disponivel = datas_unicas.min()
 data_mais_recente_disponivel = datas_unicas.max()
 
-# --- CONFIGURAÇÕES ---
-st.markdown('<h4>⚙️ Configurações do Dashboard</h4>', unsafe_allow_html=True)
+st.markdown('<h4>Configuracoes do Dashboard</h4>', unsafe_allow_html=True)
 
 col_config1, col_config2, col_config3, col_config4 = st.columns([2, 2, 2, 2])
 
 with col_config1:
-    st.markdown("**📅 Data Inicial**")
+    st.markdown("**Data Inicial**")
     periodo_inicio = st.date_input(
-        "Período inicial",
+        "Periodo inicial",
         value=data_mais_antiga_dos_15.date(),
         min_value=data_mais_antiga_disponivel.date(),
         max_value=data_mais_recente_disponivel.date(),
@@ -229,9 +217,9 @@ with col_config1:
     )
 
 with col_config2:
-    st.markdown("**📅 Data Final**")
+    st.markdown("**Data Final**")
     periodo_fim = st.date_input(
-        "Período final",
+        "Periodo final",
         value=data_mais_recente_disponivel.date(),
         min_value=data_mais_antiga_disponivel.date(),
         max_value=data_mais_recente_disponivel.date(),
@@ -240,7 +228,7 @@ with col_config2:
     )
 
 with col_config3:
-    st.markdown("**🏢 Empresas**")
+    st.markdown("**Empresas**")
     empresas_disponveis = df_consolidado['Empresa'].unique().tolist()
     default_empresas = ['Alura']
     empresas_selecionadas = st.multiselect(
@@ -251,18 +239,16 @@ with col_config3:
     )
 
 with col_config4:
-    st.markdown("**📊 Granularidade**")
+    st.markdown("**Granularidade**")
     granularidade = st.selectbox(
         "Granularidade:",
-        options=["Diário", "Semanal", "Mensal"],
+        options=["Diario", "Semanal", "Mensal"],
         index=0,
         label_visibility="collapsed"
     )
 
-# --- INFO DO PERÍODO ---
-st.info(f"📅 **Período selecionado:** {periodo_inicio.strftime('%d/%m/%Y')} até {periodo_fim.strftime('%d/%m/%Y')}")
+st.info(f"Periodo selecionado: {periodo_inicio.strftime('%d/%m/%Y')} ate {periodo_fim.strftime('%d/%m/%Y')}")
 
-# --- FILTRAR DADOS ---
 df_filtrado = df_consolidado[
     (df_consolidado['Data'] >= pd.to_datetime(periodo_inicio)) &
     (df_consolidado['Data'] <= pd.to_datetime(periodo_fim)) &
@@ -271,7 +257,6 @@ df_filtrado = df_consolidado[
 
 df_plot, periodo_label = agregar_por_granularidade(df_filtrado, granularidade)
 
-# --- MÉTRICAS PRINCIPAIS ---
 if not df_plot.empty:
     df_todas_empresas = df_consolidado[
         (df_consolidado['Data'] >= pd.to_datetime(periodo_inicio)) &
@@ -293,17 +278,16 @@ if not df_plot.empty:
     
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("🌐 Ecossistema", f"R$ {saldo_ecossistema/1_000_000:.1f}M")
+        st.metric("Ecossistema", f"R$ {saldo_ecossistema/1_000_000:.1f}M")
     with col2:
-        st.metric("🎓 Alura", f"R$ {saldo_alura/1_000_000:.1f}M")
+        st.metric("Alura", f"R$ {saldo_alura/1_000_000:.1f}M")
     with col3:
-        st.metric("🏫 FIAP", f"R$ {saldo_fiap/1_000_000:.1f}M")
+        st.metric("FIAP", f"R$ {saldo_fiap/1_000_000:.1f}M")
     with col4:
-        st.metric("💼 PM3", f"R$ {saldo_pm3/1_000_000:.1f}M")
+        st.metric("PM3", f"R$ {saldo_pm3/1_000_000:.1f}M")
 
-# --- GRÁFICO ---
 if not df_plot.empty:
-    st.markdown(f"### 📈 Evolução dos Saldos ({granularidade})")
+    st.markdown(f"### Evolucao dos Saldos ({granularidade})")
     
     cores_empresas = {
         'Saldo do Ecossistema': '#ffffff',
@@ -344,8 +328,7 @@ if not df_plot.empty:
     
     st.plotly_chart(fig_line, use_container_width=True)
     
-    # --- TABELA ---
-    st.markdown("### 🗃️ Dados Consolidados")
+    st.markdown("### Dados Consolidados")
     
     df_tabela = df_plot.copy()
     df_tabela['Data'] = df_tabela['Periodo'].dt.strftime('%d/%m/%Y')
@@ -363,21 +346,19 @@ if not df_plot.empty:
         height=400
     )
     
-    # Download
     csv_data = df_tabela[['Data', 'Empresa', 'Saldo_Formatado']].to_csv(index=False)
     st.download_button(
-        label="📥 Baixar dados como CSV",
+        label="Baixar dados como CSV",
         data=csv_data,
         file_name=f"saldos_ecossistema_{periodo_inicio}_{periodo_fim}.csv",
         mime="text/csv"
     )
 else:
-    st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados.")
+    st.warning("Nenhum dado encontrado para os filtros selecionados.")
 
-# --- FOOTER ---
 st.markdown("""
 <div style='text-align: center; color: #666666; font-size: 0.9em; margin-top: 2rem;'>
     <div style="background: #1a1a1a; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block;">ALUN</div>
-    <br>📊 Dashboard de Saldos do Ecossistema | Atualizado automaticamente
+    <br>Dashboard de Saldos do Ecossistema | Atualizado automaticamente
 </div>
 """, unsafe_allow_html=True)
