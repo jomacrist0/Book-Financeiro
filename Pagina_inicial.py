@@ -490,7 +490,7 @@ with tab2:
     st.markdown("---")
 
     # === CARREGAR DADOS DO ARQUIVO ÚNICO ===
-    @st.cache_data
+    @st.cache_data(ttl=60)  # Cache por apenas 60 segundos para pegar atualizações rápido
     def load_dados_mensais():
         """Carrega dados do arquivo único dados_mensais.csv"""
         possible_paths = [
