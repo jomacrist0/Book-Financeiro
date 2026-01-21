@@ -1266,8 +1266,7 @@ with tab3:
             yanchor="bottom",
             y=1.02,
             xanchor="center",
-            x=0.5,
-            font=dict(size=12)
+            x=0.5
         ),
         xaxis=dict(
             title='Período',
@@ -1276,15 +1275,11 @@ with tab3:
         ),
         yaxis=dict(
             title='Dívida Líquida (R$ MM)',
-            titlefont=dict(color='#DC143C'),
-            tickfont=dict(color='#DC143C'),
             showgrid=True,
             gridcolor='rgba(255,255,255,0.1)'
         ),
         yaxis2=dict(
             title='Dívida Líquida / EBITDA',
-            titlefont=dict(color='#FF8C00'),
-            tickfont=dict(color='#FF8C00'),
             overlaying='y',
             side='right'
         ),
