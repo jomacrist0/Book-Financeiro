@@ -191,7 +191,7 @@ with st.sidebar:
         st.rerun()
 
 # === NAVEGAÇÃO POR ABAS ===
-tab1, tab2 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico"])
+tab1, tab2, tab3 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico", "📊 Endividamento"])
 
 # ==========================
 # ABA 1: SALDOS DO ECOSSISTEMA
@@ -1070,6 +1070,264 @@ with tab2:
         <div style='text-align: center; padding: 20px; opacity: 0.7;'>
             <p style='color: #FFFFFF; font-size: 0.9rem;'>
                 🎯 Planejamento Estratégico | Dados de: {df_filtrado['MES'].iloc[0]}/{df_filtrado['ANO'].iloc[0]}
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ==========================
+# ABA 3: ENDIVIDAMENTO
+# ==========================
+with tab3:
+    aplicar_css_planejamento()
+    
+    st.markdown("""
+        <div style='text-align: center; padding: 20px 0;'>
+            <h1 style='color: #DC143C; font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;'>
+                📊 Análise de Endividamento
+            </h1>
+            <p style='color: #FFFFFF; font-size: 1.2rem; opacity: 0.9;'>
+                Evolução da Dívida Líquida e Indicadores de Alavancagem
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # === CARREGAR DADOS DE ENDIVIDAMENTO ===
+    @st.cache_data(ttl=60)
+    def load_endividamento():
+        """Carrega dados de endividamento"""
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "data", "endividamento.csv"),
+            os.path.join(os.getcwd(), "data", "endividamento.csv"),
+            os.path.join("data", "endividamento.csv"),
+        ]
+        
+        def fix_encoding_issues(text):
+            """Corrige problemas comuns de encoding"""
+            if pd.isna(text):
+                return text
+            text = str(text)
+            replacements = {
+                'Ã¡': 'á', 'Ã©': 'é', 'Ã­': 'í', 'Ã³': 'ó', 'Ãº': 'ú',
+                'Ã¢': 'â', 'Ãª': 'ê', 'Ã´': 'ô',
+                'Ã£': 'ã', 'Ãµ': 'õ',
+                'Ã§': 'ç',
+            }
+            for wrong, right in replacements.items():
+                text = text.replace(wrong, right)
+            return text
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
+                for encoding in encodings:
+                    try:
+                        df = pd.read_csv(path, encoding=encoding, sep=';')
+                        if len(df.columns) == 1:
+                            df = pd.read_csv(path, encoding=encoding, sep=',')
+                        
+                        # Corrigir encoding
+                        for col in df.select_dtypes(include=['object']).columns:
+                            df[col] = df[col].apply(fix_encoding_issues)
+                        
+                        return df
+                    except:
+                        continue
+                
+                st.error("Não foi possível ler o arquivo endividamento.csv")
+                return None
+        
+        st.warning("Arquivo endividamento.csv não encontrado na pasta /data")
+        return None
+
+    # Carregar dados
+    df_endiv = load_endividamento()
+    
+    if df_endiv is None:
+        st.error("⚠️ Não foi possível carregar os dados de endividamento")
+        st.stop()
+
+    # === PREPARAR DADOS PARA VISUALIZAÇÃO ===
+    # Extrair linha de Dívida Líquida e Dívida Líquida/EBITDA
+    meses_cols = [col for col in df_endiv.columns if col != 'Metrica']
+    
+    divida_liquida_row = df_endiv[df_endiv['Metrica'] == 'Dívida Líquida']
+    ratio_row = df_endiv[df_endiv['Metrica'] == 'Dívida Líquida/EBITDA']
+    
+    if divida_liquida_row.empty or ratio_row.empty:
+        st.error("Dados de Dívida Líquida ou Ratio não encontrados")
+        st.stop()
+    
+    # Converter para números
+    divida_valores = []
+    ratio_valores = []
+    
+    for mes in meses_cols:
+        try:
+            val_divida = str(divida_liquida_row[mes].values[0]).replace(',', '.')
+            divida_valores.append(float(val_divida))
+        except:
+            divida_valores.append(0)
+        
+        try:
+            val_ratio = str(ratio_row[mes].values[0]).replace(',', '.')
+            ratio_valores.append(float(val_ratio))
+        except:
+            ratio_valores.append(0)
+    
+    # === MÉTRICAS PRINCIPAIS ===
+    col1, col2, col3, col4 = st.columns(4)
+    
+    ultimo_mes = meses_cols[-1]
+    penultimo_mes = meses_cols[-2] if len(meses_cols) > 1 else meses_cols[-1]
+    
+    divida_atual = divida_valores[-1]
+    divida_anterior = divida_valores[-2] if len(divida_valores) > 1 else divida_valores[-1]
+    var_divida = divida_atual - divida_anterior
+    var_perc = (var_divida / divida_anterior * 100) if divida_anterior != 0 else 0
+    
+    ratio_atual = ratio_valores[-1]
+    ratio_anterior = ratio_valores[-2] if len(ratio_valores) > 1 else ratio_valores[-1]
+    var_ratio = ratio_atual - ratio_anterior
+    
+    with col1:
+        st.metric(
+            label=f"💰 Dívida Líquida ({ultimo_mes})",
+            value=f"R$ {divida_atual:,.0f} MM",
+            delta=f"{var_divida:+,.0f} MM ({var_perc:+.1f}%)"
+        )
+    
+    with col2:
+        st.metric(
+            label=f"📊 Dívida Líq./EBITDA ({ultimo_mes})",
+            value=f"{ratio_atual:.2f}x",
+            delta=f"{var_ratio:+.2f}x"
+        )
+    
+    with col3:
+        media_ratio = sum(ratio_valores) / len(ratio_valores)
+        st.metric(
+            label="📈 Média Histórica Ratio",
+            value=f"{media_ratio:.2f}x"
+        )
+    
+    with col4:
+        max_ratio = max(ratio_valores)
+        mes_max = meses_cols[ratio_valores.index(max_ratio)]
+        st.metric(
+            label="⚠️ Pico de Alavancagem",
+            value=f"{max_ratio:.2f}x",
+            delta=f"em {mes_max}"
+        )
+    
+    st.markdown("---")
+    
+    # === GRÁFICO COMBINADO: BARRAS + LINHA (2 EIXOS Y) ===
+    st.markdown("### 📊 Evolução da Dívida Líquida e Alavancagem")
+    
+    fig = go.Figure()
+    
+    # Barras: Dívida Líquida (eixo Y principal - esquerda)
+    fig.add_trace(go.Bar(
+        x=meses_cols,
+        y=divida_valores,
+        name='Dívida Líquida (R$MM)',
+        marker_color='#DC143C',
+        yaxis='y',
+        text=[f"R$ {v:,.0f}" for v in divida_valores],
+        textposition='outside',
+        textfont=dict(color='white', size=10)
+    ))
+    
+    # Linha: Dívida Líquida/EBITDA (eixo Y secundário - direita)
+    fig.add_trace(go.Scatter(
+        x=meses_cols,
+        y=ratio_valores,
+        name='Dív.Líq./EBITDA',
+        mode='lines+markers+text',
+        line=dict(color='#FF8C00', width=3),
+        marker=dict(size=10, color='#FF8C00'),
+        yaxis='y2',
+        text=[f"{v:.2f}x" for v in ratio_valores],
+        textposition='top center',
+        textfont=dict(color='#FF8C00', size=11, weight='bold')
+    ))
+    
+    # Layout com dois eixos Y
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white'),
+        height=500,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        xaxis=dict(
+            title='Período',
+            tickangle=45,
+            showgrid=False
+        ),
+        yaxis=dict(
+            title='Dívida Líquida (R$ MM)',
+            titlefont=dict(color='#DC143C'),
+            tickfont=dict(color='#DC143C'),
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.1)'
+        ),
+        yaxis2=dict(
+            title='Dívida Líquida / EBITDA',
+            titlefont=dict(color='#FF8C00'),
+            tickfont=dict(color='#FF8C00'),
+            overlaying='y',
+            side='right',
+            showgrid=False
+        ),
+        hovermode='x unified'
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # === TABELA DETALHADA ===
+    st.markdown("---")
+    st.markdown("### 📋 Composição da Dívida")
+    
+    # Preparar tabela com todas as métricas
+    df_tabela = df_endiv.copy()
+    
+    # Formatar valores numéricos
+    for col in meses_cols:
+        df_tabela[col] = df_tabela[col].apply(
+            lambda x: f"R$ {float(str(x).replace(',', '.')):,.0f}" if pd.notna(x) and str(x).replace(',', '.').replace('-', '').replace('.', '').isdigit() else str(x).replace('.', ',')
+        )
+    
+    st.dataframe(
+        df_tabela,
+        use_container_width=True,
+        height=400
+    )
+    
+    # Download CSV
+    csv_data = df_endiv.to_csv(index=False, sep=';')
+    st.download_button(
+        label="📥 Baixar dados como CSV",
+        data=csv_data,
+        file_name="endividamento.csv",
+        mime="text/csv"
+    )
+    
+    # Footer
+    st.markdown("---")
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px; opacity: 0.7;'>
+            <p style='color: #FFFFFF; font-size: 0.9rem;'>
+                📊 Endividamento | Último período: {meses_cols[-1]}
             </p>
         </div>
     """, unsafe_allow_html=True)
