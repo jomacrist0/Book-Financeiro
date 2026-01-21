@@ -1251,7 +1251,7 @@ with tab3:
         yaxis='y2',
         text=[f"{v:.2f}x" for v in ratio_valores],
         textposition='top center',
-        textfont=dict(color='#FF8C00', size=11, weight='bold')
+        textfont=dict(color='#FF8C00', size=11)
     ))
     
     # Layout com dois eixos Y
@@ -1286,8 +1286,7 @@ with tab3:
             titlefont=dict(color='#FF8C00'),
             tickfont=dict(color='#FF8C00'),
             overlaying='y',
-            side='right',
-            showgrid=False
+            side='right'
         ),
         hovermode='x unified'
     )
