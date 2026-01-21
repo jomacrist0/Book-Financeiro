@@ -1228,16 +1228,16 @@ with tab3:
     
     fig = go.Figure()
     
-    # Barras: Dívida Líquida (eixo Y principal - esquerda)
+    # Barras: Dívida Líquida (eixo Y principal - esquerda) - vermelho vinho
     fig.add_trace(go.Bar(
         x=meses_cols,
         y=divida_valores,
-        name='Dívida Líquida (R$MM)',
-        marker_color='#DC143C',
+        name='Dívida Líquida (R$ MM)',
+        marker_color='#722F37',
         yaxis='y',
-        text=[f"R$ {v:,.0f}" for v in divida_valores],
+        text=[f"R$ {v:,.0f}".replace(",", ".") for v in divida_valores],
         textposition='outside',
-        textfont=dict(color='white', size=10)
+        textfont=dict(color='white', size=9)
     ))
     
     # Linha: Dívida Líquida/EBITDA (eixo Y secundário - direita)
@@ -1245,16 +1245,14 @@ with tab3:
         x=meses_cols,
         y=ratio_valores,
         name='Dív.Líq./EBITDA',
-        mode='lines+markers+text',
+        mode='lines+markers',
         line=dict(color='#FF8C00', width=3),
         marker=dict(size=10, color='#FF8C00'),
         yaxis='y2',
-        text=[f"{v:.2f}x" for v in ratio_valores],
-        textposition='top center',
-        textfont=dict(color='#FF8C00', size=11)
+        hovertemplate='%{y:.2f}x<extra></extra>'
     ))
     
-    # Layout com dois eixos Y
+    # Layout com dois eixos Y - sem gridlines
     fig.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -1275,37 +1273,123 @@ with tab3:
         ),
         yaxis=dict(
             title='Dívida Líquida (R$ MM)',
-            showgrid=True,
-            gridcolor='rgba(255,255,255,0.1)'
+            showgrid=False,
+            range=[0, max(divida_valores) * 1.3]
         ),
         yaxis2=dict(
             title='Dívida Líquida / EBITDA',
             overlaying='y',
-            side='right'
+            side='right',
+            showgrid=False,
+            range=[0, max(ratio_valores) * 1.5]
         ),
-        hovermode='x unified'
+        hovermode='x unified',
+        bargap=0.3
     )
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # === TABELA DETALHADA ===
+    # === TABELA DETALHADA COM ESTILIZAÇÃO ===
     st.markdown("---")
     st.markdown("### 📋 Composição da Dívida")
     
-    # Preparar tabela com todas as métricas
-    df_tabela = df_endiv.copy()
+    # Categorias principais (destacar com cor diferente)
+    categorias_principais = ['Dívida Bruta', 'Caixa e Disponibilidades', 'Dívida Líquida', 'Dívida Líquida/EBITDA']
     
-    # Formatar valores numéricos
-    for col in meses_cols:
-        df_tabela[col] = df_tabela[col].apply(
-            lambda x: f"R$ {float(str(x).replace(',', '.')):,.0f}" if pd.notna(x) and str(x).replace(',', '.').replace('-', '').replace('.', '').isdigit() else str(x).replace('.', ',')
-        )
+    # Função para formatar valores
+    def formatar_valor_tabela(valor, metrica):
+        try:
+            if pd.isna(valor):
+                return "-"
+            val_str = str(valor).replace(',', '.')
+            val_float = float(val_str)
+            
+            # Dívida Líquida/EBITDA é índice, não R$
+            if 'EBITDA' in metrica and 'Dívida' in metrica:
+                return f"{val_float:.2f}x"
+            else:
+                # Formatar como R$ MM sem vírgula para milhar (usar ponto)
+                return f"R$ {val_float:,.0f}".replace(",", ".")
+        except:
+            return str(valor)
     
-    st.dataframe(
-        df_tabela,
-        use_container_width=True,
-        height=400
-    )
+    # Criar HTML da tabela estilizada
+    html_tabela = """
+    <style>
+        .tabela-endiv {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .tabela-endiv th {
+            background-color: #2d2d2d;
+            color: #ffffff;
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 2px solid #444;
+            font-weight: bold;
+        }
+        .tabela-endiv td {
+            padding: 10px 8px;
+            text-align: right;
+            border-bottom: 1px solid #333;
+            color: #e0e0e0;
+        }
+        .tabela-endiv td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+        .tabela-endiv tr:hover {
+            background-color: #2a2a2a;
+        }
+        .categoria-principal {
+            background-color: #3d3d5c !important;
+            font-weight: bold !important;
+        }
+        .categoria-principal td {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+    </style>
+    <table class="tabela-endiv">
+        <thead>
+            <tr>
+                <th>Métrica</th>
+    """
+    
+    # Adicionar colunas de meses
+    for mes in meses_cols:
+        html_tabela += f"<th>{mes}</th>"
+    html_tabela += "</tr></thead><tbody>"
+    
+    # Adicionar linhas
+    for _, row in df_endiv.iterrows():
+        metrica = row['Metrica']
+        is_principal = metrica in categorias_principais
+        classe = 'categoria-principal' if is_principal else ''
+        
+        html_tabela += f'<tr class="{classe}"><td>{metrica}</td>'
+        
+        for mes in meses_cols:
+            valor_formatado = formatar_valor_tabela(row[mes], metrica)
+            html_tabela += f"<td>{valor_formatado}</td>"
+        
+        html_tabela += "</tr>"
+    
+    html_tabela += "</tbody></table>"
+    
+    st.markdown(html_tabela, unsafe_allow_html=True)
+    
+    # Legenda da tabela
+    st.markdown("""
+        <div style='margin-top: 10px; font-size: 12px; color: #888;'>
+            <span style='display: inline-block; width: 15px; height: 15px; background-color: #3d3d5c; margin-right: 5px; vertical-align: middle; border-radius: 3px;'></span>
+            Categorias consolidadas (totais)
+        </div>
+    """, unsafe_allow_html=True)
     
     # Download CSV
     csv_data = df_endiv.to_csv(index=False, sep=';')
