@@ -1,0 +1,4 @@
+Bancos;Classificacao;Data_Emissao;Data_Vencimento;Periodo;Numero_Transacao;Numero_Documento;Fornecedor;CNPJ_CPF;Subsidiaria;Memorando;Valor;Forma_Pagamento;Pedido;Data_Efetivacao;Prazo_Pagamento;Adiantamento;Status;Aprovacao
+Itaú;Pagfor;01/01/2026;15/01/2026;jan 2026;VENDBILL00001;123456;FORNECEDOR EXEMPLO LTDA;12.345.678/0001-90;VSTP - Lins (761-2);Descrição do pagamento aqui;1500,00;Boleto;;15/01/2026;14;Não;Aprovado;15/01/2026
+Santander;Pagfor;05/01/2026;20/01/2026;jan 2026;VENDBILL00002;789012;EMPRESA TESTE SA;98.765.432/0001-21;Caelum;Descrição do pagamento;2500,50;TED;;20/01/2026;15;Não;A aprovar;
+Bradesco;Pagfor;10/01/2026;25/01/2026;jan 2026;VENDBILL00003;345678;SERVICOS GERAIS LTDA;11.222.333/0001-44;PM3;Descrição do pagamento;800,00;CC;;25/01/2026;15;Sim;Reprogramado;30/01/2026

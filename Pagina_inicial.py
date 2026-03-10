@@ -191,7 +191,7 @@ with st.sidebar:
         st.rerun()
 
 # === NAVEGAÇÃO POR ABAS ===
-tab1, tab2, tab3 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico", "📊 Endividamento"])
+tab1, tab2, tab3, tab4 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico", "📊 Endividamento", "💳 Resumo de Pagamentos"])
 
 # ==========================
 # ABA 1: SALDOS DO ECOSSISTEMA
@@ -1409,6 +1409,808 @@ with tab3:
             </p>
         </div>
     """, unsafe_allow_html=True)
+
+# ==========================
+# ABA 4: RESUMO DE PAGAMENTOS
+# ==========================
+with tab4:
+    aplicar_css_planejamento()
+    
+    st.markdown("""
+        <div style='text-align: center; padding: 20px 0;'>
+            <h1 style='color: #DC143C; font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;'>
+                💳 Resumo de Pagamentos
+            </h1>
+            <p style='color: #FFFFFF; font-size: 1.2rem; opacity: 0.9;'>
+                Visão Consolidada de Pagamentos por Empresa e Forma de Pagamento
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # === MAPEAMENTO DE SUBSIDIÁRIAS ===
+    MAPA_SUBSIDIARIAS = {
+        'Caelum': 'Alura',
+        'VSTP - Lins (761-2)': 'FIAP',
+        'PM3': 'PM3'
+    }
+
+    # === CARREGAR DADOS DE PAGAMENTOS ===
+    @st.cache_data(ttl=60)
+    def load_pagamentos():
+        """Carrega dados de pagamentos do CSV ou arquivo carregado"""
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "data", "pagamentos.csv"),
+            os.path.join(os.getcwd(), "data", "pagamentos.csv"),
+            os.path.join("data", "pagamentos.csv"),
+        ]
+        
+        def fix_encoding_issues(text):
+            """Corrige problemas comuns de encoding"""
+            if pd.isna(text):
+                return text
+            text = str(text)
+            replacements = {
+                'Ã¡': 'á', 'Ã©': 'é', 'Ã­': 'í', 'Ã³': 'ó', 'Ãº': 'ú',
+                'Ã¢': 'â', 'Ãª': 'ê', 'Ã´': 'ô',
+                'Ã£': 'ã', 'Ãµ': 'õ',
+                'Ã§': 'ç',
+            }
+            for wrong, right in replacements.items():
+                text = text.replace(wrong, right)
+            return text
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
+                for encoding in encodings:
+                    try:
+                        df = pd.read_csv(path, encoding=encoding, sep=';')
+                        if len(df.columns) == 1:
+                            df = pd.read_csv(path, encoding=encoding, sep=',')
+                        
+                        for col in df.select_dtypes(include=['object']).columns:
+                            df[col] = df[col].apply(fix_encoding_issues)
+                        
+                        return df
+                    except:
+                        continue
+                
+                st.error("Não foi possível ler o arquivo pagamentos.csv")
+                return None
+        
+        return None
+
+    def processar_upload(uploaded_file):
+        """Processa arquivo CSV ou Excel carregado"""
+        try:
+            if uploaded_file.name.endswith('.csv'):
+                encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
+                for encoding in encodings:
+                    try:
+                        df = pd.read_csv(uploaded_file, encoding=encoding, sep=';')
+                        if len(df.columns) == 1:
+                            uploaded_file.seek(0)
+                            df = pd.read_csv(uploaded_file, encoding=encoding, sep=',')
+                        return df
+                    except:
+                        uploaded_file.seek(0)
+                        continue
+            else:
+                df = pd.read_excel(uploaded_file)
+                return df
+        except Exception as e:
+            st.error(f"Erro ao processar arquivo: {e}")
+            return None
+
+    def converter_valor_pagamento(valor):
+        """Converte valor brasileiro para número"""
+        if pd.isna(valor):
+            return 0
+        valor_str = str(valor).strip()
+        valor_str = valor_str.replace('R$', '').replace(' ', '')
+        valor_str = valor_str.replace('.', '').replace(',', '.')
+        try:
+            return float(valor_str)
+        except:
+            return 0
+
+    def identificar_empresa(subsidiaria):
+        """Identifica a empresa com base na subsidiária"""
+        if pd.isna(subsidiaria):
+            return 'Outros'
+        sub_str = str(subsidiaria).strip()
+        return MAPA_SUBSIDIARIAS.get(sub_str, 'Outros')
+
+    # === UPLOAD DE ARQUIVO ===
+    st.markdown("### 📤 Atualização de Dados")
+    
+    col_upload1, col_upload2 = st.columns([2, 1])
+    
+    with col_upload1:
+        uploaded_file = st.file_uploader(
+            "Carregue a planilha de pagamentos (CSV ou Excel):",
+            type=['csv', 'xlsx', 'xls'],
+            key="pagamentos_upload"
+        )
+    
+    with col_upload2:
+        st.markdown("**Formato esperado:**")
+        st.caption("Colunas: Bancos, Classificação, Data de Emissão, Data de Vencimento, Valor, Forma de Pagamento, Subsidiária, etc.")
+
+    # Carregar dados
+    if uploaded_file is not None:
+        df_pag = processar_upload(uploaded_file)
+        if df_pag is not None:
+            st.success("✅ Arquivo carregado com sucesso!")
+            # Salvar arquivo carregado
+            save_path = os.path.join(os.path.dirname(__file__), "data", "pagamentos.csv")
+            try:
+                df_pag.to_csv(save_path, index=False, sep=';', encoding='utf-8-sig')
+                st.cache_data.clear()
+                st.info("💾 Arquivo salvo para uso futuro")
+            except:
+                pass
+    else:
+        df_pag = load_pagamentos()
+
+    if df_pag is None or df_pag.empty:
+        st.warning("⚠️ Nenhum dado de pagamentos encontrado. Carregue um arquivo para começar.")
+        st.stop()
+
+    # === PROCESSAR DADOS ===
+    df = df_pag.copy()
+    
+    # Normalizar nomes das colunas
+    col_mapping = {
+        'Bancos': 'Banco',
+        'Classificacao': 'Classificacao',
+        'Data_Emissao': 'Data_Emissao',
+        'Data_Vencimento': 'Data_Vencimento',
+        'Periodo': 'Periodo',
+        'Numero_Transacao': 'Numero_Transacao',
+        'Numero_Documento': 'Numero_Documento',
+        'Fornecedor': 'Fornecedor',
+        'CNPJ_CPF': 'CNPJ_CPF',
+        'Subsidiaria': 'Subsidiaria',
+        'Memorando': 'Memorando',
+        'Valor': 'Valor',
+        'Forma_Pagamento': 'Forma_Pagamento',
+        'Pedido': 'Pedido',
+        'Data_Efetivacao': 'Data_Efetivacao',
+        'Prazo_Pagamento': 'Prazo_Pagamento',
+        'Adiantamento': 'Adiantamento',
+        'Status': 'Status',
+        'Aprovacao': 'Aprovacao'
+    }
+    
+    for old_col, new_col in col_mapping.items():
+        if old_col in df.columns and old_col != new_col:
+            df = df.rename(columns={old_col: new_col})
+    
+    # Converter valor para numérico
+    if 'Valor' in df.columns:
+        df['Valor_Num'] = df['Valor'].apply(converter_valor_pagamento)
+    
+    # Identificar empresa
+    if 'Subsidiaria' in df.columns:
+        df['Empresa'] = df['Subsidiaria'].apply(identificar_empresa)
+    else:
+        df['Empresa'] = 'Outros'
+    
+    # Processar coluna de Status (Aprovado, A aprovar, Reprogramado)
+    if 'Status' not in df.columns:
+        df['Status'] = 'A aprovar'
+    df['Status'] = df['Status'].fillna('A aprovar').astype(str).str.strip()
+    df.loc[df['Status'] == '', 'Status'] = 'A aprovar'
+    
+    # Processar coluna de Data de Aprovação
+    if 'Aprovacao' not in df.columns:
+        df['Aprovacao'] = ''
+    df['Aprovacao'] = df['Aprovacao'].fillna('').astype(str).str.strip()
+    
+    # Extrair mês e dia de aprovação para filtros
+    df['Aprovacao_Mes'] = pd.to_datetime(df['Aprovacao'], format='%d/%m/%Y', errors='coerce').dt.month
+    df['Aprovacao_Dia'] = pd.to_datetime(df['Aprovacao'], format='%d/%m/%Y', errors='coerce').dt.day
+
+    st.markdown("---")
+
+    # === FILTROS ===
+    st.markdown("### 🔍 Filtros")
+    
+    col_f1, col_f2, col_f3 = st.columns(3)
+    
+    with col_f1:
+        empresas_disponiveis = ['Todas'] + sorted(df['Empresa'].unique().tolist())
+        empresa_sel = st.selectbox("Empresa:", empresas_disponiveis, key="pag_empresa")
+    
+    with col_f2:
+        periodos_disponiveis = ['Todos'] + sorted(df['Periodo'].dropna().unique().tolist())
+        periodo_sel = st.selectbox("Período de Vencimento:", periodos_disponiveis, key="pag_periodo")
+    
+    with col_f3:
+        status_options = ['Todos', 'Aprovado', 'A aprovar', 'Reprogramado']
+        status_sel = st.selectbox("Status:", status_options, key="pag_status")
+    
+    # Filtros avançados em expander
+    forma_sel = 'Todas'
+    mes_aprovacao_sel = 'Todos'
+    dia_aprovacao_sel = 'Todos'
+    
+    with st.expander("⚙️ Filtros Avançados"):
+        col_av1, col_av2, col_av3 = st.columns(3)
+        
+        with col_av1:
+            formas_disponiveis = ['Todas'] + sorted(df['Forma_Pagamento'].dropna().unique().tolist())
+            forma_sel = st.selectbox("Forma de Pagamento:", formas_disponiveis, key="pag_forma")
+        
+        with col_av2:
+            meses_map = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho',
+                         7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
+            meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
+            meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
+            meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
+            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov")
+        
+        with col_av3:
+            dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
+            dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
+            dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
+            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov")
+
+    # Aplicar filtros
+    df_filtrado = df.copy()
+    
+    if empresa_sel != 'Todas':
+        df_filtrado = df_filtrado[df_filtrado['Empresa'] == empresa_sel]
+    
+    if forma_sel != 'Todas':
+        df_filtrado = df_filtrado[df_filtrado['Forma_Pagamento'] == forma_sel]
+    
+    if periodo_sel != 'Todos':
+        df_filtrado = df_filtrado[df_filtrado['Periodo'] == periodo_sel]
+    
+    if status_sel != 'Todos':
+        df_filtrado = df_filtrado[df_filtrado['Status'] == status_sel]
+    
+    # Filtro por mês de aprovação
+    if mes_aprovacao_sel != 'Todos':
+        meses_inv = {v: k for k, v in meses_map.items()}
+        mes_num = meses_inv.get(mes_aprovacao_sel)
+        if mes_num:
+            df_filtrado = df_filtrado[df_filtrado['Aprovacao_Mes'] == mes_num]
+    
+    # Filtro por dia de aprovação
+    if dia_aprovacao_sel != 'Todos':
+        df_filtrado = df_filtrado[df_filtrado['Aprovacao_Dia'] == int(dia_aprovacao_sel)]
+
+    st.markdown("---")
+
+    # === MÉTRICAS PRINCIPAIS ===
+    st.markdown("### 📊 Resumo Geral")
+    
+    total_geral = df_filtrado['Valor_Num'].sum()
+    qtd_pagamentos = len(df_filtrado)
+    ticket_medio = total_geral / qtd_pagamentos if qtd_pagamentos > 0 else 0
+    qtd_a_aprovar = len(df_filtrado[df_filtrado['Status'] == 'A aprovar'])
+    valor_a_aprovar = df_filtrado[df_filtrado['Status'] == 'A aprovar']['Valor_Num'].sum()
+    qtd_aprovados = len(df_filtrado[df_filtrado['Status'] == 'Aprovado'])
+    valor_aprovado = df_filtrado[df_filtrado['Status'] == 'Aprovado']['Valor_Num'].sum()
+    qtd_reprogramados = len(df_filtrado[df_filtrado['Status'] == 'Reprogramado'])
+    valor_reprogramado = df_filtrado[df_filtrado['Status'] == 'Reprogramado']['Valor_Num'].sum()
+    
+    # Formatar valores
+    def formatar_valor_br(valor):
+        return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    
+    def formatar_valor_compacto(valor):
+        if valor >= 1_000_000:
+            return f"R$ {valor/1_000_000:.2f}M".replace(".", ",")
+        elif valor >= 1_000:
+            return f"R$ {valor/1_000:.1f}K".replace(".", ",")
+        else:
+            return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    
+    # CSS customizado para métricas maiores
+    st.markdown("""
+    <style>
+    .metrica-card {
+        background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #2d4a6f;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metrica-card-destaque {
+        background: linear-gradient(135deg, #8B0000 0%, #CC0000 50%, #8B0000 100%);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 2px solid #FF4444;
+        box-shadow: 0 4px 20px rgba(204,0,0,0.4);
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metrica-card-warning {
+        background: linear-gradient(135deg, #8B6914 0%, #B8860B 50%, #8B6914 100%);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 2px solid #DAA520;
+        box-shadow: 0 4px 20px rgba(184,134,11,0.4);
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metrica-card-success {
+        background: linear-gradient(135deg, #145214 0%, #228B22 50%, #145214 100%);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 2px solid #32CD32;
+        box-shadow: 0 4px 20px rgba(34,139,34,0.4);
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metrica-label {
+        font-size: 14px;
+        color: #aab8c2;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+    .metrica-valor {
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1.2;
+        word-wrap: break-word;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    .metrica-valor-grande {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1.2;
+        word-wrap: break-word;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    .metrica-subtexto {
+        font-size: 11px;
+        color: #7a8a9a;
+        margin-top: 5px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Layout 3 + 3 para métricas
+    col_m1, col_m2, col_m3 = st.columns(3)
+    
+    with col_m1:
+        st.markdown(f"""
+        <div class="metrica-card-destaque">
+            <div class="metrica-label">💰 Valor Total</div>
+            <div class="metrica-valor-grande">{formatar_valor_br(total_geral)}</div>
+            <div class="metrica-subtexto">{qtd_pagamentos} pagamentos</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m2:
+        st.markdown(f"""
+        <div class="metrica-card-success">
+            <div class="metrica-label">✅ Valor Aprovado</div>
+            <div class="metrica-valor-grande">{formatar_valor_br(valor_aprovado)}</div>
+            <div class="metrica-subtexto">{qtd_aprovados} pagamentos</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m3:
+        st.markdown(f"""
+        <div class="metrica-card-warning">
+            <div class="metrica-label">⏳ Pendente Aprovação</div>
+            <div class="metrica-valor-grande">{formatar_valor_br(valor_a_aprovar)}</div>
+            <div class="metrica-subtexto">{qtd_a_aprovar} pagamentos</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col_m4, col_m5, col_m6 = st.columns(3)
+    
+    with col_m4:
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">📊 Ticket Médio</div>
+            <div class="metrica-valor">{formatar_valor_br(ticket_medio)}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m5:
+        # Taxa de aprovação (aprovados + reprogramados vs total)
+        taxa_aprovacao = ((qtd_aprovados + qtd_reprogramados) / qtd_pagamentos * 100) if qtd_pagamentos > 0 else 0
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">📈 Taxa Aprovação</div>
+            <div class="metrica-valor">{taxa_aprovacao:.1f}%</div>
+            <div class="metrica-subtexto">{qtd_aprovados + qtd_reprogramados} de {qtd_pagamentos}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m6:
+        # Prazo médio de pagamento
+        if 'Prazo_Pagamento' in df_filtrado.columns:
+            prazo_medio = pd.to_numeric(df_filtrado['Prazo_Pagamento'], errors='coerce').mean()
+            prazo_medio = prazo_medio if not pd.isna(prazo_medio) else 0
+        else:
+            prazo_medio = 0
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">📅 Prazo Médio</div>
+            <div class="metrica-valor">{prazo_medio:.0f} dias</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # === RESUMO POR EMPRESA ===
+    st.markdown("### 🏢 Resumo por Empresa")
+    
+    resumo_empresa = df_filtrado.groupby('Empresa').agg({
+        'Valor_Num': ['sum', 'count']
+    }).reset_index()
+    resumo_empresa.columns = ['Empresa', 'Valor_Total', 'Quantidade']
+    resumo_empresa = resumo_empresa.sort_values('Valor_Total', ascending=False)
+    
+    col_g1, col_g2 = st.columns(2)
+    
+    with col_g1:
+        # Gráfico de Pizza - Distribuição por Empresa
+        cores_empresas = {
+            'Alura': '#1a5490',
+            'FIAP': '#cc0000',
+            'PM3': '#663399',
+            'Outros': '#666666'
+        }
+        
+        fig_pizza = px.pie(
+            resumo_empresa,
+            values='Valor_Total',
+            names='Empresa',
+            title='Distribuição de Valores por Empresa',
+            color='Empresa',
+            color_discrete_map=cores_empresas,
+            hole=0.4
+        )
+        
+        fig_pizza.update_traces(
+            textposition='outside',
+            textinfo='label+percent',
+            textfont=dict(color='white', size=12),
+            hovertemplate='<b>%{label}</b><br>R$ %{value:,.2f}<br>%{percent}<extra></extra>'
+        )
+        
+        fig_pizza.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            height=500,
+            showlegend=True,
+            legend=dict(font=dict(color='white', size=13), orientation='h', y=-0.1),
+            title=dict(font=dict(size=18))
+        )
+        
+        st.plotly_chart(fig_pizza, use_container_width=True)
+    
+    with col_g2:
+        # Gráfico de Barras - Quantidade e Valor por Empresa
+        fig_bar_empresa = make_subplots(specs=[[{"secondary_y": True}]])
+        
+        fig_bar_empresa.add_trace(
+            go.Bar(
+                x=resumo_empresa['Empresa'],
+                y=resumo_empresa['Valor_Total'],
+                name='Valor Total (R$)',
+                marker_color='#DC143C',
+                text=[f"R$ {v:,.0f}".replace(",", ".") for v in resumo_empresa['Valor_Total']],
+                textposition='outside',
+                textfont=dict(color='white', size=10)
+            ),
+            secondary_y=False
+        )
+        
+        fig_bar_empresa.add_trace(
+            go.Scatter(
+                x=resumo_empresa['Empresa'],
+                y=resumo_empresa['Quantidade'],
+                name='Quantidade',
+                mode='lines+markers+text',
+                line=dict(color='#FFD700', width=3),
+                marker=dict(size=10),
+                text=resumo_empresa['Quantidade'].astype(str),
+                textposition='top center',
+                textfont=dict(color='#FFD700', size=11)
+            ),
+            secondary_y=True
+        )
+        
+        fig_bar_empresa.update_layout(
+            title=dict(text='Valores e Quantidades por Empresa', font=dict(size=18)),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            height=500,
+            showlegend=True,
+            legend=dict(orientation='h', y=1.12, font=dict(color='white', size=12)),
+            xaxis=dict(showgrid=False, tickfont=dict(size=13)),
+            yaxis=dict(showgrid=False, title='Valor (R$)', tickfont=dict(size=11)),
+            yaxis2=dict(showgrid=False, title='Quantidade', tickfont=dict(size=11))
+        )
+        
+        st.plotly_chart(fig_bar_empresa, use_container_width=True)
+
+    # Tabela resumo por empresa
+    resumo_empresa_display = resumo_empresa.copy()
+    resumo_empresa_display['Valor_Formatado'] = resumo_empresa_display['Valor_Total'].apply(
+        lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    )
+    
+    st.dataframe(
+        resumo_empresa_display[['Empresa', 'Quantidade', 'Valor_Formatado']].rename(columns={
+            'Quantidade': 'Qtd. Pagamentos',
+            'Valor_Formatado': 'Valor Total'
+        }),
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.markdown("---")
+
+    # === RESUMO POR FORMA DE PAGAMENTO ===
+    st.markdown("### 💳 Resumo por Forma de Pagamento")
+    
+    # Criar pivot por Empresa e Forma de Pagamento
+    pivot_formas = df_filtrado.pivot_table(
+        index='Forma_Pagamento',
+        columns='Empresa',
+        values='Valor_Num',
+        aggfunc=['sum', 'count'],
+        fill_value=0
+    )
+    
+    # Simplificar para apresentação
+    resumo_forma = df_filtrado.groupby('Forma_Pagamento').agg({
+        'Valor_Num': ['sum', 'count']
+    }).reset_index()
+    resumo_forma.columns = ['Forma_Pagamento', 'Valor_Total', 'Quantidade']
+    resumo_forma = resumo_forma.sort_values('Valor_Total', ascending=False)
+    
+    col_f1, col_f2 = st.columns(2)
+    
+    with col_f1:
+        # Gráfico de Barras Horizontal - Formas de Pagamento
+        fig_forma = go.Figure()
+        
+        fig_forma.add_trace(go.Bar(
+            y=resumo_forma['Forma_Pagamento'],
+            x=resumo_forma['Valor_Total'],
+            orientation='h',
+            marker=dict(
+                color=resumo_forma['Valor_Total'],
+                colorscale=[[0, '#2E0219'], [0.5, '#722F37'], [1, '#DC143C']]
+            ),
+            text=[f"R$ {v:,.0f}".replace(",", ".") for v in resumo_forma['Valor_Total']],
+            textposition='outside',
+            textfont=dict(color='white', size=11)
+        ))
+        
+        fig_forma.update_layout(
+            title=dict(text='Valores por Forma de Pagamento', font=dict(size=18)),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            height=400,
+            xaxis=dict(showgrid=False, title='Valor Total (R$)', tickfont=dict(size=12)),
+            yaxis=dict(showgrid=False, tickfont=dict(size=13))
+        )
+        
+        st.plotly_chart(fig_forma, use_container_width=True)
+    
+    with col_f2:
+        # Gráfico Treemap - Formas de Pagamento
+        fig_tree = px.treemap(
+            resumo_forma,
+            path=['Forma_Pagamento'],
+            values='Valor_Total',
+            color='Valor_Total',
+            color_continuous_scale='Reds',
+            title='Distribuição por Forma de Pagamento'
+        )
+        
+        fig_tree.update_traces(
+            textinfo='label+value',
+            texttemplate='<b>%{label}</b><br>R$ %{value:,.0f}',
+            hovertemplate='<b>%{label}</b><br>R$ %{value:,.2f}<extra></extra>'
+        )
+        
+        fig_tree.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            height=400,
+            coloraxis_showscale=False,
+            title=dict(font=dict(size=18))
+        )
+        
+        st.plotly_chart(fig_tree, use_container_width=True)
+
+    # === TABELA CRUZADA: FORMA DE PAGAMENTO x EMPRESA ===
+    st.markdown("### 📋 Visão Cruzada: Forma de Pagamento por Empresa")
+    
+    # Criar tabela cruzada
+    empresas_unicas = sorted(df_filtrado['Empresa'].unique().tolist())
+    formas_unicas = sorted(df_filtrado['Forma_Pagamento'].dropna().unique().tolist())
+    
+    dados_tabela = []
+    for forma in formas_unicas:
+        linha = {'Forma de Pagamento': forma}
+        total_qtd = 0
+        total_valor = 0
+        
+        for empresa in empresas_unicas:
+            subset = df_filtrado[(df_filtrado['Forma_Pagamento'] == forma) & (df_filtrado['Empresa'] == empresa)]
+            qtd = len(subset)
+            valor = subset['Valor_Num'].sum()
+            linha[f'{empresa} (Qtd)'] = qtd
+            linha[f'{empresa} (R$)'] = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            total_qtd += qtd
+            total_valor += valor
+        
+        linha['Total (Qtd)'] = total_qtd
+        linha['Total (R$)'] = f"R$ {total_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        dados_tabela.append(linha)
+    
+    # Linha de totais
+    linha_total = {'Forma de Pagamento': '**TOTAL**'}
+    total_geral_qtd = 0
+    total_geral_valor = 0
+    
+    for empresa in empresas_unicas:
+        subset = df_filtrado[df_filtrado['Empresa'] == empresa]
+        qtd = len(subset)
+        valor = subset['Valor_Num'].sum()
+        linha_total[f'{empresa} (Qtd)'] = qtd
+        linha_total[f'{empresa} (R$)'] = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        total_geral_qtd += qtd
+        total_geral_valor += valor
+    
+    linha_total['Total (Qtd)'] = total_geral_qtd
+    linha_total['Total (R$)'] = f"R$ {total_geral_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    dados_tabela.append(linha_total)
+    
+    df_tabela_cruzada = pd.DataFrame(dados_tabela)
+    
+    st.dataframe(df_tabela_cruzada, use_container_width=True, hide_index=True, height=300)
+
+    st.markdown("---")
+
+    # === TOP FORNECEDORES ===
+    st.markdown("### 🏆 Top 10 Fornecedores por Valor")
+    
+    top_fornecedores = df_filtrado.groupby('Fornecedor').agg({
+        'Valor_Num': 'sum',
+        'Numero_Transacao': 'count'
+    }).reset_index()
+    top_fornecedores.columns = ['Fornecedor', 'Valor_Total', 'Qtd_Pagamentos']
+    top_fornecedores = top_fornecedores.sort_values('Valor_Total', ascending=False).head(10)
+    
+    fig_top = go.Figure()
+    
+    fig_top.add_trace(go.Bar(
+        x=top_fornecedores['Fornecedor'].apply(lambda x: x[:35] + '...' if len(str(x)) > 35 else x),
+        y=top_fornecedores['Valor_Total'],
+        marker=dict(
+            color=top_fornecedores['Valor_Total'],
+            colorscale='Reds'
+        ),
+        text=[f"R$ {v:,.0f}".replace(",", ".") for v in top_fornecedores['Valor_Total']],
+        textposition='outside',
+        textfont=dict(color='white', size=10)
+    ))
+    
+    fig_top.update_layout(
+        title=dict(text='Top 10 Fornecedores por Valor Total', font=dict(size=20)),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white', size=14),
+        height=550,
+        xaxis=dict(showgrid=False, tickangle=45, tickfont=dict(size=11)),
+        yaxis=dict(showgrid=False, title='Valor Total (R$)', tickfont=dict(size=12)),
+        margin=dict(b=180)
+    )
+    
+    st.plotly_chart(fig_top, use_container_width=True)
+
+    st.markdown("---")
+
+    # === DETALHES DOS PAGAMENTOS ===
+    st.markdown("### 📝 Detalhes dos Pagamentos")
+    
+    # Mostrar TODAS as colunas originais do CSV
+    colunas_exibir = [
+        'Banco', 'Classificacao', 'Data_Emissao', 'Data_Vencimento', 'Periodo',
+        'Numero_Transacao', 'Numero_Documento', 'Fornecedor', 'CNPJ_CPF',
+        'Subsidiaria', 'Memorando', 'Valor', 'Forma_Pagamento', 'Pedido',
+        'Data_Efetivacao', 'Prazo_Pagamento', 'Adiantamento', 'Status', 'Aprovacao', 'Empresa'
+    ]
+    
+    # Filtrar apenas colunas que existem no DataFrame
+    colunas_disponiveis = [col for col in colunas_exibir if col in df_filtrado.columns]
+    
+    df_detalhe = df_filtrado[colunas_disponiveis].copy()
+    
+    # Renomear colunas para exibição amigável
+    rename_map = {
+        'Banco': 'Banco',
+        'Classificacao': 'Classificação',
+        'Data_Emissao': 'Dt. Emissão',
+        'Data_Vencimento': 'Dt. Vencimento',
+        'Periodo': 'Período',
+        'Numero_Transacao': 'Nº Transação',
+        'Numero_Documento': 'Nº Documento',
+        'Fornecedor': 'Fornecedor',
+        'CNPJ_CPF': 'CNPJ/CPF',
+        'Subsidiaria': 'Subsidiária',
+        'Memorando': 'Memorando',
+        'Valor': 'Valor',
+        'Forma_Pagamento': 'Forma Pgto',
+        'Pedido': 'Pedido',
+        'Data_Efetivacao': 'Dt. Efetivação',
+        'Prazo_Pagamento': 'Prazo (dias)',
+        'Adiantamento': 'Adiantamento',
+        'Status': 'Status',
+        'Aprovacao': 'Dt. Aprovação',
+        'Empresa': 'Empresa'
+    }
+    
+    df_detalhe = df_detalhe.rename(columns=rename_map)
+    
+    st.dataframe(
+        df_detalhe,
+        use_container_width=True,
+        hide_index=True,
+        height=500
+    )
+    
+    # Download
+    csv_export = df_filtrado.to_csv(index=False, sep=';', encoding='utf-8-sig')
+    st.download_button(
+        label="📥 Baixar dados filtrados (CSV)",
+        data=csv_export,
+        file_name=f"pagamentos_filtrados_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+        mime="text/csv"
+    )
+
+    # Footer
+    st.markdown("---")
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px; opacity: 0.7;'>
+            <p style='color: #FFFFFF; font-size: 0.9rem;'>
+                💳 Resumo de Pagamentos | Total: R$ {total_geral:,.2f} | {qtd_pagamentos} pagamentos
+            </p>
+        </div>
+    """.replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
 
 # === FOOTER GERAL ===
 st.markdown("""
