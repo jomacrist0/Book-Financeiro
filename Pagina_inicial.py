@@ -2182,11 +2182,11 @@ with tab4:
     # === DETALHES DOS PAGAMENTOS ===
     st.markdown("### 📝 Detalhes dos Pagamentos")
     
-    # Mostrar TODAS as colunas originais do CSV
+    # Mostrar colunas principais (Subsidiaria fica oculta, só Empresa)
     colunas_exibir = [
         'Banco', 'Classificacao', 'Data_Emissao', 'Data_Vencimento', 'Periodo',
         'Numero_Transacao', 'Numero_Documento', 'Fornecedor', 'CNPJ_CPF',
-        'Subsidiaria', 'Memorando', 'Valor', 'Forma_Pagamento', 'Pedido',
+        'Memorando', 'Valor', 'Forma_Pagamento', 'Pedido',
         'Data_Efetivacao', 'Prazo_Pagamento', 'Adiantamento', 'Status', 'Aprovacao', 'Empresa'
     ]
     
@@ -2206,7 +2206,6 @@ with tab4:
         'Numero_Documento': 'Nº Documento',
         'Fornecedor': 'Fornecedor',
         'CNPJ_CPF': 'CNPJ/CPF',
-        'Subsidiaria': 'Subsidiária',
         'Memorando': 'Memorando',
         'Valor': 'Valor',
         'Forma_Pagamento': 'Forma Pgto',
