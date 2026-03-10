@@ -1827,7 +1827,7 @@ with tab4:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    col_m4, col_m5, col_m6 = st.columns(3)
+    col_m4, col_m5 = st.columns(2)
     
     with col_m4:
         st.markdown(f"""
@@ -1838,16 +1838,6 @@ with tab4:
         """, unsafe_allow_html=True)
     
     with col_m5:
-        # Reprogramados
-        st.markdown(f"""
-        <div class="metrica-card">
-            <div class="metrica-label">🔄 Reprogramados</div>
-            <div class="metrica-valor">{formatar_valor_br(valor_reprogramado)}</div>
-            <div class="metrica-subtexto">{qtd_reprogramados} pagamentos</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col_m6:
         # Prazo médio de pagamento
         if 'Prazo_Pagamento' in df_filtrado.columns:
             prazo_medio = pd.to_numeric(df_filtrado['Prazo_Pagamento'], errors='coerce').mean()
