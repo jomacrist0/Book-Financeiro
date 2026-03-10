@@ -1838,13 +1838,12 @@ with tab4:
         """, unsafe_allow_html=True)
     
     with col_m5:
-        # Taxa de aprovação (aprovados + reprogramados vs total)
-        taxa_aprovacao = ((qtd_aprovados + qtd_reprogramados) / qtd_pagamentos * 100) if qtd_pagamentos > 0 else 0
+        # Reprogramados
         st.markdown(f"""
         <div class="metrica-card">
-            <div class="metrica-label">📈 Taxa Aprovação</div>
-            <div class="metrica-valor">{taxa_aprovacao:.1f}%</div>
-            <div class="metrica-subtexto">{qtd_aprovados + qtd_reprogramados} de {qtd_pagamentos}</div>
+            <div class="metrica-label">🔄 Reprogramados</div>
+            <div class="metrica-valor">{formatar_valor_br(valor_reprogramado)}</div>
+            <div class="metrica-subtexto">{qtd_reprogramados} pagamentos</div>
         </div>
         """, unsafe_allow_html=True)
     
