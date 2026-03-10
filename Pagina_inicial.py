@@ -1657,19 +1657,16 @@ with tab4:
                 # Para 'A aprovar', usar data de vencimento
                 df_filtro_status = df[df['Status'] == 'A aprovar']
                 meses_disponiveis = df_filtro_status['Vencimento_Mes'].dropna().unique().tolist()
-                label_mes = "Mês Vencimento:"
             elif status_sel == 'Aprovado':
                 # Para 'Aprovado', usar data de aprovação
                 df_filtro_status = df[df['Status'] == 'Aprovado']
                 meses_disponiveis = df_filtro_status['Aprovacao_Mes'].dropna().unique().tolist()
-                label_mes = "Mês Aprovação:"
             else:
                 # Para 'Todos', mostrar todos os meses de aprovação
                 meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
-                label_mes = "Mês Aprovação:"
             meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
             meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
-            mes_aprovacao_sel = st.selectbox(label_mes, meses_opcoes, key="pag_mes_aprov")
+            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov")
         
         with col_av3:
             # Filtrar dias baseado no status selecionado
@@ -1677,24 +1674,18 @@ with tab4:
                 # Para 'A aprovar', usar data de vencimento
                 df_filtro_status = df[df['Status'] == 'A aprovar']
                 dias_disponiveis = df_filtro_status['Vencimento_Dia'].dropna().unique().tolist()
-                label_dia = "Dia Vencimento:"
             elif status_sel == 'Aprovado':
                 # Para 'Aprovado', usar data de aprovação
                 df_filtro_status = df[df['Status'] == 'Aprovado']
                 dias_disponiveis = df_filtro_status['Aprovacao_Dia'].dropna().unique().tolist()
-                label_dia = "Dia Aprovação:"
             else:
                 # Para 'Todos', mostrar todos os dias de aprovação
                 dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
-                label_dia = "Dia Aprovação:"
             dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
             dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
-            dia_aprovacao_sel = st.selectbox(label_dia, dias_opcoes, key="pag_dia_aprov")
+            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov")
         
-        if status_sel == 'A aprovar':
-            st.caption("💡 Filtrando por data de VENCIMENTO dos pagamentos a aprovar.")
-        else:
-            st.caption("💡 Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
+        st.caption("💡 Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
 
     # Aplicar filtros
     df_filtrado = df.copy()
