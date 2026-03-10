@@ -1648,31 +1648,20 @@ with tab4:
             forma_sel = st.selectbox("Forma de Pagamento:", formas_disponiveis, key="pag_forma")
         
         with col_av2:
-            # Filtrar meses disponíveis baseado no status selecionado
-            if status_sel == 'A aprovar':
-                meses_opcoes = ['Todos']  # A aprovar não tem data de aprovação
-            else:
-                df_para_filtro = df[df['Status'] != 'A aprovar'] if status_sel == 'Todos' else df[df['Status'] == status_sel]
-                meses_disponiveis = df_para_filtro['Aprovacao_Mes'].dropna().unique().tolist()
-                meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
-                meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
-            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov", 
-                                             disabled=(status_sel == 'A aprovar'))
+            # Mostrar todos os meses disponíveis (de aprovados e reprogramados)
+            meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
+            meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
+            meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
+            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov")
         
         with col_av3:
-            # Filtrar dias disponíveis baseado no status selecionado
-            if status_sel == 'A aprovar':
-                dias_opcoes = ['Todos']  # A aprovar não tem data de aprovação
-            else:
-                df_para_filtro = df[df['Status'] != 'A aprovar'] if status_sel == 'Todos' else df[df['Status'] == status_sel]
-                dias_disponiveis = df_para_filtro['Aprovacao_Dia'].dropna().unique().tolist()
-                dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
-                dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
-            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov",
-                                             disabled=(status_sel == 'A aprovar'))
+            # Mostrar todos os dias disponíveis (de aprovados e reprogramados)
+            dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
+            dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
+            dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
+            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov")
         
-        if status_sel != 'A aprovar':
-            st.caption("💡 Dica: Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
+        st.caption("💡 Dica: Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
 
     # Aplicar filtros
     df_filtrado = df.copy()
