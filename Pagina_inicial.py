@@ -1613,6 +1613,10 @@ with tab4:
     # Extrair mês e dia de aprovação para filtros
     df['Aprovacao_Mes'] = pd.to_datetime(df['Aprovacao'], format='%d/%m/%Y', errors='coerce').dt.month
     df['Aprovacao_Dia'] = pd.to_datetime(df['Aprovacao'], format='%d/%m/%Y', errors='coerce').dt.day
+    
+    # Extrair mês e dia de vencimento para filtros de 'A aprovar'
+    df['Vencimento_Mes'] = pd.to_datetime(df['Data_Vencimento'], format='%d/%m/%Y', errors='coerce').dt.month
+    df['Vencimento_Dia'] = pd.to_datetime(df['Data_Vencimento'], format='%d/%m/%Y', errors='coerce').dt.day
 
     st.markdown("---")
 
@@ -1648,20 +1652,49 @@ with tab4:
             forma_sel = st.selectbox("Forma de Pagamento:", formas_disponiveis, key="pag_forma")
         
         with col_av2:
-            # Mostrar todos os meses disponíveis (de aprovados e reprogramados)
-            meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
+            # Filtrar meses baseado no status selecionado
+            if status_sel == 'A aprovar':
+                # Para 'A aprovar', usar data de vencimento
+                df_filtro_status = df[df['Status'] == 'A aprovar']
+                meses_disponiveis = df_filtro_status['Vencimento_Mes'].dropna().unique().tolist()
+                label_mes = "Mês Vencimento:"
+            elif status_sel == 'Aprovado':
+                # Para 'Aprovado', usar data de aprovação
+                df_filtro_status = df[df['Status'] == 'Aprovado']
+                meses_disponiveis = df_filtro_status['Aprovacao_Mes'].dropna().unique().tolist()
+                label_mes = "Mês Aprovação:"
+            else:
+                # Para 'Todos', mostrar todos os meses de aprovação
+                meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
+                label_mes = "Mês Aprovação:"
             meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
             meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
-            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov")
+            mes_aprovacao_sel = st.selectbox(label_mes, meses_opcoes, key="pag_mes_aprov")
         
         with col_av3:
-            # Mostrar todos os dias disponíveis (de aprovados e reprogramados)
-            dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
+            # Filtrar dias baseado no status selecionado
+            if status_sel == 'A aprovar':
+                # Para 'A aprovar', usar data de vencimento
+                df_filtro_status = df[df['Status'] == 'A aprovar']
+                dias_disponiveis = df_filtro_status['Vencimento_Dia'].dropna().unique().tolist()
+                label_dia = "Dia Vencimento:"
+            elif status_sel == 'Aprovado':
+                # Para 'Aprovado', usar data de aprovação
+                df_filtro_status = df[df['Status'] == 'Aprovado']
+                dias_disponiveis = df_filtro_status['Aprovacao_Dia'].dropna().unique().tolist()
+                label_dia = "Dia Aprovação:"
+            else:
+                # Para 'Todos', mostrar todos os dias de aprovação
+                dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
+                label_dia = "Dia Aprovação:"
             dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
             dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
-            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov")
+            dia_aprovacao_sel = st.selectbox(label_dia, dias_opcoes, key="pag_dia_aprov")
         
-        st.caption("💡 Dica: Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
+        if status_sel == 'A aprovar':
+            st.caption("💡 Filtrando por data de VENCIMENTO dos pagamentos a aprovar.")
+        else:
+            st.caption("💡 Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
 
     # Aplicar filtros
     df_filtrado = df.copy()
@@ -1678,16 +1711,22 @@ with tab4:
     if status_sel != 'Todos':
         df_filtrado = df_filtrado[df_filtrado['Status'] == status_sel]
     
-    # Filtro por mês de aprovação
+    # Filtro por mês (vencimento para 'A aprovar', aprovação para outros)
     if mes_aprovacao_sel != 'Todos':
         meses_inv = {v: k for k, v in meses_map.items()}
         mes_num = meses_inv.get(mes_aprovacao_sel)
         if mes_num:
-            df_filtrado = df_filtrado[df_filtrado['Aprovacao_Mes'] == mes_num]
+            if status_sel == 'A aprovar':
+                df_filtrado = df_filtrado[df_filtrado['Vencimento_Mes'] == mes_num]
+            else:
+                df_filtrado = df_filtrado[df_filtrado['Aprovacao_Mes'] == mes_num]
     
-    # Filtro por dia de aprovação
+    # Filtro por dia (vencimento para 'A aprovar', aprovação para outros)
     if dia_aprovacao_sel != 'Todos':
-        df_filtrado = df_filtrado[df_filtrado['Aprovacao_Dia'] == int(dia_aprovacao_sel)]
+        if status_sel == 'A aprovar':
+            df_filtrado = df_filtrado[df_filtrado['Vencimento_Dia'] == int(dia_aprovacao_sel)]
+        else:
+            df_filtrado = df_filtrado[df_filtrado['Aprovacao_Dia'] == int(dia_aprovacao_sel)]
 
     st.markdown("---")
 
