@@ -1630,13 +1630,15 @@ with tab4:
         periodo_sel = st.selectbox("Período de Vencimento:", periodos_disponiveis, key="pag_periodo")
     
     with col_f3:
-        status_options = ['Todos', 'Aprovado', 'A aprovar', 'Reprogramado']
+        status_options = ['Todos', 'Aprovado', 'A aprovar']
         status_sel = st.selectbox("Status:", status_options, key="pag_status")
     
     # Filtros avançados em expander
     forma_sel = 'Todas'
     mes_aprovacao_sel = 'Todos'
     dia_aprovacao_sel = 'Todos'
+    meses_map = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho',
+                 7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
     
     with st.expander("⚙️ Filtros Avançados"):
         col_av1, col_av2, col_av3 = st.columns(3)
@@ -1646,18 +1648,31 @@ with tab4:
             forma_sel = st.selectbox("Forma de Pagamento:", formas_disponiveis, key="pag_forma")
         
         with col_av2:
-            meses_map = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho',
-                         7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
-            meses_disponiveis = df['Aprovacao_Mes'].dropna().unique().tolist()
-            meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
-            meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
-            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov")
+            # Filtrar meses disponíveis baseado no status selecionado
+            if status_sel == 'A aprovar':
+                meses_opcoes = ['Todos']  # A aprovar não tem data de aprovação
+            else:
+                df_para_filtro = df[df['Status'] != 'A aprovar'] if status_sel == 'Todos' else df[df['Status'] == status_sel]
+                meses_disponiveis = df_para_filtro['Aprovacao_Mes'].dropna().unique().tolist()
+                meses_disponiveis = sorted([int(m) for m in meses_disponiveis if pd.notna(m)])
+                meses_opcoes = ['Todos'] + [meses_map.get(m, str(m)) for m in meses_disponiveis]
+            mes_aprovacao_sel = st.selectbox("Mês Aprovação:", meses_opcoes, key="pag_mes_aprov", 
+                                             disabled=(status_sel == 'A aprovar'))
         
         with col_av3:
-            dias_disponiveis = df['Aprovacao_Dia'].dropna().unique().tolist()
-            dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
-            dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
-            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov")
+            # Filtrar dias disponíveis baseado no status selecionado
+            if status_sel == 'A aprovar':
+                dias_opcoes = ['Todos']  # A aprovar não tem data de aprovação
+            else:
+                df_para_filtro = df[df['Status'] != 'A aprovar'] if status_sel == 'Todos' else df[df['Status'] == status_sel]
+                dias_disponiveis = df_para_filtro['Aprovacao_Dia'].dropna().unique().tolist()
+                dias_disponiveis = sorted([int(d) for d in dias_disponiveis if pd.notna(d)])
+                dias_opcoes = ['Todos'] + [str(d) for d in dias_disponiveis]
+            dia_aprovacao_sel = st.selectbox("Dia Aprovação:", dias_opcoes, key="pag_dia_aprov",
+                                             disabled=(status_sel == 'A aprovar'))
+        
+        if status_sel != 'A aprovar':
+            st.caption("💡 Dica: Selecione um dia de aprovação específico para ver pagamentos reprogramados para aquela data.")
 
     # Aplicar filtros
     df_filtrado = df.copy()
@@ -1827,7 +1842,7 @@ with tab4:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    col_m4, col_m5 = st.columns(2)
+    col_m4, col_m5, col_m6 = st.columns(3)
     
     with col_m4:
         st.markdown(f"""
@@ -1848,6 +1863,18 @@ with tab4:
         <div class="metrica-card">
             <div class="metrica-label">📅 Prazo Médio</div>
             <div class="metrica-valor">{prazo_medio:.0f} dias</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m6:
+        # Reprogramados - baseado em Status == 'Reprogramado'
+        qtd_reprogramados = len(df_filtrado[df_filtrado['Status'] == 'Reprogramado'])
+        valor_reprogramado = df_filtrado[df_filtrado['Status'] == 'Reprogramado']['Valor_Num'].sum()
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">🔄 Reprogramados</div>
+            <div class="metrica-valor">{formatar_valor_br(valor_reprogramado)}</div>
+            <div class="metrica-subtexto">{qtd_reprogramados} pagamentos</div>
         </div>
         """, unsafe_allow_html=True)
 
