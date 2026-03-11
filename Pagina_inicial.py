@@ -191,7 +191,7 @@ with st.sidebar:
         st.rerun()
 
 # === NAVEGAÇÃO POR ABAS ===
-tab1, tab2, tab3, tab4 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico", "📊 Endividamento", "💳 Resumo de Pagamentos"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["💰 Saldos do Ecossistema", "🎯 Planejamento Estratégico", "📊 Endividamento", "💳 Resumo de Pagamentos", "📈 Contas a Receber"])
 
 # ==========================
 # ABA 1: SALDOS DO ECOSSISTEMA
@@ -2199,6 +2199,314 @@ with tab4:
         <div style='text-align: center; padding: 20px; opacity: 0.7;'>
             <p style='color: #FFFFFF; font-size: 0.9rem;'>
                 💳 Resumo de Pagamentos | Total: R$ {total_geral:,.2f} | {qtd_pagamentos} pagamentos
+            </p>
+        </div>
+    """.replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
+
+# ==========================
+# ABA 5: CONTAS A RECEBER
+# ==========================
+with tab5:
+    # CSS específico para Contas a Receber
+    st.markdown("""
+    <style>
+    .aging-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 16px;
+        padding: 25px;
+        margin: 10px 0;
+        border-left: 5px solid;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .aging-a-vencer { border-left-color: #00d4aa; }
+    .aging-1-30 { border-left-color: #ffc107; }
+    .aging-31-60 { border-left-color: #ff9800; }
+    .aging-61-90 { border-left-color: #ff5722; }
+    .aging-90-plus { border-left-color: #dc3545; }
+    .aging-valor {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: white;
+        margin: 10px 0;
+    }
+    .aging-label {
+        font-size: 1rem;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .aging-qtd {
+        font-size: 0.9rem;
+        color: #888;
+        margin-top: 8px;
+    }
+    .empresa-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 5px;
+    }
+    .badge-alura { background: linear-gradient(135deg, #1a5490, #2980b9); color: white; }
+    .badge-fiap { background: linear-gradient(135deg, #cc0000, #e74c3c); color: white; }
+    .badge-pm3 { background: linear-gradient(135deg, #663399, #8e44ad); color: white; }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="color: #fafafa; font-weight: 700; margin-bottom: 0;">📈 Contas a Receber</h1>
+        <p style="color: #ccc; font-size: 1.1em;">Aging e Status de Recebíveis do Ecossistema</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Dados fictícios para demonstração
+    import random
+    random.seed(42)  # Para consistência
+    
+    empresas = ['Alura', 'FIAP', 'PM3']
+    faixas_aging = ['A Vencer', '1-30 dias', '31-60 dias', '61-90 dias', '+90 dias']
+    
+    # Gerar dados fictícios por empresa e faixa
+    dados_aging = []
+    for empresa in empresas:
+        base_valor = random.randint(5000000, 15000000)
+        for i, faixa in enumerate(faixas_aging):
+            # Valores decrescentes conforme envelhece
+            fator = [0.45, 0.25, 0.15, 0.10, 0.05][i]
+            valor = base_valor * fator * random.uniform(0.8, 1.2)
+            qtd = random.randint(50, 300) if i == 0 else random.randint(10, 100)
+            dados_aging.append({
+                'Empresa': empresa,
+                'Faixa': faixa,
+                'Valor': valor,
+                'Quantidade': qtd
+            })
+    
+    df_aging = pd.DataFrame(dados_aging)
+    
+    # Totais por faixa
+    totais_faixa = df_aging.groupby('Faixa').agg({'Valor': 'sum', 'Quantidade': 'sum'}).reindex(faixas_aging).reset_index()
+    
+    # === MÉTRICAS PRINCIPAIS ===
+    total_receber = df_aging['Valor'].sum()
+    total_vencido = df_aging[df_aging['Faixa'] != 'A Vencer']['Valor'].sum()
+    total_a_vencer = df_aging[df_aging['Faixa'] == 'A Vencer']['Valor'].sum()
+    pct_vencido = (total_vencido / total_receber * 100) if total_receber > 0 else 0
+    
+    col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+    
+    with col_m1:
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">💰 Total a Receber</div>
+            <div class="metrica-valor">R$ {total_receber/1_000_000:.2f}M</div>
+            <div class="metrica-subtexto">{df_aging['Quantidade'].sum()} títulos</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m2:
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">✅ A Vencer</div>
+            <div class="metrica-valor" style="color: #00d4aa;">R$ {total_a_vencer/1_000_000:.2f}M</div>
+            <div class="metrica-subtexto">Em dia</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m3:
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">⚠️ Total Vencido</div>
+            <div class="metrica-valor" style="color: #ff5722;">R$ {total_vencido/1_000_000:.2f}M</div>
+            <div class="metrica-subtexto">{pct_vencido:.1f}% da carteira</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_m4:
+        # Prazo médio ponderado (fictício)
+        prazo_medio = random.randint(25, 45)
+        st.markdown(f"""
+        <div class="metrica-card">
+            <div class="metrica-label">📅 Prazo Médio</div>
+            <div class="metrica-valor">{prazo_medio} dias</div>
+            <div class="metrica-subtexto">Ponderado por valor</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # === AGING POR FAIXA ===
+    st.markdown("### 📊 Aging por Faixa de Vencimento")
+    
+    cores_faixas = ['#00d4aa', '#ffc107', '#ff9800', '#ff5722', '#dc3545']
+    classes_faixas = ['aging-a-vencer', 'aging-1-30', 'aging-31-60', 'aging-61-90', 'aging-90-plus']
+    
+    cols_aging = st.columns(5)
+    for i, (col, faixa) in enumerate(zip(cols_aging, faixas_aging)):
+        with col:
+            dados_faixa = totais_faixa[totais_faixa['Faixa'] == faixa]
+            valor = dados_faixa['Valor'].values[0] if len(dados_faixa) > 0 else 0
+            qtd = dados_faixa['Quantidade'].values[0] if len(dados_faixa) > 0 else 0
+            st.markdown(f"""
+            <div class="aging-card {classes_faixas[i]}">
+                <div class="aging-label">{faixa}</div>
+                <div class="aging-valor" style="color: {cores_faixas[i]};">R$ {valor/1_000_000:.2f}M</div>
+                <div class="aging-qtd">{int(qtd)} títulos</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # === GRÁFICOS ===
+    col_g1, col_g2 = st.columns(2)
+    
+    with col_g1:
+        # Gráfico de barras empilhadas por empresa
+        fig_bar = go.Figure()
+        
+        for i, faixa in enumerate(faixas_aging):
+            df_faixa = df_aging[df_aging['Faixa'] == faixa]
+            fig_bar.add_trace(go.Bar(
+                name=faixa,
+                x=df_faixa['Empresa'],
+                y=df_faixa['Valor'],
+                marker_color=cores_faixas[i],
+                text=[f"R$ {v/1_000_000:.1f}M" for v in df_faixa['Valor']],
+                textposition='inside',
+                textfont=dict(color='white', size=10)
+            ))
+        
+        fig_bar.update_layout(
+            title=dict(text='Aging por Empresa', font=dict(size=18, color='white')),
+            barmode='stack',
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white'),
+            height=450,
+            legend=dict(orientation='h', y=-0.15, font=dict(size=11)),
+            xaxis=dict(showgrid=False, tickfont=dict(size=13)),
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', title='Valor (R$)')
+        )
+        
+        st.plotly_chart(fig_bar, use_container_width=True)
+    
+    with col_g2:
+        # Gráfico de pizza do total
+        fig_pizza = px.pie(
+            totais_faixa,
+            values='Valor',
+            names='Faixa',
+            title='Distribuição do Aging',
+            color='Faixa',
+            color_discrete_map=dict(zip(faixas_aging, cores_faixas)),
+            hole=0.45
+        )
+        
+        fig_pizza.update_traces(
+            textposition='outside',
+            textinfo='label+percent',
+            textfont=dict(color='white', size=11),
+            hovertemplate='<b>%{label}</b><br>R$ %{value:,.0f}<br>%{percent}<extra></extra>'
+        )
+        
+        fig_pizza.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white'),
+            height=450,
+            showlegend=False,
+            title=dict(font=dict(size=18))
+        )
+        
+        st.plotly_chart(fig_pizza, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # === AGING POR EMPRESA ===
+    st.markdown("### 🏢 Detalhamento por Empresa")
+    
+    # Badges das empresas
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span class="empresa-badge badge-alura">Alura</span>
+        <span class="empresa-badge badge-fiap">FIAP</span>
+        <span class="empresa-badge badge-pm3">PM3</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Tabela pivot
+    df_pivot = df_aging.pivot_table(
+        index='Empresa',
+        columns='Faixa',
+        values='Valor',
+        aggfunc='sum'
+    ).reindex(columns=faixas_aging).fillna(0)
+    
+    df_pivot['Total'] = df_pivot.sum(axis=1)
+    df_pivot = df_pivot.reset_index()
+    
+    # Formatar valores
+    df_display = df_pivot.copy()
+    for col in faixas_aging + ['Total']:
+        df_display[col] = df_display[col].apply(
+            lambda x: f"R$ {x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        )
+    
+    st.dataframe(df_display, use_container_width=True, hide_index=True, height=180)
+    
+    st.markdown("---")
+    
+    # === EVOLUÇÃO MENSAL (FICTÍCIA) ===
+    st.markdown("### 📈 Evolução Mensal do Aging")
+    
+    # Gerar dados mensais fictícios
+    meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun']
+    dados_evolucao = []
+    for mes in meses:
+        for faixa in faixas_aging:
+            valor_base = totais_faixa[totais_faixa['Faixa'] == faixa]['Valor'].values[0]
+            # Variação aleatória por mês
+            variacao = random.uniform(0.85, 1.15)
+            dados_evolucao.append({
+                'Mês': mes,
+                'Faixa': faixa,
+                'Valor': valor_base * variacao
+            })
+    
+    df_evolucao = pd.DataFrame(dados_evolucao)
+    
+    fig_line = px.line(
+        df_evolucao,
+        x='Mês',
+        y='Valor',
+        color='Faixa',
+        markers=True,
+        color_discrete_map=dict(zip(faixas_aging, cores_faixas))
+    )
+    
+    fig_line.update_layout(
+        title=dict(text='Tendência do Aging por Faixa (Últimos 6 meses)', font=dict(size=18, color='white')),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white'),
+        height=400,
+        legend=dict(orientation='h', y=-0.2, font=dict(size=11)),
+        xaxis=dict(showgrid=False, tickfont=dict(size=13)),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', title='Valor (R$)')
+    )
+    
+    fig_line.update_traces(line=dict(width=3), marker=dict(size=8))
+    
+    st.plotly_chart(fig_line, use_container_width=True)
+    
+    # Footer
+    st.markdown("---")
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px; opacity: 0.7;'>
+            <p style='color: #FFFFFF; font-size: 0.9rem;'>
+                📈 Contas a Receber | Total: R$ {total_receber:,.2f} | {int(df_aging['Quantidade'].sum())} títulos | ⚠️ Dados fictícios para demonstração
             </p>
         </div>
     """.replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
