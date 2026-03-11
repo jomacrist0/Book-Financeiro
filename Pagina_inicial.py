@@ -206,6 +206,10 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
+    # Inicializar session_state para dados de saldos
+    if 'df_saldos_upload' not in st.session_state:
+        st.session_state.df_saldos_upload = None
+
     # === UPLOAD DE PLANILHA PARA ATUALIZAR SALDOS ===
     with st.expander("📤 Atualizar Planilha de Saldos", expanded=False):
         st.markdown("Envie a planilha atualizada de saldos (formato Excel .xlsx)")
@@ -218,31 +222,64 @@ with tab1:
         
         if uploaded_saldos is not None:
             try:
-                # Verificar se é um arquivo Excel válido
-                df_preview = pd.read_excel(uploaded_saldos)
-                st.success(f"✅ Arquivo carregado: {len(df_preview)} linhas")
-                st.dataframe(df_preview.head(5), use_container_width=True, height=150)
+                # Ler arquivo Excel
+                df_upload = pd.read_excel(uploaded_saldos)
+                st.success(f"✅ Arquivo carregado: {len(df_upload)} linhas")
+                st.dataframe(df_upload.head(5), use_container_width=True, height=150)
                 
                 col_salvar1, col_salvar2 = st.columns([1, 3])
                 with col_salvar1:
-                    if st.button("💾 Salvar e Atualizar", type="primary", key="btn_salvar_saldos"):
-                        # Voltar ao início do arquivo
-                        uploaded_saldos.seek(0)
-                        # Salvar no diretório data
-                        save_path = os.path.join(os.path.dirname(__file__), "data", "1Saldos - ecossistema.xlsx")
-                        with open(save_path, "wb") as f:
-                            f.write(uploaded_saldos.getbuffer())
-                        st.success("✅ Planilha atualizada com sucesso!")
-                        st.cache_data.clear()
-                        st.rerun()
+                    if st.button("💾 Aplicar Dados", type="primary", key="btn_salvar_saldos"):
+                        # Processar o dataframe do upload
+                        df_upload.columns = [col.strip().replace('\n', '').replace('\r', '') for col in df_upload.columns]
+                        
+                        col_data = next((c for c in df_upload.columns if 'data' in c.lower()), None)
+                        col_empresa = next((c for c in df_upload.columns if 'empresa' in c.lower()), None)
+                        col_saldo = next((c for c in df_upload.columns if 'saldo' in c.lower() and 'final' in c.lower()), None)
+                        
+                        if col_data and col_saldo:
+                            if not col_empresa:
+                                df_upload['Empresa'] = 'Empresa Geral'
+                                col_empresa = 'Empresa'
+                            
+                            df_upload[col_data] = pd.to_datetime(df_upload[col_data], errors='coerce', dayfirst=True)
+                            
+                            if df_upload[col_saldo].dtype not in ['int64', 'float64']:
+                                df_upload[col_saldo] = (
+                                    df_upload[col_saldo]
+                                    .astype(str)
+                                    .str.replace('.', '', regex=False)
+                                    .str.replace(',', '.', regex=False)
+                                )
+                            df_upload[col_saldo] = pd.to_numeric(df_upload[col_saldo], errors='coerce').fillna(0)
+                            
+                            df_processado = df_upload.rename(columns={
+                                col_data: 'Data',
+                                col_empresa: 'Empresa',
+                                col_saldo: 'Saldo_Final'
+                            }).dropna(subset=['Data'])
+                            
+                            # Salvar na session_state
+                            st.session_state.df_saldos_upload = df_processado
+                            st.success("✅ Dados aplicados com sucesso!")
+                            st.rerun()
+                        else:
+                            st.error("❌ Colunas 'Data' e 'Saldo Final' não encontradas no arquivo!")
                 with col_salvar2:
-                    st.caption("Clique em 'Salvar e Atualizar' para substituir os dados atuais.")
+                    st.caption("Clique em 'Aplicar Dados' para usar esta planilha.")
             except Exception as e:
                 st.error(f"❌ Erro ao ler arquivo: {e}")
+        
+        # Mostrar status atual
+        if st.session_state.df_saldos_upload is not None:
+            st.info(f"📊 Usando dados carregados: {len(st.session_state.df_saldos_upload)} registros")
+            if st.button("🔄 Voltar aos dados originais", key="btn_reset_saldos"):
+                st.session_state.df_saldos_upload = None
+                st.rerun()
 
     # Função para carregar dados
     @st.cache_data
-    def load_data():
+    def load_data_from_file():
         possible_paths = [
             os.path.join(os.path.dirname(__file__), "data", "1Saldos - ecossistema.xlsx"),
             os.path.join(os.getcwd(), "data", "1Saldos - ecossistema.xlsx"),
@@ -334,7 +371,11 @@ with tab1:
         
         return df_agrupado, periodo_label
 
-    df = load_data()
+    # Usar dados do upload se disponível, senão carregar do arquivo
+    if st.session_state.df_saldos_upload is not None:
+        df = st.session_state.df_saldos_upload
+    else:
+        df = load_data_from_file()
 
     if df is not None:
         result = process_data(df)
