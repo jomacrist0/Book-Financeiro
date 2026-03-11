@@ -1523,40 +1523,11 @@ with tab4:
         sub_str = str(subsidiaria).strip()
         return MAPA_SUBSIDIARIAS.get(sub_str, 'Outros')
 
-    # === UPLOAD DE ARQUIVO ===
-    st.markdown("### 📤 Atualização de Dados")
-    
-    col_upload1, col_upload2 = st.columns([2, 1])
-    
-    with col_upload1:
-        uploaded_file = st.file_uploader(
-            "Carregue a planilha de pagamentos (CSV ou Excel):",
-            type=['csv', 'xlsx', 'xls'],
-            key="pagamentos_upload"
-        )
-    
-    with col_upload2:
-        st.markdown("**Formato esperado:**")
-        st.caption("Colunas: Bancos, Classificação, Data de Emissão, Data de Vencimento, Valor, Forma de Pagamento, Subsidiária, etc.")
-
-    # Carregar dados
-    if uploaded_file is not None:
-        df_pag = processar_upload(uploaded_file)
-        if df_pag is not None:
-            st.success("✅ Arquivo carregado com sucesso!")
-            # Salvar arquivo carregado
-            save_path = os.path.join(os.path.dirname(__file__), "data", "pagamentos.csv")
-            try:
-                df_pag.to_csv(save_path, index=False, sep=';', encoding='utf-8-sig')
-                st.cache_data.clear()
-                st.info("💾 Arquivo salvo para uso futuro")
-            except:
-                pass
-    else:
-        df_pag = load_pagamentos()
+    # === CARREGAR DADOS ===
+    df_pag = load_pagamentos()
 
     if df_pag is None or df_pag.empty:
-        st.warning("⚠️ Nenhum dado de pagamentos encontrado. Carregue um arquivo para começar.")
+        st.warning("⚠️ Nenhum dado de pagamentos encontrado.")
         st.stop()
 
     # === PROCESSAR DADOS ===
