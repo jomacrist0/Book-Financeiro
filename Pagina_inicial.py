@@ -206,6 +206,40 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
+    # === UPLOAD DE PLANILHA PARA ATUALIZAR SALDOS ===
+    with st.expander("📤 Atualizar Planilha de Saldos", expanded=False):
+        st.markdown("Envie a planilha atualizada de saldos (formato Excel .xlsx)")
+        uploaded_saldos = st.file_uploader(
+            "Selecione o arquivo Excel:",
+            type=['xlsx'],
+            key="upload_saldos",
+            help="O arquivo deve ter as colunas: Data, Empresa, Saldo Final"
+        )
+        
+        if uploaded_saldos is not None:
+            try:
+                # Verificar se é um arquivo Excel válido
+                df_preview = pd.read_excel(uploaded_saldos)
+                st.success(f"✅ Arquivo carregado: {len(df_preview)} linhas")
+                st.dataframe(df_preview.head(5), use_container_width=True, height=150)
+                
+                col_salvar1, col_salvar2 = st.columns([1, 3])
+                with col_salvar1:
+                    if st.button("💾 Salvar e Atualizar", type="primary", key="btn_salvar_saldos"):
+                        # Voltar ao início do arquivo
+                        uploaded_saldos.seek(0)
+                        # Salvar no diretório data
+                        save_path = os.path.join(os.path.dirname(__file__), "data", "1Saldos - ecossistema.xlsx")
+                        with open(save_path, "wb") as f:
+                            f.write(uploaded_saldos.getbuffer())
+                        st.success("✅ Planilha atualizada com sucesso!")
+                        st.cache_data.clear()
+                        st.rerun()
+                with col_salvar2:
+                    st.caption("Clique em 'Salvar e Atualizar' para substituir os dados atuais.")
+            except Exception as e:
+                st.error(f"❌ Erro ao ler arquivo: {e}")
+
     # Função para carregar dados
     @st.cache_data
     def load_data():
@@ -2060,54 +2094,6 @@ with tab4:
         )
         
         st.plotly_chart(fig_tree, use_container_width=True)
-
-    # === TABELA CRUZADA: FORMA DE PAGAMENTO x EMPRESA ===
-    st.markdown("### 📋 Visão Cruzada: Forma de Pagamento por Empresa")
-    
-    # Criar tabela cruzada
-    empresas_unicas = sorted(df_filtrado['Empresa'].unique().tolist())
-    formas_unicas = sorted(df_filtrado['Forma_Pagamento'].dropna().unique().tolist())
-    
-    dados_tabela = []
-    for forma in formas_unicas:
-        linha = {'Forma de Pagamento': forma}
-        total_qtd = 0
-        total_valor = 0
-        
-        for empresa in empresas_unicas:
-            subset = df_filtrado[(df_filtrado['Forma_Pagamento'] == forma) & (df_filtrado['Empresa'] == empresa)]
-            qtd = len(subset)
-            valor = subset['Valor_Num'].sum()
-            linha[f'{empresa} (Qtd)'] = qtd
-            linha[f'{empresa} (R$)'] = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-            total_qtd += qtd
-            total_valor += valor
-        
-        linha['Total (Qtd)'] = total_qtd
-        linha['Total (R$)'] = f"R$ {total_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        dados_tabela.append(linha)
-    
-    # Linha de totais
-    linha_total = {'Forma de Pagamento': '**TOTAL**'}
-    total_geral_qtd = 0
-    total_geral_valor = 0
-    
-    for empresa in empresas_unicas:
-        subset = df_filtrado[df_filtrado['Empresa'] == empresa]
-        qtd = len(subset)
-        valor = subset['Valor_Num'].sum()
-        linha_total[f'{empresa} (Qtd)'] = qtd
-        linha_total[f'{empresa} (R$)'] = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        total_geral_qtd += qtd
-        total_geral_valor += valor
-    
-    linha_total['Total (Qtd)'] = total_geral_qtd
-    linha_total['Total (R$)'] = f"R$ {total_geral_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    dados_tabela.append(linha_total)
-    
-    df_tabela_cruzada = pd.DataFrame(dados_tabela)
-    
-    st.dataframe(df_tabela_cruzada, use_container_width=True, hide_index=True, height=300)
 
     st.markdown("---")
 
