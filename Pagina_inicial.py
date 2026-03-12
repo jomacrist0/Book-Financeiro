@@ -1504,6 +1504,63 @@ with tab4:
 
     st.markdown("---")
 
+    # Inicializar session_state para dados de pagamentos
+    if 'df_pagamentos_upload' not in st.session_state:
+        st.session_state.df_pagamentos_upload = None
+
+    # === UPLOAD DE PLANILHA PARA ATUALIZAR PAGAMENTOS ===
+    with st.expander("📤 Atualizar Planilha de Pagamentos", expanded=False):
+        st.markdown("Envie a planilha atualizada de pagamentos (formato CSV ou Excel)")
+        uploaded_pagamentos = st.file_uploader(
+            "Selecione o arquivo:",
+            type=['csv', 'xlsx', 'xls'],
+            key="upload_pagamentos",
+            help="O arquivo deve ter as colunas: Fornecedor, Valor, Data_Vencimento, Status, etc."
+        )
+        
+        if uploaded_pagamentos is not None:
+            try:
+                # Ler arquivo
+                if uploaded_pagamentos.name.endswith('.csv'):
+                    encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
+                    df_upload_pag = None
+                    for encoding in encodings:
+                        try:
+                            df_upload_pag = pd.read_csv(uploaded_pagamentos, encoding=encoding, sep=';')
+                            if len(df_upload_pag.columns) == 1:
+                                uploaded_pagamentos.seek(0)
+                                df_upload_pag = pd.read_csv(uploaded_pagamentos, encoding=encoding, sep=',')
+                            break
+                        except:
+                            uploaded_pagamentos.seek(0)
+                            continue
+                else:
+                    df_upload_pag = pd.read_excel(uploaded_pagamentos)
+                
+                if df_upload_pag is not None:
+                    st.success(f"✅ Arquivo carregado: {len(df_upload_pag)} linhas")
+                    st.dataframe(df_upload_pag.head(5), use_container_width=True, height=150)
+                    
+                    col_salvar1, col_salvar2 = st.columns([1, 3])
+                    with col_salvar1:
+                        if st.button("💾 Aplicar Dados", type="primary", key="btn_salvar_pagamentos"):
+                            st.session_state.df_pagamentos_upload = df_upload_pag
+                            st.success("✅ Dados aplicados com sucesso!")
+                            st.rerun()
+                    with col_salvar2:
+                        st.caption("Clique em 'Aplicar Dados' para usar esta planilha.")
+                else:
+                    st.error("❌ Não foi possível ler o arquivo!")
+            except Exception as e:
+                st.error(f"❌ Erro ao ler arquivo: {e}")
+        
+        # Mostrar status atual
+        if st.session_state.df_pagamentos_upload is not None:
+            st.info(f"📊 Usando dados carregados: {len(st.session_state.df_pagamentos_upload)} registros")
+            if st.button("🔄 Voltar aos dados originais", key="btn_reset_pagamentos"):
+                st.session_state.df_pagamentos_upload = None
+                st.rerun()
+
     # === MAPEAMENTO DE SUBSIDIÁRIAS ===
     MAPA_SUBSIDIARIAS = {
         'Caelum': 'Alura',
@@ -1599,10 +1656,14 @@ with tab4:
         return MAPA_SUBSIDIARIAS.get(sub_str, 'Outros')
 
     # === CARREGAR DADOS ===
-    df_pag = load_pagamentos()
+    # Usar dados do upload se disponível, senão carregar do arquivo
+    if st.session_state.df_pagamentos_upload is not None:
+        df_pag = st.session_state.df_pagamentos_upload
+    else:
+        df_pag = load_pagamentos()
 
     if df_pag is None or df_pag.empty:
-        st.warning("⚠️ Nenhum dado de pagamentos encontrado.")
+        st.warning("⚠️ Nenhum dado de pagamentos encontrado. Faça upload de uma planilha acima.")
         st.stop()
 
     # === PROCESSAR DADOS ===
