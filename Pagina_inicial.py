@@ -2032,6 +2032,13 @@ with tab4:
     banco_empresa['Banco'] = banco_empresa['Banco'].fillna('Não informado').astype(str)
     banco_empresa['Empresa'] = banco_empresa['Empresa'].fillna('Não informado').astype(str)
 
+    resumo_banco = df_filtrado.groupby('Banco', dropna=False).agg({
+        'Valor_Num': ['sum', 'count']
+    }).reset_index()
+    resumo_banco.columns = ['Banco', 'Valor_Total', 'Quantidade']
+    resumo_banco['Banco'] = resumo_banco['Banco'].fillna('Não informado').astype(str)
+    resumo_banco = resumo_banco.sort_values('Valor_Total', ascending=False)
+
     resumo_empresa = df_filtrado.groupby('Empresa').agg({
         'Valor_Num': ['sum', 'count']
     }).reset_index()
@@ -2048,36 +2055,52 @@ with tab4:
     col_g1, col_g2 = st.columns(2)
 
     with col_g1:
-        # Gráfico de barras empilhadas: Banco x Empresa
-        fig_banco_empresa = px.bar(
-            banco_empresa,
-            x='Banco',
-            y='Valor_Num',
-            color='Empresa',
-            barmode='stack',
-            title='Pagamentos por Banco e Empresa',
-            color_discrete_map=cores_empresas
-        )
+        # Gráfico de barras empilhadas: Banco x Empresa com rótulos de total
+        fig_banco_empresa = go.Figure()
 
-        fig_banco_empresa.update_traces(
-            hovertemplate='<b>Banco:</b> %{x}<br><b>Empresa:</b> %{fullData.name}<br><b>Valor:</b> R$ %{y:,.2f}<extra></extra>'
-        )
+        for empresa in banco_empresa['Empresa'].unique():
+            df_emp = banco_empresa[banco_empresa['Empresa'] == empresa]
+            cor = cores_empresas.get(empresa, '#999999')
+            fig_banco_empresa.add_trace(go.Bar(
+                name=empresa,
+                x=df_emp['Banco'],
+                y=df_emp['Valor_Num'],
+                marker_color=cor,
+                text=[f"R$ {v:,.0f}".replace(",", ".") if v > 0 else "" for v in df_emp['Valor_Num']],
+                textposition='inside',
+                textfont=dict(color='white', size=10),
+                hovertemplate='<b>%{x}</b><br>Empresa: ' + empresa + '<br>R$ %{y:,.2f}<extra></extra>'
+            ))
+
+        # Adicionar anotações com total por banco no topo das barras
+        totais_banco = banco_empresa.groupby('Banco')['Valor_Num'].sum().to_dict()
+        for banco, total in totais_banco.items():
+            fig_banco_empresa.add_annotation(
+                x=banco,
+                y=total,
+                text=f"<b>R$ {total:,.0f}</b>".replace(",", "."),
+                showarrow=False,
+                yshift=15,
+                font=dict(color='white', size=11)
+            )
 
         fig_banco_empresa.update_layout(
+            barmode='stack',
+            title=dict(text='Pagamentos por Banco e Empresa', font=dict(size=18, color='white')),
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white', size=14),
-            height=500,
+            height=520,
             showlegend=True,
             legend=dict(orientation='h', y=-0.15, font=dict(color='white', size=12)),
-            xaxis=dict(showgrid=False, tickfont=dict(size=12)),
-            yaxis=dict(showgrid=False, title='Valor Total (R$)', tickfont=dict(size=11))
+            xaxis=dict(showgrid=False, tickfont=dict(size=13)),
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.08)', title='', tickfont=dict(size=11))
         )
 
         st.plotly_chart(fig_banco_empresa, use_container_width=True)
 
     with col_g2:
-        # Gráfico de pizza: Distribuição por Empresa
+        # Gráfico de pizza com valores em R$
         fig_pizza_emp = px.pie(
             resumo_empresa,
             values='Valor_Total',
@@ -2090,22 +2113,60 @@ with tab4:
 
         fig_pizza_emp.update_traces(
             textposition='outside',
-            textinfo='label+percent',
-            textfont=dict(color='white', size=12),
-            hovertemplate='<b>%{label}</b><br>R$ %{value:,.2f}<br>%{percent}<extra></extra>'
+            textinfo='label+value+percent',
+            texttemplate='<b>%{label}</b><br>R$ %{value:,.0f}<br>(%{percent})',
+            textfont=dict(color='white', size=11),
+            hovertemplate='<b>%{label}</b><br>R$ %{value:,.2f}<br>%{percent}<extra></extra>',
+            pull=[0.03] * len(resumo_empresa)
         )
 
         fig_pizza_emp.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white', size=14),
-            height=500,
-            showlegend=True,
-            legend=dict(orientation='h', y=-0.15, font=dict(color='white', size=12)),
-            title=dict(font=dict(size=18))
+            height=520,
+            showlegend=False,
+            title=dict(font=dict(size=18, color='white')),
+            margin=dict(t=60, b=20)
         )
 
         st.plotly_chart(fig_pizza_emp, use_container_width=True)
+
+    # Tabela resumo por banco com valores formatados
+    st.markdown("""
+    <style>
+    .tabela-banco {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 10px 0 20px 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    col_tb1, col_tb2 = st.columns(2)
+
+    with col_tb1:
+        st.markdown("**📊 Resumo por Banco**")
+        resumo_banco_display = resumo_banco.copy()
+        resumo_banco_display['Valor Total'] = resumo_banco_display['Valor_Total'].apply(
+            lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        )
+        st.dataframe(
+            resumo_banco_display[['Banco', 'Quantidade', 'Valor Total']].rename(columns={'Quantidade': 'Qtd.'}),
+            use_container_width=True, hide_index=True, height=min(150, 35 + len(resumo_banco) * 35)
+        )
+
+    with col_tb2:
+        st.markdown("**📊 Resumo por Empresa**")
+        resumo_empresa_display = resumo_empresa.copy()
+        resumo_empresa_display['Valor Total'] = resumo_empresa_display['Valor_Total'].apply(
+            lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        )
+        st.dataframe(
+            resumo_empresa_display[['Empresa', 'Quantidade', 'Valor Total']].rename(columns={'Quantidade': 'Qtd.'}),
+            use_container_width=True, hide_index=True, height=min(150, 35 + len(resumo_empresa) * 35)
+        )
 
     st.markdown("---")
 
