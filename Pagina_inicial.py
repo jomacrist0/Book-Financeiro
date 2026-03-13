@@ -2154,7 +2154,7 @@ with tab4:
         )
         st.dataframe(
             resumo_banco_display[['Banco', 'Quantidade', 'Valor Total']].rename(columns={'Quantidade': 'Qtd.'}),
-            use_container_width=True, hide_index=True, height=min(150, 35 + len(resumo_banco) * 35)
+            use_container_width=True, hide_index=True, height=37 + len(resumo_banco) * 35
         )
 
     with col_tb2:
@@ -2165,7 +2165,7 @@ with tab4:
         )
         st.dataframe(
             resumo_empresa_display[['Empresa', 'Quantidade', 'Valor Total']].rename(columns={'Quantidade': 'Qtd.'}),
-            use_container_width=True, hide_index=True, height=min(150, 35 + len(resumo_empresa) * 35)
+            use_container_width=True, hide_index=True, height=37 + len(resumo_empresa) * 35
         )
 
     st.markdown("---")
