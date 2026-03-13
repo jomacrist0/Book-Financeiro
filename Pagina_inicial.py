@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import io
 import os
 from datetime import datetime, timedelta
 
@@ -143,7 +144,6 @@ def aplicar_css_planejamento():
         }
     </style>
     """, unsafe_allow_html=True)
-
 # === CSS BASE ===
 st.markdown("""
 <style>
@@ -1522,17 +1522,16 @@ with tab4:
             try:
                 # Ler arquivo
                 if uploaded_pagamentos.name.endswith('.csv'):
+                    uploaded_bytes = uploaded_pagamentos.getvalue()
                     encodings = ['utf-8', 'utf-8-sig', 'iso-8859-1', 'latin1', 'cp1252']
                     df_upload_pag = None
                     for encoding in encodings:
                         try:
-                            df_upload_pag = pd.read_csv(uploaded_pagamentos, encoding=encoding, sep=';')
+                            df_upload_pag = pd.read_csv(io.BytesIO(uploaded_bytes), encoding=encoding, sep=';')
                             if len(df_upload_pag.columns) == 1:
-                                uploaded_pagamentos.seek(0)
-                                df_upload_pag = pd.read_csv(uploaded_pagamentos, encoding=encoding, sep=',')
+                                df_upload_pag = pd.read_csv(io.BytesIO(uploaded_bytes), encoding=encoding, sep=',')
                             break
                         except:
-                            uploaded_pagamentos.seek(0)
                             continue
                 else:
                     df_upload_pag = pd.read_excel(uploaded_pagamentos)
@@ -1543,12 +1542,19 @@ with tab4:
                     
                     col_salvar1, col_salvar2 = st.columns([1, 3])
                     with col_salvar1:
-                        if st.button("💾 Aplicar Dados", type="primary", key="btn_salvar_pagamentos"):
-                            st.session_state.df_pagamentos_upload = df_upload_pag
-                            st.success("✅ Dados aplicados com sucesso!")
+                        if st.button("💾 Aplicar e Salvar", type="primary", key="btn_salvar_pagamentos"):
+                            caminho_pagamentos = os.path.join(os.path.dirname(__file__), "data", "pagamentos.csv")
+                            os.makedirs(os.path.dirname(caminho_pagamentos), exist_ok=True)
+
+                            # Persistir no CSV padrão para manter atualização após recarregar a página.
+                            df_upload_pag.to_csv(caminho_pagamentos, index=False, sep=';', encoding='utf-8-sig')
+
+                            st.session_state.df_pagamentos_upload = df_upload_pag.copy()
+                            st.cache_data.clear()
+                            st.success(f"✅ Dados aplicados e salvos em: {caminho_pagamentos}")
                             st.rerun()
                     with col_salvar2:
-                        st.caption("Clique em 'Aplicar Dados' para usar esta planilha.")
+                        st.caption("Clique em 'Aplicar e Salvar' para atualizar a base de pagamentos definitivamente.")
                 else:
                     st.error("❌ Não foi possível ler o arquivo!")
             except Exception as e:
@@ -1569,7 +1575,7 @@ with tab4:
     }
 
     # === CARREGAR DADOS DE PAGAMENTOS ===
-    @st.cache_data(ttl=60)
+    @st.cache_data
     def load_pagamentos():
         """Carrega dados de pagamentos do CSV ou arquivo carregado"""
         possible_paths = [
@@ -1695,6 +1701,13 @@ with tab4:
     for old_col, new_col in col_mapping.items():
         if old_col in df.columns and old_col != new_col:
             df = df.rename(columns={old_col: new_col})
+
+    # Coluna padronizada de empresa nominal para análises detalhadas.
+    if 'Empresa_NM' not in df.columns:
+        for possible_col in ['Empresa NM', 'Empresa_NM', 'Nm_Empresa', 'NM Empresa', 'nm_empresa', 'nm empresa']:
+            if possible_col in df.columns:
+                df = df.rename(columns={possible_col: 'Empresa_NM'})
+                break
     
     # Converter valor para numérico
     if 'Valor' in df.columns:
@@ -1705,6 +1718,11 @@ with tab4:
         df['Empresa'] = df['Subsidiaria'].apply(identificar_empresa)
     else:
         df['Empresa'] = 'Outros'
+
+    if 'Empresa_NM' not in df.columns:
+        df['Empresa_NM'] = df['Empresa']
+    df['Empresa_NM'] = df['Empresa_NM'].fillna(df['Empresa']).astype(str).str.strip()
+    df.loc[df['Empresa_NM'] == '', 'Empresa_NM'] = df['Empresa']
     
     # Processar coluna de Status (Aprovado, A aprovar, Reprogramado)
     if 'Status' not in df.columns:
@@ -2006,116 +2024,88 @@ with tab4:
 
     st.markdown("---")
 
-    # === RESUMO POR EMPRESA ===
-    st.markdown("### 🏢 Resumo por Empresa")
-    
+    # === RESUMO POR BANCO x EMPRESA ===
+    st.markdown("### 🏦 Pagamentos por Banco e por Empresa")
+
+    # Dados agrupados
+    banco_empresa = df_filtrado.groupby(['Banco', 'Empresa'], dropna=False)['Valor_Num'].sum().reset_index()
+    banco_empresa['Banco'] = banco_empresa['Banco'].fillna('Não informado').astype(str)
+    banco_empresa['Empresa'] = banco_empresa['Empresa'].fillna('Não informado').astype(str)
+
     resumo_empresa = df_filtrado.groupby('Empresa').agg({
         'Valor_Num': ['sum', 'count']
     }).reset_index()
     resumo_empresa.columns = ['Empresa', 'Valor_Total', 'Quantidade']
     resumo_empresa = resumo_empresa.sort_values('Valor_Total', ascending=False)
-    
+
+    cores_empresas = {
+        'Alura': '#1a5490',
+        'FIAP': '#cc0000',
+        'PM3': '#663399',
+        'Outros': '#666666'
+    }
+
     col_g1, col_g2 = st.columns(2)
-    
+
     with col_g1:
-        # Gráfico de Pizza - Distribuição por Empresa
-        cores_empresas = {
-            'Alura': '#1a5490',
-            'FIAP': '#cc0000',
-            'PM3': '#663399',
-            'Outros': '#666666'
-        }
-        
-        fig_pizza = px.pie(
+        # Gráfico de barras empilhadas: Banco x Empresa
+        fig_banco_empresa = px.bar(
+            banco_empresa,
+            x='Banco',
+            y='Valor_Num',
+            color='Empresa',
+            barmode='stack',
+            title='Pagamentos por Banco e Empresa',
+            color_discrete_map=cores_empresas
+        )
+
+        fig_banco_empresa.update_traces(
+            hovertemplate='<b>Banco:</b> %{x}<br><b>Empresa:</b> %{fullData.name}<br><b>Valor:</b> R$ %{y:,.2f}<extra></extra>'
+        )
+
+        fig_banco_empresa.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white', size=14),
+            height=500,
+            showlegend=True,
+            legend=dict(orientation='h', y=-0.15, font=dict(color='white', size=12)),
+            xaxis=dict(showgrid=False, tickfont=dict(size=12)),
+            yaxis=dict(showgrid=False, title='Valor Total (R$)', tickfont=dict(size=11))
+        )
+
+        st.plotly_chart(fig_banco_empresa, use_container_width=True)
+
+    with col_g2:
+        # Gráfico de pizza: Distribuição por Empresa
+        fig_pizza_emp = px.pie(
             resumo_empresa,
             values='Valor_Total',
             names='Empresa',
-            title='Distribuição de Valores por Empresa',
+            title='Distribuição por Empresa',
             color='Empresa',
             color_discrete_map=cores_empresas,
             hole=0.4
         )
-        
-        fig_pizza.update_traces(
+
+        fig_pizza_emp.update_traces(
             textposition='outside',
             textinfo='label+percent',
             textfont=dict(color='white', size=12),
             hovertemplate='<b>%{label}</b><br>R$ %{value:,.2f}<br>%{percent}<extra></extra>'
         )
-        
-        fig_pizza.update_layout(
+
+        fig_pizza_emp.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white', size=14),
             height=500,
             showlegend=True,
-            legend=dict(font=dict(color='white', size=13), orientation='h', y=-0.1),
+            legend=dict(orientation='h', y=-0.15, font=dict(color='white', size=12)),
             title=dict(font=dict(size=18))
         )
-        
-        st.plotly_chart(fig_pizza, use_container_width=True)
-    
-    with col_g2:
-        # Gráfico de Barras - Quantidade e Valor por Empresa
-        fig_bar_empresa = make_subplots(specs=[[{"secondary_y": True}]])
-        
-        fig_bar_empresa.add_trace(
-            go.Bar(
-                x=resumo_empresa['Empresa'],
-                y=resumo_empresa['Valor_Total'],
-                name='Valor Total (R$)',
-                marker_color='#DC143C',
-                text=[f"R$ {v:,.0f}".replace(",", ".") for v in resumo_empresa['Valor_Total']],
-                textposition='outside',
-                textfont=dict(color='white', size=10)
-            ),
-            secondary_y=False
-        )
-        
-        fig_bar_empresa.add_trace(
-            go.Scatter(
-                x=resumo_empresa['Empresa'],
-                y=resumo_empresa['Quantidade'],
-                name='Quantidade',
-                mode='lines+markers+text',
-                line=dict(color='#FFD700', width=3),
-                marker=dict(size=10),
-                text=resumo_empresa['Quantidade'].astype(str),
-                textposition='top center',
-                textfont=dict(color='#FFD700', size=11)
-            ),
-            secondary_y=True
-        )
-        
-        fig_bar_empresa.update_layout(
-            title=dict(text='Valores e Quantidades por Empresa', font=dict(size=18)),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='white', size=14),
-            height=500,
-            showlegend=True,
-            legend=dict(orientation='h', y=1.12, font=dict(color='white', size=12)),
-            xaxis=dict(showgrid=False, tickfont=dict(size=13)),
-            yaxis=dict(showgrid=False, title='Valor (R$)', tickfont=dict(size=11)),
-            yaxis2=dict(showgrid=False, title='Quantidade', tickfont=dict(size=11))
-        )
-        
-        st.plotly_chart(fig_bar_empresa, use_container_width=True)
 
-    # Tabela resumo por empresa
-    resumo_empresa_display = resumo_empresa.copy()
-    resumo_empresa_display['Valor_Formatado'] = resumo_empresa_display['Valor_Total'].apply(
-        lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    )
-    
-    st.dataframe(
-        resumo_empresa_display[['Empresa', 'Quantidade', 'Valor_Formatado']].rename(columns={
-            'Quantidade': 'Qtd. Pagamentos',
-            'Valor_Formatado': 'Valor Total'
-        }),
-        use_container_width=True,
-        hide_index=True
-    )
+        st.plotly_chart(fig_pizza_emp, use_container_width=True)
 
     st.markdown("---")
 
